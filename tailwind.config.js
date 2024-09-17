@@ -44,6 +44,7 @@ module.exports = {
         "homepage-icon": "0px 5px 10px 0px #7575E5",
       },
       width: {
+        logoLogin: "103.18px",
         textContainer: "550px",
         textContainer2: "800px",
         textContainer3: "830px",
@@ -80,6 +81,8 @@ module.exports = {
         applyButton: "251.56px",
       },
       height: {
+        logoLogin: "96px",
+        input: "40px",
         heroContainer: "1289px",
         logo: "34px",
         imageContainer: "252px",
