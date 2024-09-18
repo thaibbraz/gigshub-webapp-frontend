@@ -45,8 +45,9 @@ module.exports = {
       },
       width: {
         logoLogin: "103.18px",
-        textContainer: "550px",
-        textContainer2: "800px",
+        formContainer: "1264px",
+        buttonSize: "122px",
+        inputForm: "224px",
         textContainer3: "830px",
         shortTextContainer: "480px",
         headingContainer: "768px",
@@ -83,6 +84,7 @@ module.exports = {
       height: {
         logoLogin: "96px",
         input: "40px",
+        formContainer: "989px",
         heroContainer: "1289px",
         logo: "34px",
         imageContainer: "252px",

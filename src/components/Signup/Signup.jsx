@@ -1,5 +1,5 @@
 import React from "react";
-import { Container } from "../Container/Container";
+import { Container } from "../../components/Container/Container";
 import logoDarkPurple from "../../assets/logoDarkPurple.svg";
 
 const Signup = () => {
