@@ -1,14 +1,17 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-// import { Navigation } from "./Navigation/Navigation"; // need to change it
+import Navigation from "../components/Navigation/Navigation";
 
 export default function Layout() {
   return (
-    <div className="bg-off-white">
-      {/* <Navigation /> */}
-      <Outlet />
+    <div className="flex bg-off-white min-h-screen">
+      {/* Sidebar */}
+      <Navigation />
+
+      {/* Page content */}
+      <div className="flex-grow p-8">
+        <Outlet />
+      </div>
     </div>
   );
 }
-
-// Here is the page layout. Outlet is the content that varies.

@@ -2,13 +2,15 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import Login from "./components/Login/Login";
+import Signup from "./components/Signup/Signup";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route path="login" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           {/* <Route path="/" index element={<Home />} />
           <Route path="/freelancers" element={<Freelancers />} />
           <Route path="/jobSeekers" element={<JobSeekers />} />
