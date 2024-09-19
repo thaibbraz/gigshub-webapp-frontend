@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Container } from "../../Container/Container";
 
 const PersonalDetailsForm = ({ onNext }) => {
   const [formData, setFormData] = useState({
@@ -20,25 +19,36 @@ const PersonalDetailsForm = ({ onNext }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("PersonalDetailsForm submitted");
     onNext(formData);
   };
 
+  const progress = (1 / 3) * 100;
   return (
     <div>
       <div
-        className="absolute top-6 left-[1225px] px-10 mx-20
+        className="absolute top-8 left-[1225px] px-10 mx-20
       "
       >
-        <a href="/logout" className="text-dark-blue font-medium">
+        <a
+          href="/logout"
+          className="text-light-purple font-thin  hover:underline"
+        >
           Log out
         </a>
       </div>
-      <div className="flex flex-col items-center justify-center bg-white rounded-xl p-10 ml-24 pl-4 maincontainer w-full max-w-7xl h-[calc(100vh-28px)]">
-        <div className="w-full">
+      <div className="flex flex-col bg-white rounded-xl p-10 ml-24 pl-4 maincontainer w-full max-w-7xl h-[calc(100vh-28px)]">
+        <div className="relative w-12/12 h-3 bg-white rounded-lg mb-6 ml-2">
+          <div
+            className="absolute h-full bg-lime-green rounded-lg transition-all duration-500"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <div className="w-full mt-28">
           <h2 className="text-3xl font-bold text-dark-blue text-center mb-4">
             Personal Details
           </h2>
-          <p className="text-gray-500 text-center text-sm mb-8 text-dark-purple">
+          <p className="text-center text-sm mb-8 text-dark-purple ">
             Please fill out your personal information
           </p>
           <form
@@ -136,7 +146,10 @@ const PersonalDetailsForm = ({ onNext }) => {
             </div>
 
             <div className="col-span-4 flex justify-center mt-4">
-              <button className="flex items-center justify-center h-input mt-4 py-6 px-1 rounded-3xl border-2 border-pale-purple">
+              <button
+                className="flex items-center justify-center h-input mt-4 py-6 px-1 rounded-3xl border-2 border-pale-purple"
+                type="submit"
+              >
                 <div className="flex items-center justify-center w-buttonSize h-input bg-dark-blue rounded-2xl border-5">
                   <span className="text-sm text-white font-normal">
                     Continue
