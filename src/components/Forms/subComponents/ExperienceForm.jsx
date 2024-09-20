@@ -33,7 +33,7 @@ const ExperienceForm = ({ onNext }) => {
       >
         <a
           href="/logout"
-          className="text-light-purple font-thin  hover:underline"
+          className="text-light-purple font-thin  hover:underline whitespace-nowrap"
         >
           Log out
         </a>

@@ -30,6 +30,9 @@ module.exports = {
         "semi-dark-purple": "#4D4DAB",
         violet: "#8A8AFF",
       },
+      backgroundImage: {
+        "custom-gradient": "linear-gradient(90deg, #D0D0FF 0%, #2C2C70 100%)",
+      },
       padding: {
         button: "30px 10px",
         "30.89px": "30.89px",
@@ -37,11 +40,7 @@ module.exports = {
       },
       boxShadow: {
         button: "0 0 5px rgba(0, 0, 0, 0.5)",
-        "card-1": "0px 0px 100px 0px #ADADFFE5",
-        "card-2": "0px 4px 10px 0px #8A8AFF4D",
-        "custom-inner": "0px 10px 30px 0px rgba(0, 0, 0, 0.08) inset",
-        "custom-drop": "0px 4px 20px 0px rgba(0, 0, 0, 0.08)",
-        "homepage-icon": "0px 5px 10px 0px #7575E5",
+        "dark-blue": "0px 0px 4px 0px #2C2C70",
       },
       width: {
         logoLogin: "103.18px",
@@ -85,7 +84,7 @@ module.exports = {
         logoLogin: "96px",
         input: "40px",
         formContainer: "989px",
-        heroContainer: "1289px",
+        banner: "96px",
         logo: "34px",
         imageContainer: "252px",
         card: "241px",
@@ -120,6 +119,9 @@ module.exports = {
       },
       borderRadius: {
         ctaBanner: "32px",
+      },
+      borderWidth: {
+        2: "2px",
       },
       listStyleImage: {
         checkmark: 'url("assets/check-icon2.svg")',
