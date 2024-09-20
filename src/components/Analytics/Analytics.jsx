@@ -38,7 +38,7 @@ const Analytics = () => {
   ];
 
   return (
-    <div className="ml-24">
+    <div className="ml-2">
       <div className="absolute top-8 left-[1225px] px-10 mx-20">
         <a
           href="/logout"

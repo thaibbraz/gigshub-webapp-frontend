@@ -85,10 +85,8 @@ const UserDashboard = () => {
     },
   ];
 
-  const dailyLimitMargin = "ml-2";
-
   return (
-    <div className="ml-24">
+    <div className="ml-2">
       <div className="absolute top-8 left-[1225px] px-10 mx-20">
         <a
           href="/logout"
@@ -143,7 +141,7 @@ const UserDashboard = () => {
             </span>
           </div>
         </button>
-        <p className="text-light-purple text-xs font-thin mt-6 ml-52">
+        <p className="text-light-purple text-xs font-thin mt-6 ml-[250px]">
           Daily limit: <span className="font-bold text-lg">26/100</span>
         </p>
       </div>

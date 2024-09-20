@@ -70,10 +70,10 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="ml-24">
-      <div className="absolute top-8 left-[1210px] px-10 mx-20">
+    <div className="ml-2">
+      <div className="absolute top-8 left-[1179px] px-10 mx-20">
         <p className="text-light-purple font-thin text-xs whitespace-nowrap">
-          Daily Limit: <span className="font-bold text-lg">0/100</span>
+          Daily Limit: <span className="font-bold text-lg ">0/100</span>
         </p>
       </div>
       {/* Top Filter Section */}
