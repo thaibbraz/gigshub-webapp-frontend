@@ -30,7 +30,7 @@ const SkillsForm = () => {
   };
 
   return (
-    <div>
+    <div className="ml-2">
       <div className="absolute top-8 left-[1225px] px-10 mx-20">
         <a
           href="/logout"
@@ -39,7 +39,7 @@ const SkillsForm = () => {
           Log out
         </a>
       </div>
-      <div className="flex flex-col bg-white rounded-xl p-10 ml-24 pl-4 maincontainer w-full max-w-7xl h-[calc(100vh-28px)]">
+      <div className="flex flex-col bg-white rounded-xl p-10 ml-10 maincontainer w-full max-w-7xl h-[calc(100vh-28px)]">
         <div className="relative w-full h-3 bg-white rounded-lg mb-6 ml-2">
           <div
             className="absolute h-full bg-lime-green rounded-lg transition-all duration-500"
@@ -71,14 +71,14 @@ const SkillsForm = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 disabled={limitReached}
-                className={`border border-gray-300 rounded-2xl h-input py-3 px-12 mb-6 w-full ${
+                className={`border border-gray-300 rounded-2xl h-input py-3 px-12 mb-6 w-full shadow dark-blue${
                   limitReached ? "text-red-500" : ""
                 }`}
               />
               <img
                 src={searchIcon}
                 alt="Search"
-                className="absolute left-5 top-1/3 transform -translate-y-1/2 h-5 w-5"
+                className="absolute left-5 top-1/3 transform -translate-y-1/2 h-5 w-5 "
               />
             </div>
 
