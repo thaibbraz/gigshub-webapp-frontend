@@ -19,14 +19,13 @@ const ExperienceForm = ({ onNext }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("ExperienceForm submitted");
     onNext(formData);
   };
 
   const progress = (2 / 3) * 100;
 
   return (
-    <div>
+    <div className="ml-2">
       <div
         className="absolute top-8 left-[1225px] px-10 mx-20
       "
@@ -38,7 +37,7 @@ const ExperienceForm = ({ onNext }) => {
           Log out
         </a>
       </div>
-      <div className="flex flex-col bg-white rounded-xl p-10 ml-24 pl-4 maincontainer w-full max-w-7xl h-[calc(100vh-28px)]">
+      <div className="flex flex-col bg-white rounded-xl p-10 ml-10 w-full max-w-7xl h-[calc(100vh-28px)]">
         <div className="relative w-12/12 h-3 bg-white rounded-lg mb-6 ml-2">
           <div
             className="absolute h-full bg-lime-green rounded-lg transition-all duration-500"
@@ -63,7 +62,7 @@ const ExperienceForm = ({ onNext }) => {
                 value={formData.company}
                 onChange={handleChange}
                 placeholder="Company"
-                className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto"
+                className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
               />
             </div>
 
@@ -76,7 +75,7 @@ const ExperienceForm = ({ onNext }) => {
                 value={formData.jobTitle}
                 onChange={handleChange}
                 placeholder="Job title"
-                className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto"
+                className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
               />
             </div>
 
@@ -89,7 +88,7 @@ const ExperienceForm = ({ onNext }) => {
                 value={formData.startDate}
                 onChange={handleChange}
                 placeholder="DD-MM-YY"
-                className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto"
+                className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
               />
             </div>
 
@@ -101,7 +100,7 @@ const ExperienceForm = ({ onNext }) => {
                 onChange={handleChange}
                 placeholder="DD-MM-YY"
                 disabled={formData.currentWorkplace}
-                className={`border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto ${
+                className={`border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue ${
                   formData.currentWorkplace ? "bg-gray-200" : ""
                 }`}
               />
