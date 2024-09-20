@@ -6,6 +6,7 @@ export default function Layout() {
   const location = useLocation();
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/signup";
+  const isDashboard = location.pathname === "/dashboard";
 
   return (
     <div className="flex bg-off-white min-h-screen">

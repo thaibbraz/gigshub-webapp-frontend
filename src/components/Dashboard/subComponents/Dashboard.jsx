@@ -1,5 +1,5 @@
 import React from "react";
-import starsUnfilled from "../../assets/starsUnfilled.svg";
+import starsUnfilled from "../../../assets/starsUnfilled.svg";
 
 const Dashboard = () => {
   const jobs = [
@@ -67,37 +67,15 @@ const Dashboard = () => {
       location: "Barcelona, Spain",
       appliedDate: "04/09/2024, 20:04",
     },
-    {
-      title: "Front-end developer",
-      contractType: "Permanent contract",
-      salary: "$40,000",
-      company: "AIRBNB",
-      location: "Barcelona, Spain",
-      appliedDate: "04/09/2024, 20:04",
-    },
-    {
-      title: "Front-end developer",
-      contractType: "Permanent contract",
-      salary: "$40,000",
-      company: "AIRBNB",
-      location: "Barcelona, Spain",
-      appliedDate: "04/09/2024, 20:04",
-    },
   ];
-
-  const dailyLimitMargin = "ml-2";
 
   return (
     <div className="ml-24">
-      <div className="absolute top-8 left-[1225px] px-10 mx-20">
-        <a
-          href="/logout"
-          className="text-light-purple font-thin hover:underline whitespace-nowrap"
-        >
-          Log out
-        </a>
+      <div className="absolute top-8 left-[1210px] px-10 mx-20">
+        <p className="text-light-purple font-thin text-xs whitespace-nowrap">
+          Daily Limit: <span className="font-bold text-lg">0/100</span>
+        </p>
       </div>
-
       {/* Top Filter Section */}
       <div className="flex items-center mb-4 mt-6 w-full max-w-7xl gap-x-6 ml-10">
         <div className="flex space-x-4">
@@ -131,7 +109,10 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <button className="flex items-center justify-center h-input py-6 px-1 rounded-3xl border-2 border-pale-purple mt-6 ml-10">
+        <button
+          style={{ marginLeft: "28rem" }}
+          className="flex items-center justify-center h-input py-6 px-1 rounded-3xl border-2 border-pale-purple mt-6"
+        >
           <div className="flex items-center justify-center w-40 h-input bg-dark-blue rounded-2xl border-5 px-6">
             <img
               src={starsUnfilled}
@@ -143,17 +124,15 @@ const Dashboard = () => {
             </span>
           </div>
         </button>
-        <p className="text-light-purple text-xs font-thin mt-6 ml-52">
-          Daily limit: <span className="font-bold text-lg">26/100</span>
-        </p>
       </div>
-
       {/* Job List Section */}
-      <div className="flex flex-col items-center  ml-10 bg-white rounded-xl w-full max-w-7xl h-[calc(100vh-28px)]">
+      <div className="flex flex-col items-center ml-10 bg-white rounded-xl w-full max-w-7xl h-[calc(65vh-28px)] overflow-y-auto">
         {jobs.map((job, index) => (
           <div
             key={index}
-            className="h-[112px] w-[1200px] border-b-2 border-pale-purple grid grid-cols-4"
+            className={`h-[112px] w-[1200px] grid grid-cols-4 ${
+              index !== jobs.length - 1 ? "border-b-2 border-pale-purple" : ""
+            }`}
           >
             {/* Job Title */}
             <div className="col-span-2 flex flex-col justify-center border-r-2 border-dotted border-pale-purple my-4 ml-10">
@@ -188,6 +167,15 @@ const Dashboard = () => {
             </div>
           </div>
         ))}
+      </div>
+      <div className="w-full max-w-7xl ml-10 h-banner mt-4 bg-custom-gradient flex items-center">
+        <button className="flex items-center justify-center h-input py-6 px-1 rounded-3xl border-2 border-white ml-auto mr-10">
+          <div className="flex items-center justify-center w-40 h-input bg-white rounded-2xl border-5 px-6">
+            <span className="text-sm font-thin py-6 text-dark-blue">
+              Sign up for free
+            </span>
+          </div>
+        </button>
       </div>
     </div>
   );

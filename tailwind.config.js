@@ -30,6 +30,9 @@ module.exports = {
         "semi-dark-purple": "#4D4DAB",
         violet: "#8A8AFF",
       },
+      backgroundImage: {
+        "custom-gradient": "linear-gradient(90deg, #D0D0FF 0%, #2C2C70 100%)",
+      },
       padding: {
         button: "30px 10px",
         "30.89px": "30.89px",
@@ -85,7 +88,7 @@ module.exports = {
         logoLogin: "96px",
         input: "40px",
         formContainer: "989px",
-        heroContainer: "1289px",
+        banner: "96px",
         logo: "34px",
         imageContainer: "252px",
         card: "241px",

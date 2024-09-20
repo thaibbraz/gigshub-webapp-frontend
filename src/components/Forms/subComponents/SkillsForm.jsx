@@ -2,20 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import searchIcon from "../../../assets/searchIcon.svg";
 
-const SkillsForm = ({ onNext }) => {
+const SkillsForm = () => {
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [limitReached, setLimitReached] = useState(false);
   const navigate = useNavigate();
 
   const progress = (3 / 3) * 100;
-
-  const handleSkillClick = (skill) => {
-    if (!selectedSkills.includes(skill) && selectedSkills.length < 10) {
-      setSelectedSkills([...selectedSkills, skill]);
-      setLimitReached(false);
-    }
-  };
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -33,8 +26,7 @@ const SkillsForm = ({ onNext }) => {
   };
 
   const handleConfirm = () => {
-    // Once confirmed, redirect to the dashboard
-    navigate("/dashboard");
+    navigate("/userdashboard");
   };
 
   return (
