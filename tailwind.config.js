@@ -121,6 +121,9 @@ module.exports = {
       borderRadius: {
         ctaBanner: "32px",
       },
+      borderWidth: {
+        2: "2px",
+      },
       listStyleImage: {
         checkmark: 'url("assets/check-icon2.svg")',
       },

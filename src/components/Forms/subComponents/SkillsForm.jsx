@@ -42,7 +42,7 @@ const SkillsForm = ({ onNext }) => {
       <div className="absolute top-8 left-[1225px] px-10 mx-20">
         <a
           href="/logout"
-          className="text-light-purple font-thin hover:underline"
+          className="text-light-purple font-thin hover:underline whitespace-nowrap"
         >
           Log out
         </a>

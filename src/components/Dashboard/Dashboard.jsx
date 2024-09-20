@@ -7,26 +7,99 @@ const Dashboard = () => {
       title: "Front-end developer",
       contractType: "Permanent contract",
       salary: "$40,000",
-      company: "ORBITECH",
-      location: "Bremen, Germany",
+      company: "AIRBNB",
+      location: "Barcelona, Spain",
       appliedDate: "04/09/2024, 20:04",
     },
-    // Add more jobs similarly
+    {
+      title: "Front-end developer",
+      contractType: "Permanent contract",
+      salary: "$40,000",
+      company: "AIRBNB",
+      location: "Barcelona, Spain",
+      appliedDate: "04/09/2024, 20:04",
+    },
+    {
+      title: "Front-end developer",
+      contractType: "Permanent contract",
+      salary: "$40,000",
+      company: "AIRBNB",
+      location: "Barcelona, Spain",
+      appliedDate: "04/09/2024, 20:04",
+    },
+    {
+      title: "Front-end developer",
+      contractType: "Permanent contract",
+      salary: "$40,000",
+      company: "AIRBNB",
+      location: "Barcelona, Spain",
+      appliedDate: "04/09/2024, 20:04",
+    },
+    {
+      title: "Front-end developer",
+      contractType: "Permanent contract",
+      salary: "$40,000",
+      company: "AIRBNB",
+      location: "Barcelona, Spain",
+      appliedDate: "04/09/2024, 20:04",
+    },
+    {
+      title: "Front-end developer",
+      contractType: "Permanent contract",
+      salary: "$40,000",
+      company: "AIRBNB",
+      location: "Barcelona, Spain",
+      appliedDate: "04/09/2024, 20:04",
+    },
+    {
+      title: "Front-end developer",
+      contractType: "Permanent contract",
+      salary: "$40,000",
+      company: "AIRBNB",
+      location: "Barcelona, Spain",
+      appliedDate: "04/09/2024, 20:04",
+    },
+    {
+      title: "Front-end developer",
+      contractType: "Permanent contract",
+      salary: "$40,000",
+      company: "AIRBNB",
+      location: "Barcelona, Spain",
+      appliedDate: "04/09/2024, 20:04",
+    },
+    {
+      title: "Front-end developer",
+      contractType: "Permanent contract",
+      salary: "$40,000",
+      company: "AIRBNB",
+      location: "Barcelona, Spain",
+      appliedDate: "04/09/2024, 20:04",
+    },
+    {
+      title: "Front-end developer",
+      contractType: "Permanent contract",
+      salary: "$40,000",
+      company: "AIRBNB",
+      location: "Barcelona, Spain",
+      appliedDate: "04/09/2024, 20:04",
+    },
   ];
 
+  const dailyLimitMargin = "ml-2";
+
   return (
-    <div>
+    <div className="ml-24">
       <div className="absolute top-8 left-[1225px] px-10 mx-20">
         <a
           href="/logout"
-          className="text-light-purple font-thin hover:underline"
+          className="text-light-purple font-thin hover:underline whitespace-nowrap"
         >
           Log out
         </a>
       </div>
 
       {/* Top Filter Section */}
-      <div className="flex justify-between items-center mb-4 mt-6 ml-24 w-full max-w-7xl">
+      <div className="flex items-center mb-4 mt-6 w-full max-w-7xl gap-x-6 ml-10">
         <div className="flex space-x-4">
           <div className="flex flex-col">
             <label className="text-light-liliac text-sm mb-2">Job Title</label>
@@ -58,7 +131,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <button className="flex items-center justify-center h-input py-6 px-1 rounded-3xl border-2 border-pale-purple mt-6">
+        <button className="flex items-center justify-center h-input py-6 px-1 rounded-3xl border-2 border-pale-purple mt-6 ml-10">
           <div className="flex items-center justify-center w-40 h-input bg-dark-blue rounded-2xl border-5 px-6">
             <img
               src={starsUnfilled}
@@ -70,14 +143,51 @@ const Dashboard = () => {
             </span>
           </div>
         </button>
-        <p className="text-light-purple text-xs font-thin mt-6">
+        <p className="text-light-purple text-xs font-thin mt-6 ml-52">
           Daily limit: <span className="font-bold text-lg">26/100</span>
         </p>
       </div>
 
       {/* Job List Section */}
-      <div className="flex flex-col bg-white rounded-xl p-10 ml-24 pl-4 w-full max-w-7xl h-[calc(100vh-28px)]">
-        {/* Add your job list rendering logic here */}
+      <div className="flex flex-col items-center  ml-10 bg-white rounded-xl w-full max-w-7xl h-[calc(100vh-28px)]">
+        {jobs.map((job, index) => (
+          <div
+            key={index}
+            className="h-[112px] w-[1200px] border-b-2 border-pale-purple grid grid-cols-4"
+          >
+            {/* Job Title */}
+            <div className="col-span-2 flex flex-col justify-center border-r-2 border-dotted border-pale-purple my-4 ml-10">
+              <p className="text-dark-blue text-lg font-extrabold">
+                {job.title}
+              </p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {/* Contract Type Label */}
+                <div className="bg-soft-liliac rounded-lg py-1 px-3 text-sm h-auto">
+                  <span className="text-xs text-dark-purple">
+                    {job.contractType}
+                  </span>
+                </div>
+                {/* Salary Label */}
+                <div className="bg-soft-liliac rounded-lg py-1 px-3 text-sm h-auto">
+                  <span className="text-xs text-dark-purple">{job.salary}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Company and Location */}
+            <div className="col-span-1 flex flex-col justify-center border-r-2 border-dotted border-pale-purple my-4 ml-10">
+              <p className="text-lg font-extrabold text-dark-blue">
+                {job.company}
+              </p>
+              <p className="text-dark-blue font-thin">{job.location}</p>
+            </div>
+
+            {/* Applied Date */}
+            <div className="col-span-1 flex items-center ml-10">
+              <p className="text-dark-blue font-thin">{job.appliedDate}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
