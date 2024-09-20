@@ -80,11 +80,11 @@ const Dashboard = () => {
       <div className="flex items-center mb-4 mt-6 w-full max-w-7xl gap-x-6 ml-10">
         <div className="flex space-x-4">
           <div className="flex flex-col">
-            <label className="text-light-liliac text-sm mb-2">Job Title</label>
+            <label className="text-light-liliac text-sm mb-2 ">Job Title</label>
             <input
               type="text"
               placeholder="Job Title"
-              className="border border-gray-300 rounded-2xl h-input py-3 px-4"
+              className="border border-gray-300 rounded-2xl h-input py-3 px-4 shadow dark-blue"
             />
           </div>
 
@@ -95,7 +95,7 @@ const Dashboard = () => {
             <input
               type="text"
               placeholder="Salary expectation"
-              className="border border-gray-300 rounded-2xl h-input py-3 px-4"
+              className="border border-gray-300 rounded-2xl h-input py-3 px-4 shadow dark-blue"
             />
           </div>
 
@@ -104,7 +104,7 @@ const Dashboard = () => {
             <input
               type="text"
               placeholder="Location"
-              className="border border-gray-300 rounded-2xl h-input py-3 px-4"
+              className="border border-gray-300 rounded-2xl h-input py-3 px-4 shadow dark-blue"
             />
           </div>
         </div>

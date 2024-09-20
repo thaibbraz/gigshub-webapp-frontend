@@ -40,11 +40,7 @@ module.exports = {
       },
       boxShadow: {
         button: "0 0 5px rgba(0, 0, 0, 0.5)",
-        "card-1": "0px 0px 100px 0px #ADADFFE5",
-        "card-2": "0px 4px 10px 0px #8A8AFF4D",
-        "custom-inner": "0px 10px 30px 0px rgba(0, 0, 0, 0.08) inset",
-        "custom-drop": "0px 4px 20px 0px rgba(0, 0, 0, 0.08)",
-        "homepage-icon": "0px 5px 10px 0px #7575E5",
+        "dark-blue": "0px 0px 4px 0px #2C2C70",
       },
       width: {
         logoLogin: "103.18px",

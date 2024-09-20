@@ -14,6 +14,7 @@ export default function Layout() {
       {!isAuthPage && <Navigation />}
 
       {/* Page content */}
+
       <div className={`flex-grow p-8 pb-2 mt-8 ${isAuthPage ? "w-full" : ""}`}>
         <Outlet />
       </div>

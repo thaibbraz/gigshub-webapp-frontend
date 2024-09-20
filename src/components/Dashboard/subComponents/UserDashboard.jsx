@@ -104,7 +104,7 @@ const UserDashboard = () => {
             <input
               type="text"
               placeholder="Job Title"
-              className="border border-gray-300 rounded-2xl h-input py-3 px-4"
+              className="border border-gray-300 rounded-2xl h-input py-3 px-4 shadow dark-blue"
             />
           </div>
 
@@ -115,7 +115,7 @@ const UserDashboard = () => {
             <input
               type="text"
               placeholder="Salary expectation"
-              className="border border-gray-300 rounded-2xl h-input py-3 px-4"
+              className="border border-gray-300 rounded-2xl h-input py-3 px-4 shadow dark-blue"
             />
           </div>
 
@@ -124,7 +124,7 @@ const UserDashboard = () => {
             <input
               type="text"
               placeholder="Location"
-              className="border border-gray-300 rounded-2xl h-input py-3 px-4"
+              className="border border-gray-300 rounded-2xl h-input py-3 px-4 shadow dark-blue"
             />
           </div>
         </div>
