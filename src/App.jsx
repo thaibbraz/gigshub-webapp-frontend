@@ -7,6 +7,8 @@ import Forms from "./components/Forms/Forms";
 import UserDashboard from "./components/Dashboard/subComponents/UserDashboard";
 import Dashboard from "./components/Dashboard/subComponents/Dashboard";
 import Analytics from "./components/Analytics/Analytics";
+import AIJobMatch from "./components/AI Job Match/AIJobMatch";
+import Settings from "./components/Profile Settings/Settings";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
           <Route path="/userdashboard" element={<UserDashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/ai-job-match" element={<AIJobMatch />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>
     </Router>
