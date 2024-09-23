@@ -29,6 +29,7 @@ module.exports = {
         "lime-green": "#D7F77C",
         "semi-dark-purple": "#4D4DAB",
         violet: "#8A8AFF",
+        "bright-purple": "#312783",
       },
       backgroundImage: {
         "custom-gradient": "linear-gradient(90deg, #D0D0FF 0%, #2C2C70 100%)",

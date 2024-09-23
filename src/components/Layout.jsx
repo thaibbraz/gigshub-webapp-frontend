@@ -9,12 +9,15 @@ export default function Layout() {
   const isDashboard = location.pathname === "/dashboard";
 
   return (
-    <div className="flex bg-off-white min-h-screen">
+    <div
+      className={`flex min-h-screen ${
+        isAuthPage ? "bg-bright-purple" : "bg-off-white"
+      }`}
+    >
       {/* Sidebar */}
       {!isAuthPage && <Navigation />}
 
       {/* Page content */}
-
       <div className={`flex-grow p-8 pb-2 mt-8 ${isAuthPage ? "w-full" : ""}`}>
         <Outlet />
       </div>

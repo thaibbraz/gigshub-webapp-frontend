@@ -12,28 +12,28 @@ const Analytics = () => {
       appliedDate: "04/09/2024, 20:04",
     },
     {
-      title: "Front-end developer",
+      title: "Full Stack Developer",
       contractType: "Permanent contract",
-      salary: "$40,000",
-      company: "AIRBNB",
-      location: "Barcelona, Spain",
-      appliedDate: "04/09/2024, 20:04",
+      salary: "$55,000",
+      company: "SPOTIFY",
+      location: "Stockholm, Sweden",
+      appliedDate: "02/09/2024, 09:30",
+    },
+    {
+      title: "Mobile App Developer (iOS)",
+      contractType: "Permanent contract",
+      salary: "$50,000",
+      company: "N26",
+      location: "Berlin, Germany",
+      appliedDate: "02/09/2024, 09:10",
     },
     {
       title: "Front-end developer",
       contractType: "Permanent contract",
-      salary: "$40,000",
-      company: "AIRBNB",
+      salary: "$45,000",
+      company: "TYPEFORM",
       location: "Barcelona, Spain",
-      appliedDate: "04/09/2024, 20:04",
-    },
-    {
-      title: "Front-end developer",
-      contractType: "Permanent contract",
-      salary: "$40,000",
-      company: "AIRBNB",
-      location: "Barcelona, Spain",
-      appliedDate: "04/09/2024, 20:04",
+      appliedDate: "02/09/2024, 15:00",
     },
   ];
 
@@ -54,7 +54,7 @@ const Analytics = () => {
         <div className="border-2 border-pale-purple mt-10 rounded-xl">
           <div className="flex justify-between items-center my-10 mx-10">
             <p className="text-dark-blue text-2xl font-extrabold">
-              Job applied to
+              Jobs applied to
             </p>
             <img
               src={filterIcon}
