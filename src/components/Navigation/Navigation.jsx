@@ -8,6 +8,7 @@ import analyticsIconDark from "../../assets/analyticsIconDark.svg";
 import jobmatchIcon from "../../assets/jobmatchIcon.svg";
 import jobmatchIconDark from "../../assets/jobmatchIconDark.svg";
 import settingsIcon from "../../assets/settingsIcon.svg";
+import settingsIconDark from "../../assets/settingsIconDark.svg";
 
 const Navigation = ({ className }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -132,13 +133,17 @@ const Navigation = ({ className }) => {
             } items-center space-x-4 cursor-pointer pb-2`}
             onClick={() => handleClick("settings")}
           >
-            <img src={settingsIcon} alt="Settings" className="h-6 w-6" />
+            <img
+              src={activePage === "settings" ? settingsIconDark : settingsIcon}
+              alt="Settings"
+              className="h-6 w-6"
+            />
             {isExpanded && (
               <span
                 className={`font-small font-sans ${
                   activePage === "settings"
                     ? "text-dark-blue"
-                    : "text-light-purple"
+                    : "text-light-liliac"
                 }`}
               >
                 Settings
