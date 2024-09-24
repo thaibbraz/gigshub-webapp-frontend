@@ -279,7 +279,7 @@ const Settings = () => {
             <p className="mt-8 mx-10 text-dark-blue text-2xl font-extrabold">
               Account Settings
             </p>
-            <div className="grid grid-cols-5 gap-6 p-10 items-center justify-center">
+            <div className="grid grid-cols-5 gap-6 pt-10 px-10 pb-8 items-center justify-center">
               <div className="col-span-5 grid grid-cols-5 gap-6">
                 {[
                   "planType",
@@ -290,21 +290,23 @@ const Settings = () => {
                   <div
                     key={field}
                     className={
-                      "flex flex-col items-center justify-center text-center rounded-lg bg-lime-200"
+                      "flex flex-col items-center justify-center text-center rounded-lg bg-lime-200 h-20"
                     }
                   >
-                    <p className="text-dark-blue text-lg font-bold">
-                      {formatFieldName(field)}
-                    </p>
-                    <p className="text-dark-blue text-md text-center h-input">
-                      {accountSettings[field]}
-                    </p>
+                    <div className="pt-4">
+                      <p className="text-dark-blue text-lg font-bold">
+                        {formatFieldName(field)}
+                      </p>
+                      <p className="text-dark-blue text-md text-center h-input">
+                        {accountSettings[field]}
+                      </p>
+                    </div>
                   </div>
                 ))}
 
                 <div className="flex flex-col items-center justify-center text-center rounded-lg p-4">
                   <button
-                    className="flex items-center justify-center h-input mt-4 py-6 px-1 rounded-3xl border-2 border-red-600"
+                    className="flex items-center justify-center h-input py-6 px-1 rounded-3xl border-2 border-red-600"
                     type="button"
                   >
                     <div className="flex items-center justify-center w-40 h-10 bg-red-600 rounded-2xl border-5">
