@@ -9,7 +9,7 @@ const Settings = () => {
     lastName: "Cellerino",
     email: "giulia.cellerino@icloud.com",
     password: "mammamia",
-    phone: "+39 3895790276",
+    phone: "+39 3000000000",
     city: "Barcelona",
     country: "Spain",
     education: "BBA",
@@ -100,8 +100,10 @@ const Settings = () => {
   };
 
   return (
-    <div className="ml-2">
-      <div className="absolute top-8 left-[1225px] px-10 mx-20">
+    // This is my main container
+    <div className="ml-2 mr-10">
+      {/* Logout */}
+      <div className="absolute top-8 xl:left-[1330px] mlg:left-[1100px] lg:left-[900px] md:left-[730px] sm:left-[540px] xs:left-[340px] mc:left-[100px]">
         <a
           href="/logout"
           className="text-light-purple font-thin hover:underline whitespace-nowrap"
@@ -110,16 +112,18 @@ const Settings = () => {
         </a>
       </div>
 
-      {/* Profile Information Section */}
-      <div className="flex flex-col items-center ml-10 bg-white rounded-xl w-full max-w-7xl h-[calc(100vh-28px)] overflow-y-auto ">
+      <div className="flex flex-col items-center ml-10 bg-white rounded-xl w-full max-w-7xl h-[calc(100vh-28px)] overflow-y-auto overflow-y-auto">
+        {/* Profile Information Section */}
         <div className="w-full px-9">
           <div className="border-2 border-pale-purple mt-10 rounded-xl">
-            <div className="flex justify-between items-center mt-10 mx-10">
+            <div className="flex justify-between items-center mt-10 mx-10 ">
               <p className="text-dark-blue text-2xl font-extrabold">
                 Your Profile Information
               </p>
               <div className="flex items-center mr-2">
-                <p className="text-dark-blue mr-4">Click here to edit:</p>
+                <p className="text-dark-blue mr-4 hidden md:block">
+                  Click here to edit:
+                </p>
                 <img
                   src={editIcon}
                   alt="Edit Icon"
@@ -129,7 +133,6 @@ const Settings = () => {
               </div>
             </div>
             <div className="grid grid-cols-4 gap-6 p-10 items-center justify-center">
-              {/* First Row: 4 fields */}
               <div className="col-span-4 grid grid-cols-4 gap-6">
                 {["firstName", "lastName", "email", "password"].map((field) => (
                   <div
@@ -138,7 +141,7 @@ const Settings = () => {
                       isEditing ? "bg-gray-200" : "bg-pale-purple"
                     }`}
                   >
-                    <p className="text-dark-blue text-lg font-bold">
+                    <p className="text-dark-blue text-md sm:text-sm md:text-lg font-bold hidden md:block">
                       {formatFieldName(field)}
                     </p>
                     <input
@@ -148,13 +151,12 @@ const Settings = () => {
                       onChange={handleChangePersonal}
                       onBlur={handleBlur}
                       disabled={!isEditing}
-                      className="text-dark-blue text-md bg-transparent text-center focus:outline-none"
+                      className="text-dark-blue text-xs sm:text-sm md:text-md bg-transparent text-center focus:outline-none w-full h-auto break-words"
+                      style={{ minHeight: "2.5rem" }}
                     />
                   </div>
                 ))}
               </div>
-
-              {/* Second Row: 5 fields */}
               <div className="col-span-5 grid grid-cols-5 gap-6 mt-6 text-sm">
                 {["phone", "city", "country", "education", "experience"].map(
                   (field) => (
@@ -164,7 +166,7 @@ const Settings = () => {
                         isEditing ? "bg-gray-200" : "bg-pale-purple"
                       }`}
                     >
-                      <p className="text-dark-blue text-lg font-bold">
+                      <p className="text-dark-blue text-xs sm:text-sm md:text-lg font-bold hidden md:block">
                         {field.charAt(0).toUpperCase() + field.slice(1)}
                       </p>
                       <input
@@ -174,7 +176,8 @@ const Settings = () => {
                         onChange={handleChangePersonal}
                         onBlur={handleBlur}
                         disabled={!isEditing}
-                        className="text-dark-blue text-md bg-transparent text-center focus:outline-none"
+                        className="text-dark-blue text-xs sm:text-sm md:text-md bg-transparent text-center focus:outline-none w-full h-auto break-words"
+                        style={{ minHeight: "2.5rem" }}
                       />
                     </div>
                   )
@@ -202,7 +205,7 @@ const Settings = () => {
                         isEditing ? "bg-gray-200" : "bg-pale-purple"
                       }`}
                     >
-                      <p className="text-dark-blue text-lg font-bold">
+                      <p className="text-dark-blue text-lg font-bold hidden md:block">
                         {formatFieldName(field)}
                       </p>
                       <input
@@ -216,18 +219,19 @@ const Settings = () => {
                           (field === "endDate" &&
                             experienceInformation.currentWorkplace)
                         }
-                        className={`text-dark-blue text-md bg-transparent text-center focus:outline-none ${
+                        className={`text-dark-blue text-xs sm:text-sm md:text-md bg-transparent text-center focus:outline-none w-full h-auto break-words ${
                           experienceInformation.currentWorkplace &&
                           field === "endDate"
                             ? "opacity-50"
                             : ""
                         }`}
+                        style={{ minHeight: "2.5rem" }}
                       />
                     </div>
                   )
                 )}
                 <div className="flex flex-col items-center justify-center text-center rounded-lg p-4">
-                  <p className="text-dark-blue text-lg font-bold">
+                  <p className="text-dark-blue text-lg font-bold hidden md:block">
                     Current Job?
                   </p>
                   <input
@@ -235,7 +239,7 @@ const Settings = () => {
                     name="currentWorkplace"
                     checked={experienceInformation.currentWorkplace}
                     onChange={handleCheckboxChange}
-                    className="text-dark-blue text-md"
+                    className="text-dark-blue text-xs sm:text-sm md:text-md bg-transparent text-center focus:outline-none w-full h-auto break-words"
                   />
                 </div>
               </div>
@@ -290,23 +294,25 @@ const Settings = () => {
                   <div
                     key={field}
                     className={
-                      "flex flex-col items-center justify-center text-center rounded-lg bg-lime-200 h-20"
+                      "flex flex-col items-center justify-center text-center rounded-lg bg-lime-200 h-auto"
                     }
                   >
-                    <div className="pt-4">
-                      <p className="text-dark-blue text-lg font-bold">
-                        {formatFieldName(field)}
-                      </p>
-                      <p className="text-dark-blue text-md text-center h-input">
-                        {accountSettings[field]}
-                      </p>
-                    </div>
+                    {/* Label - hidden on small and sm screens */}
+                    <p className="text-dark-blue text-lg font-bold hidden md:block">
+                      {formatFieldName(field)}
+                    </p>
+                    {/* Display the account setting value with word wrapping */}
+                    <p className="text-dark-blue text-xs sm:text-sm md:text-md text-center break-words">
+                      {accountSettings[field]}
+                    </p>
                   </div>
                 ))}
 
+                {/* Delete Account Button */}
                 <div className="flex flex-col items-center justify-center text-center rounded-lg p-4">
+                  {/* Delete Account Button - visible only on large and larger screens */}
                   <button
-                    className="flex items-center justify-center h-input py-6 px-1 rounded-3xl border-2 border-red-600"
+                    className="flex items-center justify-center h-input py-6 px-1 rounded-3xl border-2 border-red-600 w-40 h-10  hidden md:hidden lg:flex"
                     type="button"
                   >
                     <div className="flex items-center justify-center w-40 h-10 bg-red-600 rounded-2xl border-5">
@@ -314,6 +320,14 @@ const Settings = () => {
                         Delete Account
                       </span>
                     </div>
+                  </button>
+
+                  {/* X Button - visible on medium and smaller screens */}
+                  <button
+                    className="block lg:hidden text-red-600 text-2xl"
+                    type="button"
+                  >
+                    ❌
                   </button>
                 </div>
               </div>
