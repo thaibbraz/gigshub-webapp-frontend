@@ -29,7 +29,7 @@ const Navigation = ({ className }) => {
   };
 
   return (
-    <div className={`w-16 ${className} bg-oft-liliac`}>
+    <div className={`w-16 ${className}`}>
       <div
         className={`fixed top-2 left-4 bottom-2 flex flex-col ${
           isExpanded ? "items-start pl-4" : "items-center"
