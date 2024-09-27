@@ -30,7 +30,7 @@ const SkillsForm = () => {
   };
 
   return (
-    <div className="ml-2">
+    <div className="ml-2 mr-10">
       <div className="absolute top-8 left-[1225px] px-10 mx-20">
         <a
           href="/logout"
