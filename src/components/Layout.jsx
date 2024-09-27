@@ -6,7 +6,6 @@ export default function Layout() {
   const location = useLocation();
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/signup";
-  const isDashboard = location.pathname === "/dashboard";
 
   return (
     <div
@@ -18,7 +17,11 @@ export default function Layout() {
       {!isAuthPage && <Navigation />}
 
       {/* Page content */}
-      <div className={`flex-grow p-8 pb-2 mt-8 ${isAuthPage ? "w-full" : ""}`}>
+      <div
+        className={`flex-grow p-8 pb-2 mt-8 w-[90%] ${
+          isAuthPage ? "w-full" : ""
+        }`}
+      >
         <Outlet />
       </div>
     </div>
