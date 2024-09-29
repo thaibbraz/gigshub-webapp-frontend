@@ -50,7 +50,8 @@ const ExperienceForm = ({ onNext }) => {
               Experience
             </h2>
             <p className="text-center text-sm mb-8 text-dark-purple">
-              Please fill out your work experience information
+              {/* Please fill out your work experience information */}
+              Please provide details of your most relevant work experience.
             </p>
             <form
               onSubmit={handleSubmit}

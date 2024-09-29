@@ -15,6 +15,9 @@ module.exports = {
       fontSize: {
         xxs: ["10px", "14px"],
       },
+      animation: {
+        "spin-slow": "spin 3s linear infinite",
+      },
       colors: {
         "off-white": "#F3F3FF",
         purple: "#3C3C8E",
