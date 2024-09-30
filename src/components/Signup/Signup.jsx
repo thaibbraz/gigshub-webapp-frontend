@@ -10,13 +10,13 @@ const Signup = () => {
         <img
           src={logoLightPurple}
           alt="Logo"
-          className="h-logoLogin w-logoLogin mb-8"
+          className="h-logoLogin w-logoLogin mb-8 animate-spin-slow"
         />
         <img src={logoTextGigshub} alt="Logo text" className=" mb-8" />
         <form className="flex flex-col w-80">
           <input
-            type="name"
-            placeholder="Name"
+            type="firstname"
+            placeholder="First Name"
             className="mb-4 py-4 px-6 border rounded-md focus:outline-none focus:border-dark-blue h-input font-light placeholder-gray-400 placeholder-opacity-100 focus:placeholder-dark-blue shadow-md dark-blu"
           />
           <input

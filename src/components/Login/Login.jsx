@@ -11,7 +11,7 @@ const Login = () => {
         <img
           src={logoLightPurple}
           alt="Logo"
-          className="h-logoLogin w-logoLogin mb-8"
+          className="h-logoLogin w-logoLogin mb-8 animate-spin-slow"
         />
         <img src={logoTextGigshub} alt="Logo text" className=" mb-8" />
         <form className="flex flex-col w-80">

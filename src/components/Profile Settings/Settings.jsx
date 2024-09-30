@@ -38,9 +38,9 @@ const Settings = () => {
   });
 
   const [accountSettings, setAccountSettings] = useState({
-    planType: "Unlimited",
+    planType: "Free",
     billingType: "Annually",
-    annualPrice: "$ 588",
+    annualPrice: "$ 0,00",
     creditCardInfo: "**** **** **** ****",
   });
 
@@ -145,7 +145,7 @@ const Settings = () => {
                       {formatFieldName(field)}
                     </p>
                     <input
-                      type="text"
+                      type={field === "password" ? "password" : "text"}
                       name={field}
                       value={personalInformation[field]}
                       onChange={handleChangePersonal}

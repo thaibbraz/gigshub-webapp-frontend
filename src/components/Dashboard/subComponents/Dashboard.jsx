@@ -132,7 +132,7 @@ const Dashboard = () => {
         </div>
 
         {/* Job List Section */}
-        <div className="flex flex-col items-center ml-10 bg-white rounded-xl w-full max-w-7xl h-[calc(100vh-28px)] overflow-y-auto">
+        <div className="flex flex-col items-center ml-10 bg-white rounded-xl w-full max-w-7xl h-[calc(62vh-28px)] overflow-y-auto">
           {jobs.map((job, index) => (
             <div
               key={index}
@@ -192,15 +192,15 @@ const Dashboard = () => {
             </div>
           ))}
         </div>
-        <div className="w-full max-w-7xl ml-10 h-banner mt-4 bg-custom-gradient flex items-center">
-          <button className="flex items-center justify-center h-input py-6 px-1 rounded-3xl border-2 border-white ml-auto mr-10">
-            <div className="flex items-center justify-center w-40 h-input bg-white rounded-2xl border-5 px-6">
-              <span className="text-sm font-thin py-6 text-dark-blue">
-                Sign up
-              </span>
-            </div>
-          </button>
-        </div>
+      </div>
+      <div className="fixed bottom-0 left-0 w-full max-w-10xl h-banner bg-custom-gradient flex items-center z-50">
+        <button className="flex items-center justify-center h-input py-6 px-1 rounded-3xl border-2 border-white ml-auto mr-10">
+          <div className="flex items-center justify-center w-40 h-input bg-white rounded-2xl border-5 px-6">
+            <span className="text-sm font-thin py-6 text-dark-blue">
+              Sign up
+            </span>
+          </div>
+        </button>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import logoDarkPurple from "../../assets/logoDarkPurple.svg";
 import homepageIcon from "../../assets/homepageIcon.png";
 import homepageIconLight from "../../assets/homepageIconLight.svg";
@@ -14,6 +14,7 @@ const Navigation = ({ className }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activePage, setActivePage] = useState();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleMouseEnter = () => {
     setIsExpanded(true);
@@ -30,10 +31,21 @@ const Navigation = ({ className }) => {
 
   return (
     <div className={`w-16 ${className}`}>
-      <div
+      {/* <div
         className={`fixed top-2 left-4 bottom-2 flex flex-col ${
           isExpanded ? "items-start pl-4" : "items-center"
         } bg-white h-auto py-6 ${
+          isExpanded ? "w-48" : "w-24"
+        } transition-all duration-300 rounded-xl`}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      > */}
+      <div
+        className={`fixed top-2 left-4 bottom-2 flex flex-col ${
+          isExpanded ? "items-start pl-4" : "items-center"
+        } bg-white ${
+          location.pathname === "/dashboard" ? "h-5/6" : "h-auto"
+        } py-6 ${
           isExpanded ? "w-48" : "w-24"
         } transition-all duration-300 rounded-xl`}
         onMouseEnter={handleMouseEnter}
@@ -157,3 +169,5 @@ const Navigation = ({ className }) => {
 };
 
 export default Navigation;
+
+// h-[calc(65vh-28px)]
