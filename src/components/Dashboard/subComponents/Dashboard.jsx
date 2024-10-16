@@ -74,7 +74,7 @@ const Dashboard = () => {
       <div className="flex flex-col items-center max-w-7xl ml-0">
         <div className="flex flex-col lg:flex-row items-center lg:justify-end top-8 xl:ml-60 mlg:ml-20 w-[90%]">
           <p className="text-light-purple font-thin text-xs whitespace-nowrap">
-            Daily Limit: <span className="font-bold text-lg">0/100</span>
+            Daily Limits: <span className="font-bold text-lg">0/100</span>
           </p>
         </div>
       </div>
