@@ -59,14 +59,6 @@ const Dashboard = () => {
       location: "Madrid, Spain",
       appliedDate: "31/08/2024, 16:09",
     },
-    {
-      title: "Senior Full Stack Developer",
-      contractType: "Permanent contract",
-      salary: "$65,000",
-      company: "AMAZON",
-      location: "Milan, Italy",
-      appliedDate: "31/08/2024, 18:54",
-    },
   ];
 
   return (
@@ -91,7 +83,7 @@ const Dashboard = () => {
               <input
                 type="text"
                 placeholder="Job Title"
-                className="border border-gray-300 rounded-2xl h-input py-3 px-4 shadow dark-blue"
+                className="border border-gray-300 rounded-2xl h-input py-2 px-3 shadow dark-blue text-xs"
               />
             </div>
             {/* Salary Expectation Input */}
@@ -102,7 +94,7 @@ const Dashboard = () => {
               <input
                 type="text"
                 placeholder="Salary expectation"
-                className="border border-gray-300 rounded-2xl h-input py-3 px-4 shadow dark-blue"
+                className="border border-gray-300 rounded-2xl h-input py-2 px-3 shadow dark-blue text-xs"
               />
             </div>
             {/* Location Input */}
@@ -111,7 +103,7 @@ const Dashboard = () => {
               <input
                 type="text"
                 placeholder="Location"
-                className="border border-gray-300 rounded-2xl h-input py-3 px-4 shadow dark-blue"
+                className="border border-gray-300 rounded-2xl h-input py-2 px-3 shadow dark-blue text-xs"
               />
             </div>
           </div>
@@ -132,65 +124,52 @@ const Dashboard = () => {
         </div>
 
         {/* Job List Section */}
-        <div className="flex flex-col items-center ml-10 bg-white rounded-xl w-full max-w-7xl h-[calc(62vh-28px)] overflow-y-auto">
-          {jobs.map((job, index) => (
-            <div
-              key={index}
-              className={`h-[112px] w-full md:w-[1000px] lg:w-[1200px] grid grid-cols-4 ${
-                index !== jobs.length - 1 ? "border-b-2 border-pale-purple" : ""
-              }`}
-            >
-              {/* Job Title */}
-              <div className="col-span-2 flex flex-col justify-center border-r-2 border-dotted border-pale-purple my-4 ml-10">
-                <p className="text-dark-blue text-lg font-extrabold sm:hidden">
-                  {job.title.length > 8
-                    ? `${job.title.slice(0, 8)}...`
-                    : job.title}
-                </p>
-                <p className="text-dark-blue text-lg font-extrabold hidden sm:block">
-                  {job.title}
-                </p>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  <div className="bg-soft-liliac rounded-lg py-1 px-3 text-sm h-auto hidden sm:flex">
-                    <span className="text-xs text-dark-purple">
-                      {job.contractType}
-                    </span>
-                  </div>
-                  {/* Salary Label */}
-                  <div className="bg-soft-liliac rounded-lg py-1 px-3 text-sm h-auto hidden sm:flex">
-                    <span className="text-xs text-dark-purple">
-                      {job.salary}
-                    </span>
+        <div className="flex flex-col justify-center items-center ml-10 bg-white rounded-xl w-full max-w-7xl h-[calc(66vh-28px)] overflow-y-auto bg-pink-300">
+          <div className="w-full max-w-5xl">
+            {jobs.map((job, index) => (
+              <div
+                key={index}
+                className={`h-[85px]w-full grid grid-cols-4 gap-4 ${
+                  index !== jobs.length - 1
+                    ? "border-b-2 border-pale-purple"
+                    : ""
+                }`}
+              >
+                {/* Job Title */}
+                <div className="col-span-2 flex flex-col justify-center border-r-2 border-dotted border-pale-purple my-4">
+                  <p className="text-dark-blue text-sm font-extrabold">
+                    {job.title}
+                  </p>
+                  {/* Contract Type and Salary */}
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    <div className="bg-soft-liliac rounded-lg py-1 px-2 text-xs h-auto">
+                      <span className="text-dark-purple">
+                        {job.contractType}
+                      </span>
+                    </div>
+                    <div className="bg-soft-liliac rounded-lg py-1 px-3 text-xs h-auto">
+                      <span className="text-dark-purple">{job.salary}</span>
+                    </div>
                   </div>
                 </div>
+                {/* Company and Location */}
+                <div className="col-span-1 flex flex-col justify-center border-r-2 border-dotted border-pale-purple my-4">
+                  <p className="text-dark-blue text-xs font-extrabold">
+                    {job.company}
+                  </p>
+                  <p className="text-dark-blue text-xs font-thin">
+                    {job.location}
+                  </p>
+                </div>
+                {/* Applied Date */}
+                <div className="col-span-1 flex items-center">
+                  <p className="text-dark-blue text-xs font-thin">
+                    {job.appliedDate}
+                  </p>
+                </div>
               </div>
-
-              {/* Company and Location */}
-              <div className="col-span-1 flex flex-col justify-center border-r-2 border-dotted border-pale-purple my-4 ml-10">
-                <p className="text-lg font-extrabold text-dark-blue sm:hidden">
-                  {job.company.length > 8
-                    ? `${job.company.slice(0, 8)}...`
-                    : job.company}
-                </p>
-                <p className="text-lg font-extrabold text-dark-blue hidden sm:block">
-                  {job.company}
-                </p>
-                <p className="text-lg font-thin text-dark-blue sm:hidden">
-                  {job.location.length > 10
-                    ? `${job.location.slice(0, 10)}...`
-                    : job.location}
-                </p>
-                <p className="text-lg font-thin text-dark-blue hidden sm:block">
-                  {job.location}
-                </p>
-              </div>
-
-              {/* Applied Date */}
-              <div className="col-span-1 flex items-center ml-10 hidden sm:flex">
-                <p className="text-dark-blue font-thin">{job.appliedDate}</p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
       <div className="fixed bottom-0 left-0 w-full max-w-10xl h-banner bg-custom-gradient flex items-center z-50">

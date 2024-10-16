@@ -18,7 +18,7 @@ export default function Layout() {
 
       {/* Page content */}
       <div
-        className={`flex-grow p-8 pb-2 mt-8 w-[90%] ${
+        className={`flex-grow p-8 pt-0 pb-2 mt-8 w-[90%] ${
           isAuthPage ? "w-full" : ""
         }`}
       >
