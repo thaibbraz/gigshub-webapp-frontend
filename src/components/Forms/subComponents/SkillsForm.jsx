@@ -31,14 +31,6 @@ const SkillsForm = () => {
 
   return (
     <div className="ml-2 mr-10">
-      <div className="absolute top-8 left-[1225px] px-10 mx-20">
-        <a
-          href="/logout"
-          className="text-light-purple font-thin hover:underline whitespace-nowrap"
-        >
-          Log out
-        </a>
-      </div>
       <div className="flex flex-col bg-white rounded-xl p-10 ml-10 maincontainer w-full max-w-7xl h-[calc(100vh-28px)]">
         <div className="relative w-full h-3 bg-white rounded-lg mb-6 ml-2">
           <div

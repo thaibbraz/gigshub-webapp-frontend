@@ -87,18 +87,6 @@ const UserDashboard = () => {
 
   return (
     <div className="ml-2 mr-10">
-      {/* Logout Button */}
-      <div className="flex flex-col items-center max-w-7xl ml-0">
-        <div className="flex flex-col lg:flex-row items-center lg:justify-end top-8 xl:ml-60 mlg:ml-20 w-[90%]">
-          <a
-            href="/logout"
-            className="text-light-purple font-thin hover:underline whitespace-nowrap lg:ml-auto lg:mr-6"
-          >
-            Log out
-          </a>
-        </div>
-      </div>
-
       {/* Top Filter Section */}
       <div className="w-full px-9">
         <div className="flex flex-col lg:flex-row items-center mb-4 mt-6 max-w-7xl gap-x-6 ml-10 w-[90%]">

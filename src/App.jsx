@@ -9,25 +9,33 @@ import Dashboard from "./components/Dashboard/subComponents/Dashboard";
 import Analytics from "./components/Analytics/Analytics";
 import AIJobMatch from "./components/AI Job Match/AIJobMatch";
 import Settings from "./components/Profile Settings/Settings";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import { AuthProvider } from "./context/AuthContext";
 import { Navigate } from "react-router-dom";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route path="/" element={<Navigate to="/signup" />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/forms" element={<Forms />} />
-          <Route path="/userdashboard" element={<UserDashboard />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/ai-job-match" element={<AIJobMatch />} />
-          <Route path="/settings" element={<Settings />} />
-        </Route>
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route path="/" element={<Navigate to="/signup" />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+
+            {/* only available to logged-in users */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/forms" element={<Forms />} />
+              <Route path="/userdashboard" element={<UserDashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/analytics" element={<Analytics />} />
+              <Route path="/ai-job-match" element={<AIJobMatch />} />
+              <Route path="/settings" element={<Settings />} />
+            </Route>
+          </Route>
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

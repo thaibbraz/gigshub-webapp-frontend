@@ -26,17 +26,6 @@ const ExperienceForm = ({ onNext }) => {
 
   return (
     <div className="ml-2 mr-10">
-      {/* Logout Button */}
-      <div className="flex flex-col items-center max-w-7xl ml-0">
-        <div className="flex flex-col lg:flex-row items-center lg:justify-end top-8 xl:ml-60 mlg:ml-20 w-[90%]">
-          <a
-            href="/logout"
-            className="text-light-purple font-thin hover:underline whitespace-nowrap lg:ml-auto lg:mr-6"
-          >
-            Log out
-          </a>
-        </div>
-      </div>
       <div className="w-full px-9">
         <div className="flex flex-col bg-white rounded-xl p-10 ml-10 w-full max-w-7xl h-[calc(100vh-28px)]">
           <div className="relative w-12/12 h-3 bg-white rounded-lg mb-6 ml-2">

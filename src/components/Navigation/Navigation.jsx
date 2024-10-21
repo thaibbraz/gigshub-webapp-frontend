@@ -9,12 +9,17 @@ import jobmatchIcon from "../../assets/jobmatchIcon.svg";
 import jobmatchIconDark from "../../assets/jobmatchIconDark.svg";
 import settingsIcon from "../../assets/settingsIcon.svg";
 import settingsIconDark from "../../assets/settingsIconDark.svg";
+import logoutIcon from "../../assets/logoutIcon.svg";
+import logoutIconDark from "../../assets/logoutIconDark.svg";
+import { useAuth } from "../../context/AuthContext";
 
 const Navigation = ({ className }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activePage, setActivePage] = useState();
+  const [logoutHover, setLogoutHover] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
 
   const handleMouseEnter = () => {
     setIsExpanded(true);
@@ -27,6 +32,11 @@ const Navigation = ({ className }) => {
   const handleClick = (page) => {
     setActivePage(page);
     navigate(`/${page}`);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
   };
 
   return (
@@ -159,6 +169,29 @@ const Navigation = ({ className }) => {
                 }`}
               >
                 Settings
+              </span>
+            )}
+          </div>
+          <div
+            className={`flex ${
+              isExpanded ? "justify-start" : "justify-center"
+            } items-center space-x-4 cursor-pointer pb-2`}
+            onClick={() => handleLogout()}
+            onMouseEnter={() => setLogoutHover(true)}
+            onMouseLeave={() => setLogoutHover(false)}
+          >
+            <img
+              src={logoutHover ? logoutIconDark : logoutIcon}
+              alt="Logout"
+              className="h-6 w-6"
+            />
+            {isExpanded && (
+              <span
+                className={`font-small font-sans ${
+                  logoutHover ? "text-dark-blue" : "text-light-liliac"
+                }`}
+              >
+                Logout
               </span>
             )}
           </div>
