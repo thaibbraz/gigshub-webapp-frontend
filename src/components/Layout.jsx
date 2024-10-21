@@ -2,7 +2,7 @@ import React from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Navigation from "../components/Navigation/Navigation";
 
-export default function Layout({ loggedIn, setLoggedIn }) {
+export default function Layout() {
   const location = useLocation();
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/signup";
@@ -14,9 +14,7 @@ export default function Layout({ loggedIn, setLoggedIn }) {
       }`}
     >
       {/* Sidebar */}
-      {!isAuthPage && (
-        <Navigation loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-      )}
+      {!isAuthPage && <Navigation />}
 
       {/* Page content */}
       <div

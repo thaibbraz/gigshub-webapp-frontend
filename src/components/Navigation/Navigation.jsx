@@ -11,14 +11,15 @@ import settingsIcon from "../../assets/settingsIcon.svg";
 import settingsIconDark from "../../assets/settingsIconDark.svg";
 import logoutIcon from "../../assets/logoutIcon.svg";
 import logoutIconDark from "../../assets/logoutIconDark.svg";
-import { logout } from "../../utils/api.js";
+import { useAuth } from "../../context/AuthContext";
 
-const Navigation = ({ className, loggedIn, setLoggedIn }) => {
+const Navigation = ({ className }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activePage, setActivePage] = useState();
   const [logoutHover, setLogoutHover] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
 
   const handleMouseEnter = () => {
     setIsExpanded(true);
@@ -34,7 +35,7 @@ const Navigation = ({ className, loggedIn, setLoggedIn }) => {
   };
 
   const handleLogout = () => {
-    logout(setLoggedIn);
+    logout();
     navigate("/login");
   };
 

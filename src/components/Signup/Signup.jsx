@@ -4,9 +4,11 @@ import logoTextGigshub from "../../assets/logo-text-gigshub.png";
 import logoLightPurple from "../../assets/logoLightPurple.svg";
 import { useNavigate } from "react-router-dom";
 import { sendRequest } from "../../utils/api.js";
+import { useAuth } from "../../context/AuthContext";
 
-const Signup = ({ setLoggedIn }) => {
+const Signup = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const EMPTY_FORM = {
     first_name: "",
@@ -28,7 +30,8 @@ const Signup = ({ setLoggedIn }) => {
     e.preventDefault();
 
     try {
-      await sendRequest(formData, "/signup", setLoggedIn);
+      await sendRequest(formData, "/signup");
+      login();
       navigate("/settings");
     } catch (error) {
       throw new Error(error);

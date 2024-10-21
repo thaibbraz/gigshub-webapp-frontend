@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container } from "../Container/Container";
 import logoTextGigshub from "../../assets/logo-text-gigshub.png";
 import logoLightPurple from "../../assets/logoLightPurple.svg";
 import { sendRequest } from "../../utils/api.js";
+import { useAuth } from "../../context/AuthContext";
 
-const Login = ({ setLoggedIn }) => {
+const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const EMPTY_FORM = {
     email: "",
@@ -26,7 +28,8 @@ const Login = ({ setLoggedIn }) => {
     e.preventDefault();
 
     try {
-      await sendRequest(formData, "/login", setLoggedIn);
+      await sendRequest(formData, "/login");
+      login();
       navigate("/dashboard");
     } catch (error) {
       throw new Error(error);
