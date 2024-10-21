@@ -49,7 +49,7 @@ const Signup = ({ setLoggedIn }) => {
       }
     } catch (error) {
       setLoggedIn(false);
-      localStorage.removeItem("accessToken");
+      localStorage.removeItem("token");
       throw new Error(error);
     } finally {
       setFormData(EMPTY_FORM);
@@ -108,7 +108,8 @@ const Signup = ({ setLoggedIn }) => {
           </button>
         </form>
         <p className="mt-6 text-center text-lg text-white">
-          Already have an account? <a href="/logi">Log In</a>
+          Already have an account?{" "}
+          <span onClick={() => navigate("/login")}>Log In</span>
         </p>
       </div>
     </Container>

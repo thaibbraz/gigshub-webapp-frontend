@@ -20,7 +20,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<Navigate to="/signup" />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Login setLoggedIn={setLoggedIn} />} />
           <Route
             path="/signup"
             element={<Signup setLoggedIn={setLoggedIn} />}

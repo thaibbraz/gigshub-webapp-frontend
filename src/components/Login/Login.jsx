@@ -3,8 +3,56 @@ import { useNavigate } from "react-router-dom";
 import { Container } from "../Container/Container";
 import logoTextGigshub from "../../assets/logo-text-gigshub.png";
 import logoLightPurple from "../../assets/logoLightPurple.svg";
+import axios from "axios";
 
-const Login = () => {
+const Login = ({ setLoggedIn }) => {
+  const navigate = useNavigate();
+
+  const EMPTY_FORM = {
+    email: "",
+    password: "",
+  };
+  const [formData, setFormData] = useState(EMPTY_FORM);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((state) => ({
+      ...state,
+      [name]: value,
+    }));
+  };
+
+  async function handleLogin(e) {
+    e.preventDefault();
+
+    try {
+      let options = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      let response = await axios.post(
+        "https://fastapi-service-03-160893319817.europe-southwest1.run.app/login",
+        formData,
+        options
+      );
+
+      if (response.status === 200) {
+        const token = response.data.access_token;
+        localStorage.setItem("token", token);
+        setLoggedIn(true);
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      setLoggedIn(false);
+      localStorage.removeItem("token");
+      throw new Error(error);
+    } finally {
+      setFormData(EMPTY_FORM);
+    }
+  }
+
   return (
     <Container className="bg-bright-purple">
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -14,14 +62,20 @@ const Login = () => {
           className="h-logoLogin w-logoLogin mb-8 animate-spin-slow"
         />
         <img src={logoTextGigshub} alt="Logo text" className=" mb-8" />
-        <form className="flex flex-col w-80">
+        <form className="flex flex-col w-80" onSubmit={handleLogin}>
           <input
             type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
             placeholder="E-mail"
             className="mb-4 py-4 px-6 border rounded-md focus:outline-none focus:border-dark-blue h-input font-light placeholder-gray-400 placeholder-opacity-100 focus:placeholder-dark-blue shadow-md dark-blue"
           />
           <input
             type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
             placeholder="Password"
             className="mb-4 py-4 px-6 border rounded-md focus:outline-none focus:border-dark-blue h-input font-light placeholder-gray-400 placeholder-opacity-100 focus:placeholder-dark-blue shadow-md dark-blue"
           />
@@ -35,7 +89,8 @@ const Login = () => {
           </button>
         </form>
         <p className="mt-6 text-center text-lg text-white">
-          Don’t have an account? <a href="/signup">Sign up</a>
+          Don’t have an account?{" "}
+          <span onClick={() => navigate("/signup")}>Sign up</span>
         </p>
       </div>
     </Container>
