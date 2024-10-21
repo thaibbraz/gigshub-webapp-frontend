@@ -17,6 +17,7 @@ const Signup = () => {
     password: "",
   };
   const [formData, setFormData] = useState(EMPTY_FORM);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,7 +29,7 @@ const Signup = () => {
 
   async function handleSignup(e) {
     e.preventDefault();
-
+    setLoading(true);
     try {
       await sendRequest(formData, "/signup");
       login();
@@ -37,6 +38,7 @@ const Signup = () => {
       throw new Error(error);
     } finally {
       setFormData(EMPTY_FORM);
+      setLoading(false);
     }
   }
 
@@ -87,7 +89,9 @@ const Signup = () => {
             className="relative flex items-center justify-center w-full h-10 mt-4 py-0.5 px-0.5 bg-bright-purple text-white border border-white rounded-md cursor-pointer hover:bg-dark-purple hover:shadow-lg transition duration-300 ease-in-out"
           >
             <div className="flex items-center justify-center w-full h-full bg-bright-purple border border-white rounded-md hover:bg-dark-purple">
-              <span className="text-md font-normal">Sign Up</span>
+              <span className="text-md font-normal">
+                {loading ? "Signing up..." : "Sign Up"}
+              </span>
             </div>
           </button>
         </form>

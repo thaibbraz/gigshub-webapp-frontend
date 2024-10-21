@@ -23,6 +23,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
 
+            {/* only available to logged-in users */}
             <Route element={<ProtectedRoute />}>
               <Route path="/forms" element={<Forms />} />
               <Route path="/userdashboard" element={<UserDashboard />} />

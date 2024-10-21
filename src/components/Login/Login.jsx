@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container } from "../Container/Container";
 import logoTextGigshub from "../../assets/logo-text-gigshub.png";
@@ -9,6 +9,7 @@ import { useAuth } from "../../context/AuthContext";
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const EMPTY_FORM = {
     email: "",
@@ -26,7 +27,7 @@ const Login = () => {
 
   async function handleLogin(e) {
     e.preventDefault();
-
+    setLoading(true);
     try {
       await sendRequest(formData, "/login");
       login();
@@ -35,6 +36,7 @@ const Login = () => {
       throw new Error(error);
     } finally {
       setFormData(EMPTY_FORM);
+      setLoading(false);
     }
   }
 
@@ -69,7 +71,9 @@ const Login = () => {
             className="relative flex items-center justify-center w-full h-10 mt-4 py-0.5 px-0.5 bg-bright-purple text-white border border-white rounded-md cursor-pointer hover:bg-dark-purple hover:shadow-lg transition duration-300 ease-in-out"
           >
             <div className="flex items-center justify-center w-full h-full bg-bright-purple border border-white rounded-md hover:bg-dark-purple">
-              <span className="text-md font-normal">Log In</span>
+              <span className="text-md font-normal">
+                {loading ? "Logging in..." : "Log In"}
+              </span>
             </div>
           </button>
         </form>
