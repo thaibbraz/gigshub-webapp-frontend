@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Container } from "../../components/Container/Container";
 import logoTextGigshub from "../../assets/logo-text-gigshub.png";
 import logoLightPurple from "../../assets/logoLightPurple.svg";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { sendRequest } from "../../utils/api.js";
 
 const Signup = ({ setLoggedIn }) => {
   const navigate = useNavigate();
@@ -28,28 +28,9 @@ const Signup = ({ setLoggedIn }) => {
     e.preventDefault();
 
     try {
-      // send to API
-      let options = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
-
-      let response = await axios.post(
-        "https://fastapi-service-03-160893319817.europe-southwest1.run.app/signup",
-        formData,
-        options
-      );
-
-      if (response.status === 200) {
-        const token = response.data.access_token;
-        localStorage.setItem("token", token);
-        setLoggedIn(true);
-        navigate("/settings");
-      }
+      await sendRequest(formData, "/signup", setLoggedIn);
+      navigate("/settings");
     } catch (error) {
-      setLoggedIn(false);
-      localStorage.removeItem("token");
       throw new Error(error);
     } finally {
       setFormData(EMPTY_FORM);

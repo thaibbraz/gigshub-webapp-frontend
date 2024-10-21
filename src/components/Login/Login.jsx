@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Container } from "../Container/Container";
 import logoTextGigshub from "../../assets/logo-text-gigshub.png";
 import logoLightPurple from "../../assets/logoLightPurple.svg";
-import axios from "axios";
+import { sendRequest } from "../../utils/api.js";
 
 const Login = ({ setLoggedIn }) => {
   const navigate = useNavigate();
@@ -26,27 +26,9 @@ const Login = ({ setLoggedIn }) => {
     e.preventDefault();
 
     try {
-      let options = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
-
-      let response = await axios.post(
-        "https://fastapi-service-03-160893319817.europe-southwest1.run.app/login",
-        formData,
-        options
-      );
-
-      if (response.status === 200) {
-        const token = response.data.access_token;
-        localStorage.setItem("token", token);
-        setLoggedIn(true);
-        navigate("/dashboard");
-      }
+      await sendRequest(formData, "/login", setLoggedIn);
+      navigate("/dashboard");
     } catch (error) {
-      setLoggedIn(false);
-      localStorage.removeItem("token");
       throw new Error(error);
     } finally {
       setFormData(EMPTY_FORM);
