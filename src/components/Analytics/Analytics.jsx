@@ -40,15 +40,6 @@ const Analytics = () => {
   return (
     // Main Container
     <div className="ml-2 mr-10">
-      <div className="absolute top-8 right-10 xl:left-[1330px] mlg:left-[1100px] lg:left-[900px] md:left-[730px] sm:left-[540px] xs:left-[340px] mc:left-[100px]">
-        <a
-          href="/logout"
-          className="text-light-purple font-thin hover:underline whitespace-nowrap"
-        >
-          Log out
-        </a>
-      </div>
-
       {/* Jobs Applied Section */}
       <div className="flex flex-col items-center ml-10 bg-white rounded-xl w-full max-w-7xl h-[calc(100vh-28px)] overflow-y-auto">
         <div className="w-full px-9">
