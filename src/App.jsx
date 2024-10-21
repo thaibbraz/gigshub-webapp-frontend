@@ -10,15 +10,21 @@ import Analytics from "./components/Analytics/Analytics";
 import AIJobMatch from "./components/AI Job Match/AIJobMatch";
 import Settings from "./components/Profile Settings/Settings";
 import { Navigate } from "react-router-dom";
+import { useState } from "react";
 
 function App() {
+  const [loggedIn, setLoggedIn] = useState(false);
+
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<Navigate to="/signup" />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route
+            path="/signup"
+            element={<Signup setLoggedIn={setLoggedIn} />}
+          />
           <Route path="/forms" element={<Forms />} />
           <Route path="/userdashboard" element={<UserDashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
