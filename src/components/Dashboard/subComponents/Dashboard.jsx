@@ -51,14 +51,6 @@ const Dashboard = () => {
       location: "Paris, France",
       appliedDate: "01/09/2024, 11:48",
     },
-    {
-      title: "Frontend Developer (React)",
-      contractType: "Permanent contract",
-      salary: "$50,000",
-      company: "MICROSOFT",
-      location: "Madrid, Spain",
-      appliedDate: "31/08/2024, 16:09",
-    },
   ];
 
   return (
@@ -73,7 +65,7 @@ const Dashboard = () => {
 
       {/* Top Filter Section */}
       <div className="w-full px-9">
-        <div className="flex flex-col lg:flex-row items-center mb-4 mt-6 max-w-7xl gap-x-6 ml-10 w-[90%]">
+        <div className="flex flex-col lg:flex-row items-center mb-4 mt-3 max-w-7xl gap-x-6 ml-10 w-[90%]">
           <div className="flex flex-col lg:flex-row lg:space-x-4">
             {/* Job Title Input */}
             <div className="flex flex-col">
@@ -124,12 +116,12 @@ const Dashboard = () => {
         </div>
 
         {/* Job List Section */}
-        <div className="flex flex-col justify-center items-center ml-10 bg-white rounded-xl w-full max-w-7xl h-[calc(66vh-28px)] overflow-y-auto bg-pink-300">
-          <div className="w-full max-w-5xl">
+        <div className="flex flex-col justify-center items-center ml-10 bg-white rounded-xl w-full max-w-7xl h-[calc(69vh-28px)] overflow-y-auto p-4">
+          <div className="w-full max-w-6xl">
             {jobs.map((job, index) => (
               <div
                 key={index}
-                className={`h-[85px]w-full grid grid-cols-4 gap-4 ${
+                className={`h-[80px] w-full grid grid-cols-4 gap-4 ${
                   index !== jobs.length - 1
                     ? "border-b-2 border-pale-purple"
                     : ""
