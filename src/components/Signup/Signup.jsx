@@ -33,7 +33,7 @@ const Signup = () => {
     try {
       await sendRequest(formData, "/signup");
       login();
-      navigate("/settings");
+      navigate("/welcome");
     } catch (error) {
       throw new Error(error);
     } finally {
