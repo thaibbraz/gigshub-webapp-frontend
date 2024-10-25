@@ -30,7 +30,7 @@ const Explanation = () => {
                   <div className="flex items-center justify-center w-40 h-input bg-dark-blue rounded-2xl border-5">
                     <span
                       className="text-sm text-white font-thin py-6"
-                      onClick={() => navigate("/settings")}
+                      onClick={() => navigate("/forms")}
                     >
                       Get started
                     </span>
