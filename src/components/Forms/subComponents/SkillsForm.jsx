@@ -26,7 +26,7 @@ const SkillsForm = () => {
   };
 
   const handleConfirm = () => {
-    navigate("/userdashboard");
+    navigate("/dashboard");
   };
 
   return (

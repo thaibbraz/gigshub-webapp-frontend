@@ -27,8 +27,8 @@ function App() {
             {/* only available to logged-in users */}
             <Route element={<ProtectedRoute />}>
               <Route path="/forms" element={<Forms />} />
-              <Route path="/userdashboard" element={<UserDashboard />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard" element={<UserDashboard />} />
+              <Route path="/jobs" element={<Dashboard />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/welcome" element={<Explanation />} />
               <Route path="/ai-job-match" element={<AIJobMatch />} />
