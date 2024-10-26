@@ -16,7 +16,7 @@ module.exports = {
         xxs: ["10px", "14px"],
       },
       animation: {
-        "spin-slow": "spin 3s linear infinite",
+        "spin-slow": "spin 15s linear infinite",
       },
       colors: {
         "off-white": "#F3F3FF",
