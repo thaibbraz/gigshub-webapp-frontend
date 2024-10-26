@@ -2,14 +2,14 @@ import React, { useState } from "react";
 
 const PersonalDetailsForm = ({ onNext }) => {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     email: "",
     phone: "",
     city: "",
     country: "",
     education: "",
-    yearsOfExperience: "",
+    years_of_experience: "",
   });
 
   const handleChange = (e) => {
@@ -50,8 +50,8 @@ const PersonalDetailsForm = ({ onNext }) => {
                   First name
                 </label>
                 <input
-                  name="firstName"
-                  value={formData.firstName}
+                  name="first_name"
+                  value={formData.first_name}
                   onChange={handleChange}
                   placeholder="First name"
                   className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
@@ -63,8 +63,8 @@ const PersonalDetailsForm = ({ onNext }) => {
                   Last name
                 </label>
                 <input
-                  name="lastName"
-                  value={formData.lastName}
+                  name="last_name"
+                  value={formData.last_name}
                   onChange={handleChange}
                   placeholder="Last Name"
                   className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
@@ -135,8 +135,8 @@ const PersonalDetailsForm = ({ onNext }) => {
                   Years of experience
                 </label>
                 <input
-                  name="yearsOfExperience"
-                  value={formData.yearsOfExperience}
+                  name="years_of_experience"
+                  value={formData.years_of_experience}
                   onChange={handleChange}
                   placeholder="Years of experience"
                   className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
