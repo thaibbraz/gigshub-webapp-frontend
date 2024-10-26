@@ -1,0 +1,75 @@
+const express = require("express");
+const axios = require("axios");
+const cheerio = require("cheerio");
+
+const app = express();
+const PORT = 4000;
+
+app.get("/api/jobs", async (req, res) => {
+  console.log("Received a request to fetch job postings.");
+
+  try {
+    console.log("Making a request to LinkedIn API...");
+
+    const response = await axios.get(
+      "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search",
+      {
+        params: {
+          keywords: "software engineer",
+          location: "Europe",
+          f_TPR: "r604800",
+          f_SB2: "4",
+          f_E: "2",
+          f_WT: "2",
+          f_JT: "F",
+          start: 0,
+        },
+        headers: {
+          "User-Agent": "Mozilla/5.0",
+        },
+      }
+    );
+
+    console.log(`LinkedIn API responded with status: ${response.status}`);
+    const html = response.data;
+    const $ = cheerio.load(html);
+    const jobs = [];
+
+    console.log("Parsing job postings from the HTML...");
+    console.log(html);
+
+    $("li").each((index, element) => {
+      const jobElement = $(element);
+      const job = {
+        title: jobElement.find(".base-search-card__title").text().trim(),
+        company: jobElement.find(".base-search-card__subtitle a").text().trim(),
+        location: jobElement.find(".job-search-card__location").text().trim(),
+        postedTime: jobElement
+          .find(".job-search-card__listdate--new")
+          .attr("datetime"),
+        applyLink: jobElement.find(".base-card__full-link").attr("href"),
+        logo: jobElement.find(".artdeco-entity-image").attr("data-delayed-url"),
+        easyApply: jobElement
+          .find(".job-search-card__easy-apply-label")
+          .text()
+          .trim(),
+      };
+
+      console.log(`Job ${index + 1}: ${job.title} at ${job.company}`);
+      console.log(`Apply link: ${job.applyLink}`);
+
+      jobs.push(job);
+    });
+
+    console.log(`Total jobs parsed: ${jobs.length}`);
+    res.json(jobs);
+  } catch (error) {
+    console.error("Error fetching jobs:", error.message);
+    console.error("Error details:", error);
+    res.status(500).json({ error: "Error fetching jobs" });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Proxy server running on http://localhost:${PORT}`);
+});

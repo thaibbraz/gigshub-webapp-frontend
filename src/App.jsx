@@ -8,6 +8,7 @@ import UserDashboard from "./components/Dashboard/subComponents/UserDashboard";
 import Dashboard from "./components/Dashboard/subComponents/Dashboard";
 import Analytics from "./components/Analytics/Analytics";
 import AIJobMatch from "./components/AI Job Match/AIJobMatch";
+import Explanation from "./components/Explanation/Explanation";
 import Settings from "./components/Profile Settings/Settings";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
@@ -29,6 +30,7 @@ function App() {
               <Route path="/userdashboard" element={<UserDashboard />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/analytics" element={<Analytics />} />
+              <Route path="/welcome" element={<Explanation />} />
               <Route path="/ai-job-match" element={<AIJobMatch />} />
               <Route path="/settings" element={<Settings />} />
             </Route>

@@ -1,34 +1,62 @@
-import React from "react";
-import { Container } from "../Container/Container";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { load } from "cheerio"; // Correct import for cheerio
 
 const AIJobMatch = () => {
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const { data } = await axios.get(
+          "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=software+engineer&location=India&f_TPR=r604800&f_SB2=4&f_E=2&f_WT=2&f_JT=F&start=0"
+        );
+
+        // Load the HTML response into Cheerio
+        const $ = load(data);
+        const jobElements = $("li");
+        const parsedJobs = jobElements
+          .map((index, element) => {
+            const job = $(element);
+            return {
+              position: job.find(".base-search-card__title").text().trim(),
+              company: job.find(".base-search-card__subtitle").text().trim(),
+              location: job.find(".job-search-card__location").text().trim(),
+              datePosted: job.find("time").attr("datetime"),
+              jobUrl: job.find(".base-card__full-link").attr("href"),
+            };
+          })
+          .get();
+
+        setJobs(parsedJobs);
+      } catch (error) {
+        console.error("Error fetching jobs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
   return (
-    <Container>
-      <div className="flex flex-col items-center justify-center min-h-screen text-3xl text-violet">
-        AI Job Match is coming soon
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="4em"
-          height="4em"
-          viewBox="0 0 24 24"
-        >
-          <circle cx="12" cy="12" r="3" fill="#020246" />
-          <g>
-            <circle cx="4" cy="12" r="3" fill="#020246" />
-            <circle cx="20" cy="12" r="3" fill="#020246" />
-            <animateTransform
-              attributeName="transform"
-              calcMode="spline"
-              dur="1.5s"
-              keySplines=".36,.6,.31,1;.36,.6,.31,1"
-              repeatCount="indefinite"
-              type="rotate"
-              values="0 12 12;180 12 12;360 12 12"
-            />
-          </g>
-        </svg>
-      </div>
-    </Container>
+    <div>
+      {loading ? (
+        <p>Loading jobs...</p>
+      ) : (
+        <ul>
+          {jobs.map((job, index) => (
+            <li key={index}>
+              <a href={job.jobUrl} target="_blank" rel="noopener noreferrer">
+                {job.position} - {job.company} ({job.location})
+              </a>
+              <p>Posted on: {job.datePosted}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 };
 
