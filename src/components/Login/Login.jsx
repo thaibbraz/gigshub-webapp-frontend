@@ -79,7 +79,7 @@ const Login = () => {
         </form>
         <p className="mt-6 text-center text-lg text-white">
           Don’t have an account?{" "}
-          <span onClick={() => navigate("/signup")}>Sign up</span>
+          <span onClick={() => navigate("/signup")} className="cursor-pointer">Sign up</span>
         </p>
       </div>
     </Container>
