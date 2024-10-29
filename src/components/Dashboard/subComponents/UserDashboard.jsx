@@ -98,10 +98,14 @@ const UserDashboard = () => {
       }
 
       const data = await response.json();
+      console.log("data", data);
+
       // Filter out jobs with 0 compatibility score
       const filteredJobs = data.jobs.filter(
         (job) => formatScoreAsPercentage(job.compatibility_score) > 10
       );
+      console.log(filteredJobs);
+
       // Set the filtered jobs to state
       setJobs(filteredJobs);
     } catch (error) {
@@ -113,7 +117,7 @@ const UserDashboard = () => {
     return words.slice(0, 10).join(" ") + (words.length > 10 ? "..." : "");
   };
   const formatScoreAsPercentage = (score) => {
-    return `${(score * 1000).toFixed(0)}%`; // Convert to percentage and format as string
+    return score * 1000; // Convert to percentage and format as string
   };
 
   return (
