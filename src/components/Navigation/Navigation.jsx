@@ -140,7 +140,7 @@ const Navigation = ({ className }) => {
                     : "text-light-liliac"
                 }`}
               >
-                AI Job Match
+                Apply
               </span>
             )}
           </div>

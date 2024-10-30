@@ -28,8 +28,8 @@ const PersonalDetailsForm = ({ onNext }) => {
         setFormData({
           jobTitle,
           location,
-          first_name: data.resume_data["first name"],
-          last_name: data.resume_data["last name"],
+          "first name": data.resume_data["first name"],
+          "last name": data.resume_data["last name"],
           email: data.resume_data.email,
           phone: data.resume_data.phone,
           linkedin: data.resume_data.linkedin || "",
@@ -44,8 +44,6 @@ const PersonalDetailsForm = ({ onNext }) => {
           city: data.resume_data.city || "",
           state: data.resume_data.state || "",
           zip: data.resume_data.zip || "",
-          job_title: formData.job_title || "",
-          job_location: formData.job_location || "",
           experiences: data.resume_data.experiences.map((exp) => ({
             title: exp.title,
             date: exp.date,
@@ -58,11 +56,18 @@ const PersonalDetailsForm = ({ onNext }) => {
             date: edu.date,
             institution: edu.institution,
           })),
-          skills: data.resume_data.skills.flatMap((skill) => skill.list),
-          languages: data.resume_data.languages.map((lang) => ({
-            language: lang.language,
-            level: lang.level,
-          })),
+          skills: [
+            {
+              list: data.resume_data.skills.flatMap((skill) => skill.list),
+            },
+          ],
+          languages:
+            data.resume_data.languages.length > 0
+              ? data.resume_data.languages.map((lang) => ({
+                  language: lang.language || "",
+                  level: lang.level || "",
+                }))
+              : [{ language: "", level: "" }], // Default structure if no languages
           projects: data.resume_data.projects || [],
         });
 

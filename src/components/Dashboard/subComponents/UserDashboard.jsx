@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // Added useEffect here
 import starsUnfilled from "../../../assets/starsUnfilled.svg";
 
 const UserDashboard = ({ formData }) => {
   const [jobs, setJobs] = useState([]);
-  const [jobTitle, setJobTitle] = useState("software engineer");
-  const [location, setLocation] = useState("Spain");
+  const [jobTitle, setJobTitle] = useState(formData.jobTitle);
+  const [location, setLocation] = useState(formData.location);
   const [cvFormData, setcvFormData] = useState(formData);
-  // Function to fetch job data
 
+  // Function to fetch job data
   const fetchJobs = async () => {
     console.log("cvFormData", cvFormData);
 
@@ -48,9 +48,17 @@ const UserDashboard = ({ formData }) => {
       console.error("Error fetching jobs:", error);
     }
   };
+
   const formatScoreAsPercentage = (score) => {
     return score * 1000; // Convert to percentage and format as string
   };
+
+  // UseEffect to fetch jobs once when component mounts
+  useEffect(() => {
+    if (jobs.length === 0) {
+      fetchJobs();
+    }
+  }, [jobs]); // Empty dependency array makes it run only once on mount
 
   return (
     <div className="ml-2 mr-10">
@@ -69,7 +77,7 @@ const UserDashboard = ({ formData }) => {
         </div>
 
         {/* Job List Section */}
-        <div className="flex flex-col justify-center items-center ml-10 bg-white rounded-xl w-full max-w-7xl h-[calc(69vh-28px)] overflow-y-auto p-4">
+        <div className="flex flex-col justify-center items-center ml-10 bg-white rounded-xl w-full max-w-6xl h-[calc(79vh-70px)] overflow-y-auto p-4">
           <div className="w-full max-w-6xl">
             {jobs.length === 0 ? (
               <p className="text-dark-blue text-lg">
@@ -112,9 +120,6 @@ const UserDashboard = ({ formData }) => {
                         <span className="text-dark-purple">{job.company}</span>
                       </div>
                       <div className="bg-soft-liliac rounded-lg py-1 px-3 text-xs h-auto">
-                        <span className="text-dark-purple">{job.location}</span>
-                      </div>
-                      <div className="bg-soft-liliac rounded-lg py-1 px-3 text-xs h-auto">
                         <span className="text-dark-purple">{job.site}</span>
                       </div>
                     </div>
@@ -127,7 +132,7 @@ const UserDashboard = ({ formData }) => {
                       rel="noopener noreferrer"
                     >
                       <p className="text-dark-blue text-xs font-extrabold">
-                        {job.date_posted}
+                        {job.location}
                       </p>
                     </a>
                   </div>
