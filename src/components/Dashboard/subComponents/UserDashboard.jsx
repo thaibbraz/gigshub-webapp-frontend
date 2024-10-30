@@ -1,85 +1,21 @@
 import React, { useState } from "react";
 import starsUnfilled from "../../../assets/starsUnfilled.svg";
 
-const UserDashboard = () => {
+const UserDashboard = ({ formData }) => {
   const [jobs, setJobs] = useState([]);
   const [jobTitle, setJobTitle] = useState("software engineer");
   const [location, setLocation] = useState("Spain");
-
+  const [cvFormData, setcvFormData] = useState(formData);
   // Function to fetch job data
+
   const fetchJobs = async () => {
-    const requestBody = {
-      "first name": "Thainá",
-      "last name": "Braz",
-      email: "thainabraz@gmail.com",
-      phone: "+34611322956",
-      linkedin: "",
-      github: "https://github.com/thainabraz",
-      website: "",
-      ethnicity: "",
-      gender: "",
-      lgbtq: "",
-      authorization: "",
-      sponsorship: "",
-      address: "Barcelona",
-      city: "Barcelona",
-      state: "",
-      zip: "",
-      experiences: [
-        {
-          title: "Full Stack Developer/Teacher Assistant",
-          date: "Sep/2020 - Feb/2022",
-          company: "CodeOp",
-          location: "Barcelona",
-          description:
-            "Helped over 100 students to improve their tech skills...",
-        },
-        {
-          title: "Technical Manager",
-          date: "Feb/2022 - Present",
-          company: "CodeOp",
-          location: "Barcelona",
-          description:
-            "Ensuring smooth class development by managing technical tools...",
-        },
-      ],
-      education: [
-        {
-          degree: "BS Computer Science and Engineering",
-          date: "",
-          institution: "Polytechnic of Leiria",
-        },
-      ],
-      skills: [
-        {
-          list: [
-            "Python",
-            "NodeJS",
-            "Java",
-            "JavaScript",
-            "React",
-            "SQL",
-            "Tailwind",
-            "Firebase",
-            "AWS",
-          ],
-        },
-      ],
-      languages: [
-        {
-          language: "",
-          level: "",
-        },
-      ],
-      projects: [
-        "Authentication with Rate limiters (Backend) NodeJS and Redis...",
-        "Reporting Script (Backend) Python and Firebase...",
-        "LMS Admin platform (Full stack) React, JavaScript, MySQL...",
-      ],
-    };
+    console.log("cvFormData", cvFormData);
+
+    const requestBody = cvFormData;
 
     // Add jobTitle and location to the request body
     const bodyWithJobDetails = { ...requestBody, jobTitle, location };
+    console.log("bodyWithJobDetails", JSON.stringify(bodyWithJobDetails));
 
     try {
       const response = await fetch(
@@ -112,10 +48,6 @@ const UserDashboard = () => {
       console.error("Error fetching jobs:", error);
     }
   };
-  const truncateDescription = (description) => {
-    const words = description.split(" ");
-    return words.slice(0, 10).join(" ") + (words.length > 10 ? "..." : "");
-  };
   const formatScoreAsPercentage = (score) => {
     return score * 1000; // Convert to percentage and format as string
   };
@@ -131,55 +63,18 @@ const UserDashboard = () => {
       {/* Top Filter Section */}
       <div className="w-full px-9">
         <div className="flex flex-col lg:flex-row items-center mb-4 mt-3 max-w-7xl gap-x-6 ml-10 w-[80%]">
-          <div className="flex flex-col lg:flex-row lg:space-x-4">
-            {/* Job Title Input */}
-            <div className="flex flex-col">
-              <label className="text-light-liliac text-sm mb-2">
-                Job Title
-              </label>
-              <input
-                type="text"
-                placeholder="Job Title"
-                className="border border-gray-300 rounded-2xl h-input py-2 px-3 shadow dark-blue text-xs"
-                value={jobTitle}
-                onChange={(e) => setJobTitle(e.target.value)}
-              />
-            </div>
-
-            {/* Location Input */}
-            <div className="flex flex-col mt-4 lg:mt-0">
-              <label className="text-light-liliac text-sm mb-2">Location</label>
-              <input
-                type="text"
-                placeholder="Location"
-                className="border border-gray-300 rounded-2xl h-input py-2 px-3 shadow dark-blue text-xs"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-              />
-            </div>
-          </div>
-
-          {/* Auto Apply Button */}
-          <button
-            className="flex items-center justify-center h-input py-6 px-1 rounded-3xl border-2 border-pale-purple mt-6 lg:mt-0 lg:-mb-5 ml-0 xl:ml-[400px]"
-            onClick={fetchJobs} // Call fetchJobs when button is clicked
-          >
-            <div className="flex items-center justify-center w-40 h-input bg-dark-blue rounded-2xl border-5">
-              <img
-                src={starsUnfilled}
-                alt="Stars Icon"
-                className="mr-2 h-4 w-4"
-              />
-              <span className="text-sm text-white font-thin py-6">Search</span>
-            </div>
-          </button>
+          <h2 className="text-3xl font-bold text-dark-blue text-center mb-4">
+            Daily jobs
+          </h2>
         </div>
 
         {/* Job List Section */}
         <div className="flex flex-col justify-center items-center ml-10 bg-white rounded-xl w-full max-w-7xl h-[calc(69vh-28px)] overflow-y-auto p-4">
           <div className="w-full max-w-6xl">
             {jobs.length === 0 ? (
-              <p className="text-dark-blue text-lg">No jobs available</p>
+              <p className="text-dark-blue text-lg">
+                Loading your daily jobs...
+              </p>
             ) : (
               jobs.map((job, index) => (
                 <div

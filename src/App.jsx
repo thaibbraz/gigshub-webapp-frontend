@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import Login from "./components/Login/Login";
@@ -15,6 +15,11 @@ import { AuthProvider } from "./context/AuthContext";
 import { Navigate } from "react-router-dom";
 
 function App() {
+  const [formData, setFormData] = useState({}); // Initialize formData
+
+  const handleFormDataChange = (data) => {
+    setFormData(data); // Update formData when form is submitted
+  };
   return (
     <AuthProvider>
       <Router>
@@ -26,8 +31,16 @@ function App() {
 
             {/* only available to logged-in users */}
             <Route element={<ProtectedRoute />}>
-              <Route path="/forms" element={<Forms />} />
-              <Route path="/dashboard" element={<UserDashboard />} />
+              <Route
+                path="/forms"
+                element={
+                  <Forms formData={formData} onSetFormData={setFormData} />
+                }
+              />
+              <Route
+                path="/dashboard"
+                element={<UserDashboard formData={formData} />}
+              />
               <Route path="/jobs" element={<Dashboard />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/welcome" element={<Explanation />} />
