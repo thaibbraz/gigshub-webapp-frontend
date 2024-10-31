@@ -5,11 +5,13 @@ import logoTextGigshub from "../../assets/logo-text-gigshub.png";
 import logoLightPurple from "../../assets/logoLightPurple.svg";
 import { sendRequest } from "../../utils/api.js";
 import { useAuth } from "../../context/AuthContext";
+import Error from "../Error/Error.jsx";
 
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const EMPTY_FORM = {
     email: "",
@@ -32,8 +34,9 @@ const Login = () => {
       await sendRequest(formData, "/login");
       login();
       navigate("/dashboard");
+      setError(null);
     } catch (error) {
-      throw new Error(error);
+      setError("Incorrect username or password. Please try again.");
     } finally {
       setFormData(EMPTY_FORM);
       setLoading(false);
@@ -49,6 +52,7 @@ const Login = () => {
           className="h-logoLogin w-logoLogin mb-8 animate-spin-slow"
         />
         <img src={logoTextGigshub} alt="Logo text" className=" mb-8" />
+        {error && <Error message={error} />}
         <form className="flex flex-col w-80" onSubmit={handleLogin}>
           <input
             type="email"
