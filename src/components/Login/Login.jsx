@@ -36,7 +36,7 @@ const Login = () => {
       navigate("/dashboard");
       setError(null);
     } catch (error) {
-      setError("Incorrect username or password. Please try again.");
+      setError("Incorrect email or password. Please try again.");
     } finally {
       setFormData(EMPTY_FORM);
       setLoading(false);
