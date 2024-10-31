@@ -5,6 +5,8 @@ import logoLightPurple from "../../assets/logoLightPurple.svg";
 import { useNavigate } from "react-router-dom";
 import { sendRequest } from "../../utils/api.js";
 import { useAuth } from "../../context/AuthContext";
+import { validateForm, getValidationClass } from "../../utils/validateForm.js";
+import Error from "../Error/Error.jsx";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -18,6 +20,9 @@ const Signup = () => {
   };
   const [formData, setFormData] = useState(EMPTY_FORM);
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState(null);
+  const [validation, setValidation] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,20 +30,39 @@ const Signup = () => {
       ...state,
       [name]: value,
     }));
+
+    if (validation[name]) {
+      setValidation((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }));
+    }
   };
 
   async function handleSignup(e) {
     e.preventDefault();
+    setSubmitted(true);
+
+    const validationErrors = validateForm(formData);
+    if (Object.keys(validationErrors).length > 0) {
+      setValidation(validationErrors);
+      return;
+    }
+
     setLoading(true);
+
     try {
       await sendRequest(formData, "/signup");
       login();
       navigate("/welcome");
     } catch (error) {
-      throw new Error(error);
+      setError(
+        "This email is already associated with an account. Please log in or try a different email."
+      );
     } finally {
       setFormData(EMPTY_FORM);
       setLoading(false);
+      setSubmitted(false);
     }
   }
 
@@ -51,38 +75,70 @@ const Signup = () => {
           className="h-logoLogin w-logoLogin mb-8 animate-spin-slow"
         />
         <img src={logoTextGigshub} alt="Logo text" className=" mb-8" />
+        {error && <Error message={error} />}
         <form className="flex flex-col w-80" onSubmit={handleSignup}>
+          {validation.first_name && (
+            <p className="text-rose-600">{validation.first_name}</p>
+          )}
           <input
             type="text"
             name="first_name"
             value={formData.first_name}
             onChange={handleChange}
             placeholder="First Name"
-            className="mb-4 py-4 px-6 border rounded-md focus:outline-none focus:border-dark-blue h-input font-light placeholder-gray-400 placeholder-opacity-100 focus:placeholder-dark-blue shadow-md dark-blu"
+            className={`mb-4 py-4 px-6 border rounded-md ${getValidationClass(
+              validation,
+              "first_name",
+              submitted
+            )}`}
           />
+
+          {validation.last_name && (
+            <p className="text-rose-600">{validation.last_name}</p>
+          )}
           <input
             type="text"
             name="last_name"
             value={formData.last_name}
             onChange={handleChange}
             placeholder="Last Name"
-            className="mb-4 py-4 px-6 border rounded-md focus:outline-none focus:border-dark-blue h-input font-light placeholder-gray-400 placeholder-opacity-100 focus:placeholder-dark-blue shadow-md dark-blu"
+            className={`mb-4 py-4 px-6 border rounded-md ${getValidationClass(
+              validation,
+              "last_name",
+              submitted
+            )}`}
           />
+
+          {validation.email && (
+            <p className="text-rose-600">{validation.email}</p>
+          )}
           <input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
             placeholder="E-mail"
-            className="mb-4 py-4 px-6 border rounded-md focus:outline-none focus:border-dark-blue h-input font-light placeholder-gray-400 placeholder-opacity-100 focus:placeholder-dark-blue shadow-md dark-blu"
+            className={`mb-4 py-4 px-6 border rounded-md ${getValidationClass(
+              validation,
+              "email",
+              submitted
+            )}`}
           />
+
+          {validation.password && (
+            <p className="text-rose-600">{validation.password}</p>
+          )}
           <input
             type="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
             placeholder="Password"
-            className="mb-4 py-4 px-6 border rounded-md focus:outline-none focus:border-dark-blue h-input font-light placeholder-gray-400 placeholder-opacity-100 focus:placeholder-dark-blue shadow-md dark-blu"
+            className={`mb-4 py-4 px-6 border rounded-md ${getValidationClass(
+              validation,
+              "password",
+              submitted
+            )}`}
           />
           <button
             type="submit"
@@ -95,6 +151,7 @@ const Signup = () => {
             </div>
           </button>
         </form>
+
         <p className="mt-6 text-center text-lg text-white">
           Already have an account?{" "}
           <span onClick={() => navigate("/login")}>Log In</span>
