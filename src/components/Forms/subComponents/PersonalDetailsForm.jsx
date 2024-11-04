@@ -1,11 +1,26 @@
 import React, { useState } from "react";
 
 const PersonalDetailsForm = ({ onNext }) => {
+<<<<<<< HEAD
   const [formData, setFormData] = useState({});
   const [jobTitle, setJobTitle] = useState("software engineer");
   const [location, setLocation] = useState("Spain");
   const [pdfFile, setPdfFile] = useState(null);
   const [resumeText, setResumeText] = useState(null);
+=======
+  const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    city: "",
+    country: "",
+    years_of_experience: "",
+    linkedin_url: "",
+    github_url: "",
+    portfolio_url: "",
+  });
+>>>>>>> 1242298 (chore: added website urls to form)
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
@@ -102,6 +117,7 @@ const PersonalDetailsForm = ({ onNext }) => {
             <h2 className="text-3xl font-bold text-dark-blue text-center mb-4">
               Personal Details
             </h2>
+<<<<<<< HEAD
             {pdfFile != null && resumeText === null ? (
               <p className="text-center text-sm mb-8 text-dark-purple">
                 Retrieving your data ... This process will take a while
@@ -178,13 +194,151 @@ const PersonalDetailsForm = ({ onNext }) => {
                       </span>
                     </button>
                   ) : (
+=======
+            <p className="text-center text-sm mb-8 text-dark-purple">
+              Please fill out your personal information
+            </p>
+            <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-6 mx-auto w-full max-w-4xl">
+                <div className="flex flex-col">
+                  <label className="text-light-liliac text-sm mb-2">
+                    First name
+                  </label>
+                  <input
+                    name="first_name"
+                    value={formData.first_name}
+                    onChange={handleChange}
+                    placeholder="First name"
+                    className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-light-liliac text-sm mb-2">
+                    Last name
+                  </label>
+                  <input
+                    name="last_name"
+                    value={formData.last_name}
+                    onChange={handleChange}
+                    placeholder="Last Name"
+                    className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-light-liliac text-sm mb-2">
+                    E-mail
+                  </label>
+                  <input
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="E-mail"
+                    className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-light-liliac text-sm mb-2">
+                    Phone
+                  </label>
+                  <input
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="Phone"
+                    className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-light-liliac text-sm mb-2">City</label>
+                  <input
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    placeholder="City"
+                    className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-light-liliac text-sm mb-2">
+                    Country
+                  </label>
+                  <input
+                    name="country"
+                    value={formData.country}
+                    onChange={handleChange}
+                    placeholder="Country"
+                    className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+                  />
+                </div>
+              </div>
+
+              <p className="text-center text-sm my-8 text-dark-purple">
+                Please fill out your socials
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-6 mx-auto w-full max-w-4xl">
+                <div className="flex flex-col">
+                  <label className="text-light-liliac text-sm mb-2">
+                    LinkedIn
+                  </label>
+                  <input
+                    name="linkedin_url"
+                    value={formData.linkedin_url}
+                    onChange={handleChange}
+                    placeholder="LinkedIn profile"
+                    className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-light-liliac text-sm mb-2">
+                    GitHub
+                  </label>
+                  <input
+                    name="github_url"
+                    value={formData.github_url}
+                    onChange={handleChange}
+                    placeholder="GitHub profile"
+                    className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-light-liliac text-sm mb-2">
+                    Portfolio website
+                  </label>
+                  <input
+                    name="portfolio_url"
+                    value={formData.portfolio_url}
+                    onChange={handleChange}
+                    placeholder="Portfolio website"
+                    className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <div className="lg:col-span-4 sm:col-span-2 mc:col-span-1 flex justify-center mt-4">
+                  <button
+                    className="flex items-center justify-center h-input mt-4 py-6 px-1 rounded-3xl border-2 border-pale-purple"
+                    type="submit"
+                  >
+>>>>>>> 1242298 (chore: added website urls to form)
                     <div className="flex items-center justify-center w-buttonSize h-input bg-dark-blue rounded-2xl border-5">
                       <span className="text-sm text-white font-normal">
                         Continue
                       </span>
                     </div>
+<<<<<<< HEAD
                   )}
                 </button>
+=======
+                  </button>
+                </div>
+>>>>>>> 1242298 (chore: added website urls to form)
               </div>
             </form>
           </div>
