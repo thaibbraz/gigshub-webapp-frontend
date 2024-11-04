@@ -8,7 +8,7 @@ const SkillsForm = () => {
   const [limitReached, setLimitReached] = useState(false);
   const navigate = useNavigate();
 
-  const progress = (3 / 3) * 100;
+  const progress = (4 / 4) * 100;
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();

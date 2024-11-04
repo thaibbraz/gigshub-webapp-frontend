@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PersonalDetailsForm from "./subComponents/PersonalDetailsForm";
+import EducationForm from "./subComponents/EducationForm";
 import ExperienceForm from "./subComponents/ExperienceForm";
 import SkillsForm from "./subComponents/SkillsForm";
 
@@ -16,8 +17,9 @@ const Forms = ({ formData, onSetFormData }) => {
   return (
     <div>
       {step === 1 && <PersonalDetailsForm onNext={handleNext} />}
-      {step === 2 && <ExperienceForm onNext={handleNext} />}
-      {step === 3 && <SkillsForm onNext={handleNext} />}
+      {step === 2 && <EducationForm onNext={handleNext} />}
+      {step === 3 && <ExperienceForm onNext={handleNext} />}
+      {step === 4 && <SkillsForm onNext={handleNext} />}
     </div>
   );
 };

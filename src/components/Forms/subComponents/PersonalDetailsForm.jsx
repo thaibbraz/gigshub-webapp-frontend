@@ -86,7 +86,7 @@ const PersonalDetailsForm = ({ onNext }) => {
     onNext(formData);
   };
 
-  const progress = (1 / 3) * 100;
+  const progress = (1 / 4) * 100;
 
   return (
     <div className="ml-2 mr-10">

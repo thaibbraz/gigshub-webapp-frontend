@@ -1,19 +1,19 @@
 import React, { useState } from "react";
+import Dropdown from "../../Dropdown/Dropdown";
 
-const ExperienceForm = ({ onNext }) => {
+const EducationForm = ({ onNext }) => {
   const [formData, setFormData] = useState({
-    company: "",
-    jobTitle: "",
-    startDate: "",
-    endDate: "",
-    currentWorkplace: false,
+    highest_degree: "",
+    institution_name: "",
+    graduation_year: "",
+    major: "",
   });
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     });
   };
 
@@ -22,7 +22,7 @@ const ExperienceForm = ({ onNext }) => {
     onNext(formData);
   };
 
-  const progress = (3 / 4) * 100;
+  const progress = (2 / 4) * 100;
 
   return (
     <div className="ml-2 mr-10">
@@ -36,11 +36,10 @@ const ExperienceForm = ({ onNext }) => {
           </div>
           <div className="w-full mt-28">
             <h2 className="text-3xl font-bold text-dark-blue text-center mb-4">
-              Experience
+              Education
             </h2>
             <p className="text-center text-sm mb-8 text-dark-purple">
-              {/* Please fill out your work experience information */}
-              Please provide details of your most relevant work experience.
+              Please provide details about your education.
             </p>
             <form
               onSubmit={handleSubmit}
@@ -48,39 +47,41 @@ const ExperienceForm = ({ onNext }) => {
             >
               <div className="flex flex-col">
                 <label className="text-light-liliac text-sm mb-2">
-                  Company
+                  Highest level of education achieved
                 </label>
                 <input
                   name="company"
-                  value={formData.company}
+                  value={formData.highest_degree}
                   onChange={handleChange}
-                  placeholder="Company"
+                  placeholder="Highest degree"
                   className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
                 />
               </div>
 
+              <Dropdown />
+
               <div className="flex flex-col">
                 <label className="text-light-liliac text-sm mb-2">
-                  Job title
+                  Institution name
                 </label>
                 <input
                   name="jobTitle"
-                  value={formData.jobTitle}
+                  value={formData.institution_name}
                   onChange={handleChange}
-                  placeholder="Job title"
+                  placeholder="Institution name"
                   className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
                 />
               </div>
 
               <div className="flex flex-col">
                 <label className="text-light-liliac text-sm mb-2">
-                  Start date
+                  Field of study
                 </label>
                 <input
                   name="startDate"
-                  value={formData.startDate}
+                  value={formData.major}
                   onChange={handleChange}
-                  placeholder="DD-MM-YY"
+                  placeholder="Field of study"
                   className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
                 />
               </div>
@@ -134,4 +135,4 @@ const ExperienceForm = ({ onNext }) => {
   );
 };
 
-export default ExperienceForm;
+export default EducationForm;
