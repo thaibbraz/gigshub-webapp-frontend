@@ -8,6 +8,13 @@ const EducationForm = ({ onNext }) => {
     graduation_year: "",
     major: "",
   });
+  const degreeOptions = [
+    "High school diploma",
+    "4-year university degree",
+    "Post-graduate degree",
+    "Technical certification",
+  ];
+  const fieldName = "highest_degree";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,23 +56,20 @@ const EducationForm = ({ onNext }) => {
                 <label className="text-light-liliac text-sm mb-2">
                   Highest level of education achieved
                 </label>
-                <input
-                  name="company"
-                  value={formData.highest_degree}
-                  onChange={handleChange}
-                  placeholder="Highest degree"
+                <Dropdown
+                  options={degreeOptions}
+                  handleChange={handleChange}
+                  fieldName={fieldName}
                   className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
                 />
               </div>
-
-              <Dropdown />
 
               <div className="flex flex-col">
                 <label className="text-light-liliac text-sm mb-2">
                   Institution name
                 </label>
                 <input
-                  name="jobTitle"
+                  name="institution_name"
                   value={formData.institution_name}
                   onChange={handleChange}
                   placeholder="Institution name"
@@ -78,43 +82,13 @@ const EducationForm = ({ onNext }) => {
                   Field of study
                 </label>
                 <input
-                  name="startDate"
+                  name="major"
                   value={formData.major}
                   onChange={handleChange}
                   placeholder="Field of study"
                   className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
                 />
               </div>
-
-              <div className="flex flex-col">
-                <label className="text-light-liliac text-sm mb-2">
-                  End date
-                </label>
-                <input
-                  name="endDate"
-                  value={formData.endDate}
-                  onChange={handleChange}
-                  placeholder="DD-MM-YY"
-                  disabled={formData.currentWorkplace}
-                  className={`border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue ${
-                    formData.currentWorkplace ? "bg-gray-200" : ""
-                  }`}
-                />
-              </div>
-
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="currentWorkplace"
-                  checked={formData.currentWorkplace}
-                  onChange={handleChange}
-                  className="mr-2"
-                />
-                <label className="text-light-liliac text-sm">
-                  Current workplace?
-                </label>
-              </div>
-              {/* <div className="col-span-4 flex justify-center mt-4"> */}
               <div className="lg:col-span-4 flex md:col-span-2 sm:col-span-1 xs:col-span-1 mc:col-span-1 flex justify-center mt-4">
                 <button
                   className="flex items-center justify-center h-input mt-4 py-6 px-1 rounded-3xl border-2 border-pale-purple"
