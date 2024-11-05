@@ -13,12 +13,10 @@ const PersonalDetailsForm = ({ onNext }) => {
     last_name: "",
     email: "",
     phone: "",
-    city: "",
-    country: "",
     years_of_experience: "",
     linkedin_url: "",
     github_url: "",
-    portfolio_url: "",
+    website: "",
   });
 >>>>>>> 1242298 (chore: added website urls to form)
 
@@ -101,7 +99,7 @@ const PersonalDetailsForm = ({ onNext }) => {
     onNext(formData);
   };
 
-  const progress = (1 / 5) * 100;
+  const progress = (1 / 6) * 100;
 
   return (
     <div className="ml-2 mr-10">
@@ -265,24 +263,6 @@ const PersonalDetailsForm = ({ onNext }) => {
 
                 <div className="flex flex-col">
                   <label className="text-light-liliac text-sm mb-2">
-                    Country
-                  </label>
-                  <input
-                    name="country"
-                    value={formData.country}
-                    onChange={handleChange}
-                    placeholder="Country"
-                    className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
-                  />
-                </div>
-              </div>
-
-              <p className="text-center text-sm my-8 text-dark-purple">
-                Please fill out your socials
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-6 mx-auto w-full max-w-4xl">
-                <div className="flex flex-col">
-                  <label className="text-light-liliac text-sm mb-2">
                     LinkedIn
                   </label>
                   <input
@@ -312,8 +292,8 @@ const PersonalDetailsForm = ({ onNext }) => {
                     Portfolio website
                   </label>
                   <input
-                    name="portfolio_url"
-                    value={formData.portfolio_url}
+                    name="website"
+                    value={formData.website}
                     onChange={handleChange}
                     placeholder="Portfolio website"
                     className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"

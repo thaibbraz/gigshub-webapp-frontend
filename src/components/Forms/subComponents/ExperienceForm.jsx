@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ExperienceRow from "../ExperienceRow";
+import ExperienceRow from "./ExperienceRow";
 
 const ExperienceForm = ({ onNext }) => {
   const [experienceList, setExperienceList] = useState([
@@ -44,7 +44,7 @@ const ExperienceForm = ({ onNext }) => {
     onNext({ previous_experience: experienceList });
   };
 
-  const progress = (3 / 5) * 100;
+  const progress = (4 / 6) * 100;
 
   return (
     <div className="ml-2 mr-10">

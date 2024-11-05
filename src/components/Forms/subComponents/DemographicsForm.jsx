@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Dropdown from "../../Dropdown/Dropdown";
 
-const Demographics = () => {
+const DemographicsForm = () => {
   const [formData, setFormData] = useState({
     gender: "",
-    race_ethnicity: "",
+    ethnicity: "",
     veteran_status: "",
     disability_status: "",
+    lgbt: "",
   });
   const genderOptions = [
     "Male",
@@ -15,6 +16,18 @@ const Demographics = () => {
     "Non-binary",
     "Prefer not to disclose",
   ];
+
+  const lgbtOptions = [
+    "Heterosexual (Straight)",
+    "Gay or Lesbian",
+    "Bisexual",
+    "Asexual",
+    "Pansexual",
+    "Queer",
+    "Other",
+    "Prefer not to disclose",
+  ];
+
   const ethnicityOptions = [
     "Hispanic or Latino",
     "American Indian or Alaska Native",
@@ -39,7 +52,7 @@ const Demographics = () => {
 
   const navigate = useNavigate();
 
-  const progress = (5 / 5) * 100;
+  const progress = (6 / 6) * 100;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -91,7 +104,7 @@ const Demographics = () => {
               </label>
               <Dropdown
                 options={ethnicityOptions}
-                fieldName={formData.race_ethnicity}
+                fieldName={formData.ethnicity}
                 handleChange={handleChange}
                 className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-full shadow dark-blue"
               />
@@ -121,6 +134,18 @@ const Demographics = () => {
               />
             </div>
 
+            <div className="flex flex-col">
+              <label className="text-light-liliac text-sm mb-2">
+                Sexual orientation
+              </label>
+              <Dropdown
+                options={lgbtOptions}
+                fieldName={formData.lgbt}
+                handleChange={handleChange}
+                className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-full shadow dark-blue"
+              />
+            </div>
+
             <div className="lg:col-span-4 flex justify-center mt-4">
               <button
                 className="flex items-center justify-center h-input mt-4 py-6 px-1 rounded-3xl border-2 border-pale-purple"
@@ -140,4 +165,4 @@ const Demographics = () => {
   );
 };
 
-export default Demographics;
+export default DemographicsForm;

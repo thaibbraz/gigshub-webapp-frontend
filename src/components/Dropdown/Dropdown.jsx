@@ -42,29 +42,29 @@ const Dropdown = ({ options, fieldName, handleChange }) => {
         </svg>
       </button>
 
-      <div
-        className={`${
-          isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
-        } absolute left-0 z-10 mt-2 w-full origin-top transform rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition ease-out duration-200`}
-        role="menu"
-        aria-orientation="vertical"
-        aria-labelledby="menu-button"
-        tabIndex="-1"
-      >
-        <div className="py-1" role="none">
-          {options.map((option, index) => (
-            <p
-              key={index}
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-              role="menuitem"
-              tabIndex="-1"
-              onClick={() => handleOptionClick(option)}
-            >
-              {option}
-            </p>
-          ))}
+      {isOpen && (
+        <div
+          className="absolute left-0 z-10 mt-2 w-full origin-top transform rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition ease-out duration-200"
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="menu-button"
+          tabIndex="-1"
+        >
+          <div className="py-1" role="none">
+            {options.map((option, index) => (
+              <p
+                key={index}
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                role="menuitem"
+                tabIndex="-1"
+                onClick={() => handleOptionClick(option)}
+              >
+                {option}
+              </p>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
