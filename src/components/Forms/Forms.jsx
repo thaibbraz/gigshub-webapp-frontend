@@ -3,6 +3,7 @@ import PersonalDetailsForm from "./subComponents/PersonalDetailsForm";
 import EducationForm from "./subComponents/EducationForm";
 import ExperienceForm from "./subComponents/ExperienceForm";
 import SkillsForm from "./subComponents/SkillsForm";
+import Demographics from "./subComponents/Demographics";
 
 const Forms = ({ formData, onSetFormData }) => {
   const [step, setStep] = useState(1);
@@ -20,6 +21,7 @@ const Forms = ({ formData, onSetFormData }) => {
       {step === 2 && <EducationForm onNext={handleNext} />}
       {step === 3 && <ExperienceForm onNext={handleNext} />}
       {step === 4 && <SkillsForm onNext={handleNext} />}
+      {step === 5 && <Demographics onNext={handleNext} />}
     </div>
   );
 };

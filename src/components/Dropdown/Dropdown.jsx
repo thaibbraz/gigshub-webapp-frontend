@@ -2,12 +2,14 @@ import React, { useState } from "react";
 
 const Dropdown = ({ options, fieldName, handleChange }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedOption, setSelectedOption] = useState("");
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
   const handleOptionClick = (value) => {
+    setSelectedOption(value);
     handleChange({ target: { name: fieldName, value } });
     setIsOpen(false);
   };
@@ -22,7 +24,9 @@ const Dropdown = ({ options, fieldName, handleChange }) => {
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        <span className="text-gray-400 font-semibold">Options</span>
+        <span className="text-gray-400 font-semibold">
+          {selectedOption || "Options"}
+        </span>
         <svg
           className="h-5 w-5 text-gray-400"
           viewBox="0 0 20 20"

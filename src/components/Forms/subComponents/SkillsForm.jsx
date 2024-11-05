@@ -2,13 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import searchIcon from "../../../assets/searchIcon.svg";
 
-const SkillsForm = () => {
+const SkillsForm = ({ onNext }) => {
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [limitReached, setLimitReached] = useState(false);
-  const navigate = useNavigate();
 
-  const progress = (4 / 4) * 100;
+  const progress = (4 / 5) * 100;
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -25,8 +24,9 @@ const SkillsForm = () => {
     }
   };
 
-  const handleConfirm = () => {
-    navigate("/dashboard");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onNext({ skills: selectedSkills });
   };
 
   return (
@@ -48,10 +48,7 @@ const SkillsForm = () => {
           </p>
 
           {/* Search bar */}
-          <form
-            className="flex flex-col items-center"
-            onSubmit={handleSearchSubmit}
-          >
+          <form className="flex flex-col items-center" onSubmit={handleSubmit}>
             <div className="relative w-1/3">
               <input
                 type="text"
@@ -87,15 +84,18 @@ const SkillsForm = () => {
               ))}
             </div>
 
-            <button
-              type="button"
-              onClick={handleConfirm}
-              className="flex items-center justify-center h-input mt-4 py-6 px-1 rounded-3xl border-2 border-pale-purple"
-            >
-              <div className="flex items-center justify-center w-buttonSize h-input bg-dark-blue rounded-2xl border-5">
-                <span className="text-sm text-white font-normal">Confirm</span>
-              </div>
-            </button>
+            <div className="lg:col-span-4 flex md:col-span-2 sm:col-span-1 xs:col-span-1 mc:col-span-1 flex justify-center mt-4">
+              <button
+                className="flex items-center justify-center h-input mt-4 py-6 px-1 rounded-3xl border-2 border-pale-purple"
+                type="submit"
+              >
+                <div className="flex items-center justify-center w-buttonSize h-input bg-dark-blue rounded-2xl border-5">
+                  <span className="text-sm text-white font-normal">
+                    Continue
+                  </span>
+                </div>
+              </button>
+            </div>
           </form>
         </div>
       </div>

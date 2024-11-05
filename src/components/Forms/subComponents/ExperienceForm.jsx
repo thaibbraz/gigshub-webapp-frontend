@@ -44,7 +44,7 @@ const ExperienceForm = ({ onNext }) => {
     onNext({ previous_experience: experienceList });
   };
 
-  const progress = (3 / 4) * 100;
+  const progress = (3 / 5) * 100;
 
   return (
     <div className="ml-2 mr-10">
