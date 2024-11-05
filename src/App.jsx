@@ -30,6 +30,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
 
             {/* only available to logged-in users */}
+<<<<<<< HEAD
             <Route element={<ProtectedRoute />}>
               <Route
                 path="/forms"
@@ -47,6 +48,17 @@ function App() {
               <Route path="/ai-job-match" element={<AIJobMatch />} />
               <Route path="/settings" element={<Settings />} />
             </Route>
+=======
+            {/* <Route element={<ProtectedRoute />}> */}
+            <Route path="/forms" element={<Forms />} />
+            <Route path="/dashboard" element={<UserDashboard />} />
+            <Route path="/jobs" element={<Dashboard />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/welcome" element={<Explanation />} />
+            <Route path="/ai-job-match" element={<AIJobMatch />} />
+            <Route path="/settings" element={<Settings />} />
+            {/* </Route> */}
+>>>>>>> b2045b6 (WIP: add multiple experience)
           </Route>
         </Routes>
       </Router>

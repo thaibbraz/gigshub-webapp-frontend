@@ -1,25 +1,47 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import ExperienceRow from "../ExperienceRow";
 
 const ExperienceForm = ({ onNext }) => {
-  const [formData, setFormData] = useState({
-    company: "",
-    jobTitle: "",
-    startDate: "",
-    endDate: "",
-    currentWorkplace: false,
-  });
+  const [experienceList, setExperienceList] = useState([
+    {
+      id: Date.now(), // Unique ID for each row
+      company: "",
+      jobTitle: "",
+      startDate: "",
+      endDate: "",
+      currentWorkplace: false,
+    },
+  ]);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
+  const handleAddExperience = () => {
+    setExperienceList([
+      ...experienceList,
+      {
+        id: Date.now(),
+        company: "",
+        jobTitle: "",
+        startDate: "",
+        endDate: "",
+        currentWorkplace: false,
+      },
+    ]);
+  };
+
+  const handleDeleteExperience = (id) => {
+    setExperienceList(experienceList.filter((exp) => exp.id !== id));
+  };
+
+  const handleExperienceChange = (id, field, value) => {
+    setExperienceList(
+      experienceList.map((exp) =>
+        exp.id === id ? { ...exp, [field]: value } : exp
+      )
+    );
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onNext(formData);
+    onNext(experienceList);
   };
 
   const progress = (3 / 4) * 100;
@@ -39,85 +61,35 @@ const ExperienceForm = ({ onNext }) => {
               Experience
             </h2>
             <p className="text-center text-sm mb-8 text-dark-purple">
-              {/* Please fill out your work experience information */}
               Please provide details of your most relevant work experience.
             </p>
             <form
               onSubmit={handleSubmit}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-x-8 gap-y-6 mx-auto w-full max-w-4xl"
+              className="w-full max-w-4xl mx-auto space-y-6"
             >
-              <div className="flex flex-col">
-                <label className="text-light-liliac text-sm mb-2">
-                  Company
-                </label>
-                <input
-                  name="company"
-                  value={formData.company}
-                  onChange={handleChange}
-                  placeholder="Company"
-                  className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+              {experienceList.map((experience) => (
+                <ExperienceRow
+                  key={experience.id}
+                  formData={experience}
+                  onChange={(field, value) =>
+                    handleExperienceChange(experience.id, field, value)
+                  }
+                  onDelete={() => handleDeleteExperience(experience.id)}
                 />
-              </div>
-
-              <div className="flex flex-col">
-                <label className="text-light-liliac text-sm mb-2">
-                  Job title
-                </label>
-                <input
-                  name="jobTitle"
-                  value={formData.jobTitle}
-                  onChange={handleChange}
-                  placeholder="Job title"
-                  className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
-                />
-              </div>
-
-              <div className="flex flex-col">
-                <label className="text-light-liliac text-sm mb-2">
-                  Start date
-                </label>
-                <input
-                  name="startDate"
-                  value={formData.startDate}
-                  onChange={handleChange}
-                  placeholder="DD-MM-YY"
-                  className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
-                />
-              </div>
-
-              <div className="flex flex-col">
-                <label className="text-light-liliac text-sm mb-2">
-                  End date
-                </label>
-                <input
-                  name="endDate"
-                  value={formData.endDate}
-                  onChange={handleChange}
-                  placeholder="DD-MM-YY"
-                  disabled={formData.currentWorkplace}
-                  className={`border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue ${
-                    formData.currentWorkplace ? "bg-gray-200" : ""
-                  }`}
-                />
-              </div>
-
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="currentWorkplace"
-                  checked={formData.currentWorkplace}
-                  onChange={handleChange}
-                  className="mr-2"
-                />
-                <label className="text-light-liliac text-sm">
-                  Current workplace?
-                </label>
-              </div>
-              {/* <div className="col-span-4 flex justify-center mt-4"> */}
+              ))}
               <div className="lg:col-span-4 flex md:col-span-2 sm:col-span-1 xs:col-span-1 mc:col-span-1 flex justify-center mt-4">
                 <button
-                  className="flex items-center justify-center h-input mt-4 py-6 px-1 rounded-3xl border-2 border-pale-purple"
+                  type="button"
+                  onClick={handleAddExperience}
+                  className="text-light-purple border-pale-purple border-2 rounded-2xl px-3 py-2 hover:bg-pale-purple"
+                >
+                  Add Experience
+                </button>
+              </div>
+              <div className="lg:col-span-4 flex justify-center mt-4">
+                <button
                   type="submit"
+                  className="flex items-center justify-center h-input mt-4 py-6 px-1 rounded-3xl border-2 border-pale-purple"
                 >
                   <div className="flex items-center justify-center w-buttonSize h-input bg-dark-blue rounded-2xl border-5">
                     <span className="text-sm text-white font-normal">
