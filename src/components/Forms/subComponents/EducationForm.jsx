@@ -54,7 +54,7 @@ const EducationForm = ({ onNext }) => {
             >
               <div className="flex flex-col">
                 <label className="text-light-liliac text-sm mb-2">
-                  Highest level of education achieved
+                  Highest degree achieved
                 </label>
                 <Dropdown
                   options={degreeOptions}
@@ -86,6 +86,19 @@ const EducationForm = ({ onNext }) => {
                   value={formData.major}
                   onChange={handleChange}
                   placeholder="Field of study"
+                  className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="text-light-liliac text-sm mb-2">
+                  Graduation year
+                </label>
+                <input
+                  name="graduation_year"
+                  value={formData.graduation_year}
+                  onChange={handleChange}
+                  placeholder="YYYY"
                   className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
                 />
               </div>

@@ -5,7 +5,7 @@ const ExperienceRow = ({ formData, onChange, onDelete }) => {
   };
 
   return (
-    <div className="grid grid-cols-5 gap-x-8 gap-y-6 w-full">
+    <div className="grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-x-4 w-full border-b-2 py-4">
       <div className="flex flex-col">
         <label className="text-light-liliac text-sm mb-2">Company</label>
         <input
@@ -34,7 +34,7 @@ const ExperienceRow = ({ formData, onChange, onDelete }) => {
           name="startDate"
           value={formData.startDate}
           onChange={handleChange}
-          placeholder="DD-MM-YY"
+          placeholder="Month YYYY"
           className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-full shadow dark-blue"
         />
       </div>
@@ -45,7 +45,7 @@ const ExperienceRow = ({ formData, onChange, onDelete }) => {
           name="endDate"
           value={formData.endDate}
           onChange={handleChange}
-          placeholder="DD-MM-YY"
+          placeholder="Month YYYY"
           disabled={formData.currentWorkplace}
           className={`border border-gray-300 rounded-2xl h-input py-3 px-4 shadow dark-blue ${
             formData.currentWorkplace ? "bg-gray-200" : ""
@@ -53,13 +53,13 @@ const ExperienceRow = ({ formData, onChange, onDelete }) => {
         />
       </div>
 
-      <div className="flex flex-col shrink">
+      <div className="flex items-center justify-center">
         <button
           type="button"
           onClick={onDelete}
-          className="text-sm text-rose-600 font-bold border border-rose-600 rounded-2xl h-input mt-7 py-3 px-4 w-1/6 shadow dark-blue"
+          className="text-sm text-rose-600 font-bold border border-rose-600 hover:bg-rose-200 rounded-full h-8 w-8 mt-7 flex items-center justify-center"
         >
-          X
+          x
         </button>
       </div>
 

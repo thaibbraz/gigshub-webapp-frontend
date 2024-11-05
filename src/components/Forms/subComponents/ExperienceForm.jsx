@@ -4,7 +4,7 @@ import ExperienceRow from "../ExperienceRow";
 const ExperienceForm = ({ onNext }) => {
   const [experienceList, setExperienceList] = useState([
     {
-      id: Date.now(), // Unique ID for each row
+      id: Date.now(),
       company: "",
       jobTitle: "",
       startDate: "",
@@ -41,7 +41,7 @@ const ExperienceForm = ({ onNext }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onNext(experienceList);
+    onNext({ previous_experience: experienceList });
   };
 
   const progress = (3 / 4) * 100;
