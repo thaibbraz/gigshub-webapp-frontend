@@ -52,7 +52,7 @@ const DemographicsForm = () => {
 
   const navigate = useNavigate();
 
-  const progress = (6 / 6) * 100;
+  const progress = (7 / 7) * 100;
 
   const handleChange = (e) => {
     const { name, value } = e.target;

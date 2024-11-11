@@ -14,7 +14,7 @@ const SkillsForm = ({ onNext }) => {
     },
   ]);
 
-  const progress = (5 / 6) * 100;
+  const progress = (5 / 7) * 100;
 
   const handleAddLanguage = () => {
     setLanguages([

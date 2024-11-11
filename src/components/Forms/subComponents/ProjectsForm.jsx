@@ -31,7 +31,7 @@ const ProjectsForm = ({ onNext }) => {
     });
   };
 
-  const progress = (4 / 6) * 100;
+  const progress = (6 / 7) * 100;
 
   return (
     <div className="ml-2 mr-10">

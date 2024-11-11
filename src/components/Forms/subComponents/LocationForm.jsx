@@ -21,7 +21,7 @@ const LocationForm = ({ onNext }) => {
     onNext(formData);
   };
 
-  const progress = (2 / 6) * 100;
+  const progress = (2 / 7) * 100;
 
   return (
     <div className="ml-2 mr-10">
