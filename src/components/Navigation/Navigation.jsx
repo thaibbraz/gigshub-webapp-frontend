@@ -73,13 +73,11 @@ const Navigation = ({ className }) => {
             className={`flex ${
               isExpanded ? "justify-start" : "justify-center"
             } items-center space-x-4 cursor-pointer`}
-            onClick={() => handleClick("userdashboard")}
+            onClick={() => handleClick("dashboard")}
           >
             <img
               src={
-                activePage === "userdashboard"
-                  ? homepageIcon
-                  : homepageIconLight
+                activePage === "dashboard" ? homepageIcon : homepageIconLight
               }
               alt="Homepage"
               className="h-6 w-6"
@@ -142,7 +140,7 @@ const Navigation = ({ className }) => {
                     : "text-light-liliac"
                 }`}
               >
-                AI Job Match
+                Apply
               </span>
             )}
           </div>

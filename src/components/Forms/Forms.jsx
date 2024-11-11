@@ -3,12 +3,11 @@ import PersonalDetailsForm from "./subComponents/PersonalDetailsForm";
 import ExperienceForm from "./subComponents/ExperienceForm";
 import SkillsForm from "./subComponents/SkillsForm";
 
-const Forms = () => {
+const Forms = ({ formData, onSetFormData }) => {
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({});
 
   const handleNext = (data) => {
-    setFormData({ ...formData, ...data });
+    onSetFormData({ ...formData, ...data });
     setStep((prevStep) => {
       return prevStep + 1;
     });
