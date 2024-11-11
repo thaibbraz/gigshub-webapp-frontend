@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Dropdown from "../../Dropdown/Dropdown";
 
 const LocationForm = ({ onNext }) => {
   const [formData, setFormData] = useState({
@@ -54,6 +55,19 @@ const LocationForm = ({ onNext }) => {
 
                 <div className="flex flex-col">
                   <label className="text-light-liliac text-sm mb-2">
+                    State
+                  </label>
+                  <input
+                    name="state"
+                    value={formData.state}
+                    onChange={handleChange}
+                    placeholder="State"
+                    className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-light-liliac text-sm mb-2">
                     Country
                   </label>
                   <input
@@ -61,6 +75,43 @@ const LocationForm = ({ onNext }) => {
                     value={formData.country}
                     onChange={handleChange}
                     placeholder="Country"
+                    className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-light-liliac text-sm mb-2">
+                    Postal code
+                  </label>
+                  <input
+                    name="zip"
+                    value={formData.zip}
+                    onChange={handleChange}
+                    placeholder="Postal code"
+                    className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-light-liliac text-sm mb-2">
+                    Do you have the legal right to work in your country?
+                  </label>
+                  <Dropdown
+                    options={["Yes", "No"]}
+                    handleChange={handleChange}
+                    fieldName={"authorization"}
+                    className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-light-liliac text-sm mb-2">
+                    Will you require visa sponsorship?
+                  </label>
+                  <Dropdown
+                    options={["Yes", "No"]}
+                    handleChange={handleChange}
+                    fieldName={"sponsorship"}
                     className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
                   />
                 </div>

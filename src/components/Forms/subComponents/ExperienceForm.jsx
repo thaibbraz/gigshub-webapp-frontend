@@ -6,9 +6,10 @@ const ExperienceForm = ({ onNext }) => {
     {
       id: Date.now(),
       company: "",
-      jobTitle: "",
+      title: "",
       startDate: "",
       endDate: "",
+      description: "",
       currentWorkplace: false,
     },
   ]);
@@ -19,7 +20,7 @@ const ExperienceForm = ({ onNext }) => {
       {
         id: Date.now(),
         company: "",
-        jobTitle: "",
+        title: "",
         startDate: "",
         endDate: "",
         currentWorkplace: false,
@@ -41,7 +42,7 @@ const ExperienceForm = ({ onNext }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onNext({ previous_experience: experienceList });
+    onNext({ experience: experienceList });
   };
 
   const progress = (4 / 6) * 100;
@@ -49,7 +50,7 @@ const ExperienceForm = ({ onNext }) => {
   return (
     <div className="ml-2 mr-10">
       <div className="w-full px-9">
-        <div className="flex flex-col bg-white rounded-xl p-10 ml-10 w-full max-w-7xl h-[calc(100vh-28px)]">
+        <div className="flex flex-col bg-white rounded-xl p-10 ml-10 w-full max-w-7xl h-[calc(100vh-28px)] overflow-y-scroll">
           <div className="relative w-12/12 h-3 bg-white rounded-lg mb-6 ml-2">
             <div
               className="absolute h-full bg-lime-green rounded-lg transition-all duration-500"

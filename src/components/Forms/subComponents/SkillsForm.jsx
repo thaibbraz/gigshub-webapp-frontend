@@ -1,32 +1,62 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import searchIcon from "../../../assets/searchIcon.svg";
+import LanguageRow from "./LanguageRow";
 
 const SkillsForm = ({ onNext }) => {
-  const [selectedSkills, setSelectedSkills] = useState([]);
+  const [skills, setSkills] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [limitReached, setLimitReached] = useState(false);
+  const [languages, setLanguages] = useState([
+    {
+      id: Date.now(),
+      language: "",
+      level: "",
+    },
+  ]);
 
   const progress = (5 / 6) * 100;
 
+  const handleAddLanguage = () => {
+    setLanguages([
+      ...languages,
+      {
+        id: Date.now(),
+        language: "",
+        level: "",
+      },
+    ]);
+  };
+
+  const handleDeleteLanguage = (id) => {
+    setLanguages(languages.filter((l) => l.id !== id));
+  };
+
+  const handleLanguageChange = (id, field, value) => {
+    setLanguages(
+      languages.map((l) => (l.id === id ? { ...l, [field]: value } : id))
+    );
+  };
+
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    if (
-      searchTerm &&
-      !selectedSkills.includes(searchTerm) &&
-      selectedSkills.length < 10
-    ) {
-      setSelectedSkills([...selectedSkills, searchTerm]);
+    if (searchTerm && !skills.includes(searchTerm) && skills.length < 10) {
+      setSkills([...skills, searchTerm]);
       setSearchTerm(""); // Clear search input after adding the skill
       setLimitReached(false);
-    } else if (selectedSkills.length >= 10) {
+    } else if (skills.length >= 10) {
       setLimitReached(true); // Show message if 10 skills are reached
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onNext({ skills: selectedSkills });
+    onNext({
+      skills,
+      languages: languages.map((l) => ({
+        language: l.language,
+        level: l.level,
+      })),
+    });
   };
 
   return (
@@ -48,7 +78,10 @@ const SkillsForm = ({ onNext }) => {
           </p>
 
           {/* Search bar */}
-          <form className="flex flex-col items-center" onSubmit={handleSubmit}>
+          <form
+            className="flex flex-col items-center"
+            onSubmit={handleSearchSubmit}
+          >
             <div className="relative w-1/3">
               <input
                 type="text"
@@ -71,9 +104,8 @@ const SkillsForm = ({ onNext }) => {
               />
             </div>
 
-            {/* Skills list */}
             <div className="flex flex-wrap justify-center gap-4 mb-8">
-              {selectedSkills.map((skill, index) => (
+              {skills.map((skill, index) => (
                 <div
                   key={index}
                   className="flex items-center justify-center bg-soft-liliac rounded-lg py-2 px-4 text-sm h-auto"
@@ -84,12 +116,39 @@ const SkillsForm = ({ onNext }) => {
               ))}
             </div>
 
+            <p className="text-center text-sm mb-8 text-dark-purple">
+              Add any languages you speak, and your level.
+            </p>
+            {languages.map((lang) => (
+              <LanguageRow
+                key={lang.id}
+                formData={lang}
+                onChange={(field, value) =>
+                  handleLanguageChange(lang.id, field, value)
+                }
+                onDelete={() => handleDeleteLanguage(lang.id)}
+              />
+            ))}
+
+            <div className="lg:col-span-4 flex md:col-span-2 sm:col-span-1 xs:col-span-1 mc:col-span-1 flex justify-center mt-4">
+              <button
+                type="button"
+                onClick={handleAddLanguage}
+                className="text-light-purple border-pale-purple border-2 rounded-2xl px-3 py-2 hover:bg-pale-purple"
+              >
+                Add Language
+              </button>
+            </div>
+
             <div className="lg:col-span-4 flex md:col-span-2 sm:col-span-1 xs:col-span-1 mc:col-span-1 flex justify-center mt-4">
               <button
                 className="flex items-center justify-center h-input mt-4 py-6 px-1 rounded-3xl border-2 border-pale-purple"
                 type="submit"
               >
-                <div className="flex items-center justify-center w-buttonSize h-input bg-dark-blue rounded-2xl border-5">
+                <div
+                  className="flex items-center justify-center w-buttonSize h-input bg-dark-blue rounded-2xl border-5"
+                  onClick={handleSubmit}
+                >
                   <span className="text-sm text-white font-normal">
                     Continue
                   </span>

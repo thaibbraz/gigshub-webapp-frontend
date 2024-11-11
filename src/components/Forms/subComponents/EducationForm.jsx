@@ -3,9 +3,9 @@ import Dropdown from "../../Dropdown/Dropdown";
 
 const EducationForm = ({ onNext }) => {
   const [formData, setFormData] = useState({
-    highest_degree: "",
-    institution_name: "",
-    graduation_year: "",
+    degree: "",
+    institution: "",
+    date: "",
     major: "",
   });
   const degreeOptions = [
@@ -14,7 +14,7 @@ const EducationForm = ({ onNext }) => {
     "Post-graduate degree",
     "Technical certification",
   ];
-  const fieldName = "highest_degree";
+  const fieldName = "degree";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,8 +69,8 @@ const EducationForm = ({ onNext }) => {
                   Institution name
                 </label>
                 <input
-                  name="institution_name"
-                  value={formData.institution_name}
+                  name="institution"
+                  value={formData.institution}
                   onChange={handleChange}
                   placeholder="Institution name"
                   className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
@@ -95,8 +95,8 @@ const EducationForm = ({ onNext }) => {
                   Graduation year
                 </label>
                 <input
-                  name="graduation_year"
-                  value={formData.graduation_year}
+                  name="date"
+                  value={formData.date}
                   onChange={handleChange}
                   placeholder="YYYY"
                   className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"

@@ -63,7 +63,18 @@ const ExperienceRow = ({ formData, onChange, onDelete }) => {
         </button>
       </div>
 
-      <div className="col-span-4 flex items-center mt-2">
+      <div className="flex flex-col col-span-4 mt-4">
+        <label className="text-light-liliac text-sm mb-2">Description</label>
+        <textarea
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          placeholder="Describe your role"
+          className={`border border-gray-300 rounded-2xl h-18 py-3 px-4 shadow dark-blue`}
+        />
+      </div>
+
+      <div className="col-span-4 flex items-center mt-4">
         <input
           type="checkbox"
           name="currentWorkplace"

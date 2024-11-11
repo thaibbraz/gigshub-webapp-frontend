@@ -251,17 +251,6 @@ const PersonalDetailsForm = ({ onNext }) => {
                 </div>
 
                 <div className="flex flex-col">
-                  <label className="text-light-liliac text-sm mb-2">City</label>
-                  <input
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    placeholder="City"
-                    className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
-                  />
-                </div>
-
-                <div className="flex flex-col">
                   <label className="text-light-liliac text-sm mb-2">
                     LinkedIn
                   </label>
