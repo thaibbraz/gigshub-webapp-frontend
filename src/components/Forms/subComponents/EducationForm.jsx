@@ -1,28 +1,30 @@
 import React, { useState } from "react";
-import Dropdown from "../../Dropdown/Dropdown";
+import EducationRow from "./EducationRow";
 import ProgressBar from "./ProgressBar";
 
-const EducationForm = ({ onNext }) => {
-  const [formData, setFormData] = useState({
+const EducationForm = ({ onNext, data }) => {
+  const EMPTY_EDUCATION = {
+    id: Date.now(),
     degree: "",
     institution: "",
     date: "",
     major: "",
-  });
-  const degreeOptions = [
-    "High school diploma",
-    "4-year university degree",
-    "Post-graduate degree",
-    "Technical certification",
-  ];
-  const fieldName = "degree";
+  };
+  const [formData, setFormData] = useState(EMPTY_EDUCATION);
+  const [education, setEducation] = useState(data ? data : [EMPTY_EDUCATION]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+  const handleAddEducation = () => {
+    setEducation([...education, EMPTY_EDUCATION]);
+  };
+
+  const handleDeleteEducation = (id) => {
+    setEducation(education.filter((ed) => ed.id !== id));
+  };
+
+  const handleEducationChange = (id, field, value) => {
+    setEducation(
+      education.map((ed) => (ed.id === id ? { ...ed, [field]: value } : ed))
+    );
   };
 
   const handleSubmit = (e) => {
@@ -46,58 +48,28 @@ const EducationForm = ({ onNext }) => {
             </p>
             <form
               onSubmit={handleSubmit}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-x-8 gap-y-6 mx-auto w-full max-w-4xl"
+              className="w-full max-w-4xl mx-auto space-y-6"
             >
-              <div className="flex flex-col">
-                <label className="text-light-liliac text-sm mb-2">
-                  Highest degree achieved
-                </label>
-                <Dropdown
-                  options={degreeOptions}
-                  handleChange={handleChange}
-                  fieldName={fieldName}
-                  className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+              {education.map((e) => (
+                <EducationRow
+                  formData={e}
+                  onChange={(field, value) =>
+                    handleEducationChange(e.id, field, value)
+                  }
+                  onDelete={() => handleDeleteEducation(e.id)}
                 />
+              ))}
+
+              <div className="lg:col-span-4 flex md:col-span-2 sm:col-span-1 xs:col-span-1 mc:col-span-1 flex justify-center mt-4">
+                <button
+                  type="button"
+                  onClick={handleAddEducation}
+                  className="text-light-purple border-pale-purple border-2 rounded-2xl px-3 py-2 hover:bg-pale-purple"
+                >
+                  Add Education
+                </button>
               </div>
 
-              <div className="flex flex-col">
-                <label className="text-light-liliac text-sm mb-2">
-                  Institution name
-                </label>
-                <input
-                  name="institution"
-                  value={formData.institution}
-                  onChange={handleChange}
-                  placeholder="Institution name"
-                  className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
-                />
-              </div>
-
-              <div className="flex flex-col">
-                <label className="text-light-liliac text-sm mb-2">
-                  Field of study
-                </label>
-                <input
-                  name="major"
-                  value={formData.major}
-                  onChange={handleChange}
-                  placeholder="Field of study"
-                  className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
-                />
-              </div>
-
-              <div className="flex flex-col">
-                <label className="text-light-liliac text-sm mb-2">
-                  Graduation year
-                </label>
-                <input
-                  name="date"
-                  value={formData.date}
-                  onChange={handleChange}
-                  placeholder="YYYY"
-                  className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
-                />
-              </div>
               <div className="lg:col-span-4 flex md:col-span-2 sm:col-span-1 xs:col-span-1 mc:col-span-1 flex justify-center mt-4">
                 <button
                   className="flex items-center justify-center h-input mt-4 py-6 px-1 rounded-3xl border-2 border-pale-purple"

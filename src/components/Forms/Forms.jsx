@@ -21,9 +21,38 @@ const Forms = ({ formData, onSetFormData }) => {
   return (
     <div>
       {step === 1 && <CVUpload onNext={handleNext} />}
-      {step === 2 && <PersonalDetailsForm onNext={handleNext} />}
-      {step === 3 && <LocationForm onNext={handleNext} />}
-      {step === 4 && <EducationForm onNext={handleNext} />}
+
+      {step === 2 && (
+        <PersonalDetailsForm
+          onNext={handleNext}
+          data={{
+            "first name": formData["first name"],
+            "last name": formData["last name"],
+            email: formData.email,
+            phone: formData.phone,
+            linkedin: formData.linkedin,
+            github: formData.github,
+            website: formData.website,
+          }}
+        />
+      )}
+
+      {step === 3 && (
+        <LocationForm
+          onNext={handleNext}
+          data={{
+            city: formData.city,
+            state: formData.state,
+            country: formData.country,
+            zip: formData.zip,
+            authorization: formData.authorization,
+            sponsorship: formData.sponsorship,
+          }}
+        />
+      )}
+      {step === 4 && (
+        <EducationForm onNext={handleNext} data={formData.education} />
+      )}
       {step === 5 && <ExperienceForm onNext={handleNext} />}
       {step === 6 && <SkillsForm onNext={handleNext} />}
       {step === 7 && <ProjectsForm onNext={handleNext} />}

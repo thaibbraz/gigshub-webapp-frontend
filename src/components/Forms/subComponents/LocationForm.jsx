@@ -2,15 +2,8 @@ import React, { useState } from "react";
 import Dropdown from "../../Dropdown/Dropdown";
 import ProgressBar from "./ProgressBar";
 
-const LocationForm = ({ onNext }) => {
-  const [formData, setFormData] = useState({
-    city: "",
-    state: "",
-    country: "",
-    zip: "",
-    authorization: "",
-    sponsorship: "",
-  });
+const LocationForm = ({ onNext, data }) => {
+  const [formData, setFormData] = useState(data);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

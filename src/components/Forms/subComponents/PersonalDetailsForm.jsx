@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import ProgressBar from "./ProgressBar";
 
-const PersonalDetailsForm = ({ onNext }) => {
-  const [formData, setFormData] = useState({});
+const PersonalDetailsForm = ({ onNext, data }) => {
+  const [formData, setFormData] = useState({ data });
 
   const handleChange = () => {};
 
@@ -22,83 +22,7 @@ const PersonalDetailsForm = ({ onNext }) => {
             <h2 className="text-3xl font-bold text-dark-blue text-center mb-4">
               Personal Details
             </h2>
-            {/* {pdfFile != null && resumeText === null ? (
-              <p className="text-center text-sm mb-8 text-dark-purple">
-                Retrieving your data ... This process will take a while
-              </p>
-            ) : (
-              <p className="text-center text-sm mb-8 text-dark-purple">
-                Please upload your CV
-              </p>
-            )}
-            {pdfFile != null && resumeText !== null ? (
-              <p className="text-center text-sm mb-8 text-dark-purple">Done!</p>
-            ) : (
-              <p className="text-center text-sm mb-8 text-dark-purple"></p>
-            )}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-x-8 gap-y-6 mx-auto w-full max-w-4xl">
-              <div className="flex flex-col">
-                <label className="text-light-liliac text-sm mb-2">
-                  Ideal job location
-                </label>
-                <input
-                  name="job_location"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Job location"
-                  className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
-                />
-              </div>
 
-              <div className="flex flex-col">
-                <label className="text-light-liliac text-sm mb-2">
-                  Job title
-                </label>
-                <input
-                  name="job_title"
-                  value={jobTitle}
-                  onChange={(e) => setJobTitle(e.target.value)}
-                  placeholder="Job title"
-                  className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
-                />
-              </div>
-            </div>
-
-            <form
-              onSubmit={handleSubmit}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-6 mx-auto w-full max-w-4xl"
-            >
-              
-
-              <div className="py-8 pl-2 flex flex-col">
-                <label className="text-light-liliac text-sm mb-2">
-                  Upload Resume
-                </label>
-                <input
-                  type="file"
-                  className="w-auto"
-                  accept="application/pdf"
-                  onChange={handleFileUpload}
-                />
-              </div>
-
-
-              <div className="lg:col-span-4 sm:col-span-2 mc:col-span-1 flex justify-center mt-4">
-                <button
-                  className="flex items-center justify-center h-input mt-4 py-6 px-1 rounded-3xl border-2 border-pale-purple"
-                  type="submit"
-                > 
-                {pdfFile != null && resumeText === null ? (
-                  <button
-                    disabled
-                    className="flex items-center justify-center w-buttonSize h-input bg-dark-blue rounded-2xl border-5 cursor-not-allowed opacity-50"
-                  >
-                    <span className="text-sm text-white font-normal">
-                      Continue
-                    </span>
-                  </button>
-                ) : null} */}
-            {/* </form> */}
             <p className="text-center text-sm mb-8 text-dark-purple">
               Please fill out your personal information
             </p>
@@ -110,8 +34,8 @@ const PersonalDetailsForm = ({ onNext }) => {
                     First name
                   </label>
                   <input
-                    name="first_name"
-                    value={formData.first_name}
+                    name="first name"
+                    value={formData["first name"]}
                     onChange={handleChange}
                     placeholder="First name"
                     className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
@@ -123,8 +47,8 @@ const PersonalDetailsForm = ({ onNext }) => {
                     Last name
                   </label>
                   <input
-                    name="last_name"
-                    value={formData.last_name}
+                    name="last name"
+                    value={formData["last name"]}
                     onChange={handleChange}
                     placeholder="Last Name"
                     className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
