@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Dropdown from "../../Dropdown/Dropdown";
+import ProgressBar from "./ProgressBar";
 
 const DemographicsForm = () => {
   const [formData, setFormData] = useState({
@@ -52,7 +53,7 @@ const DemographicsForm = () => {
 
   const navigate = useNavigate();
 
-  const progress = (7 / 7) * 100;
+  const progress = (8 / 8) * 100;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,12 +70,7 @@ const DemographicsForm = () => {
   return (
     <div className="ml-2 mr-10">
       <div className="flex flex-col bg-white rounded-xl p-10 ml-10 maincontainer w-full max-w-7xl h-[calc(100vh-28px)]">
-        <div className="relative w-full h-3 bg-white rounded-lg mb-6 ml-2">
-          <div
-            className="absolute h-full bg-lime-green rounded-lg transition-all duration-500"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
+        <ProgressBar progress={progress} />
 
         <div className="w-full mt-24 mx-auto">
           <h2 className="text-3xl font-bold text-dark-blue text-center mb-4">

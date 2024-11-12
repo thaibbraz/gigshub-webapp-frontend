@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ProjectRow from "./ProjectRow";
+import ProgressBar from "./ProgressBar";
 
 const ProjectsForm = ({ onNext }) => {
   const EMPTY_PROJECT = {
@@ -31,18 +32,13 @@ const ProjectsForm = ({ onNext }) => {
     });
   };
 
-  const progress = (6 / 7) * 100;
+  const progress = (7 / 8) * 100;
 
   return (
     <div className="ml-2 mr-10">
       <div className="w-full px-9">
         <div className="flex flex-col bg-white rounded-xl p-10 ml-10 w-full max-w-7xl h-[calc(100vh-28px)] overflow-y-scroll">
-          <div className="relative w-12/12 h-3 bg-white rounded-lg mb-6 ml-2">
-            <div
-              className="absolute h-full bg-lime-green rounded-lg transition-all duration-500"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
+          <ProgressBar progress={progress} />
           <div className="w-full mt-28">
             <h2 className="text-3xl font-bold text-dark-blue text-center mb-4">
               Projects

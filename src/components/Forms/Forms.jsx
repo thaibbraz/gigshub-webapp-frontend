@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import CVUpload from "./subComponents/CVUpload";
 import PersonalDetailsForm from "./subComponents/PersonalDetailsForm";
 import LocationForm from "./subComponents/LocationForm";
 import EducationForm from "./subComponents/EducationForm";
@@ -19,13 +20,14 @@ const Forms = ({ formData, onSetFormData }) => {
 
   return (
     <div>
-      {step === 1 && <PersonalDetailsForm onNext={handleNext} />}
-      {step === 2 && <LocationForm onNext={handleNext} />}
-      {step === 3 && <EducationForm onNext={handleNext} />}
-      {step === 4 && <ExperienceForm onNext={handleNext} />}
-      {step === 5 && <SkillsForm onNext={handleNext} />}
-      {step === 6 && <ProjectsForm onNext={handleNext} />}
-      {step === 7 && <DemographicsForm onNext={handleNext} />}
+      {step === 1 && <CVUpload onNext={handleNext} />}
+      {step === 2 && <PersonalDetailsForm onNext={handleNext} />}
+      {step === 3 && <LocationForm onNext={handleNext} />}
+      {step === 4 && <EducationForm onNext={handleNext} />}
+      {step === 5 && <ExperienceForm onNext={handleNext} />}
+      {step === 6 && <SkillsForm onNext={handleNext} />}
+      {step === 7 && <ProjectsForm onNext={handleNext} />}
+      {step === 8 && <DemographicsForm onNext={handleNext} />}
     </div>
   );
 };

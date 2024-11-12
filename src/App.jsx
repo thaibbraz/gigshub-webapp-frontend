@@ -15,10 +15,10 @@ import { AuthProvider } from "./context/AuthContext";
 import { Navigate } from "react-router-dom";
 
 function App() {
-  const [formData, setFormData] = useState({}); // Initialize formData
+  const [formData, setFormData] = useState({});
 
   const handleFormDataChange = (data) => {
-    setFormData(data); // Update formData when form is submitted
+    setFormData(data);
   };
   return (
     <AuthProvider>
@@ -30,12 +30,14 @@ function App() {
             <Route path="/signup" element={<Signup />} />
 
             {/* only available to logged-in users */}
-<<<<<<< HEAD
             <Route element={<ProtectedRoute />}>
               <Route
                 path="/forms"
                 element={
-                  <Forms formData={formData} onSetFormData={setFormData} />
+                  <Forms
+                    formData={formData}
+                    onSetFormData={handleFormDataChange}
+                  />
                 }
               />
               <Route
@@ -48,17 +50,6 @@ function App() {
               <Route path="/ai-job-match" element={<AIJobMatch />} />
               <Route path="/settings" element={<Settings />} />
             </Route>
-=======
-            {/* <Route element={<ProtectedRoute />}> */}
-            <Route path="/forms" element={<Forms />} />
-            <Route path="/dashboard" element={<UserDashboard />} />
-            <Route path="/jobs" element={<Dashboard />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/welcome" element={<Explanation />} />
-            <Route path="/ai-job-match" element={<AIJobMatch />} />
-            <Route path="/settings" element={<Settings />} />
-            {/* </Route> */}
->>>>>>> b2045b6 (WIP: add multiple experience)
           </Route>
         </Routes>
       </Router>

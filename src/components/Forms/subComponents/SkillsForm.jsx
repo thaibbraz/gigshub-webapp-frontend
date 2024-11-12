@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import searchIcon from "../../../assets/searchIcon.svg";
 import LanguageRow from "./LanguageRow";
+import ProgressBar from "./ProgressBar";
 
 const SkillsForm = ({ onNext }) => {
   const [skills, setSkills] = useState([]);
@@ -14,7 +15,7 @@ const SkillsForm = ({ onNext }) => {
     },
   ]);
 
-  const progress = (5 / 7) * 100;
+  const progress = (6 / 8) * 100;
 
   const handleAddLanguage = () => {
     setLanguages([
@@ -62,12 +63,7 @@ const SkillsForm = ({ onNext }) => {
   return (
     <div className="ml-2 mr-10">
       <div className="flex flex-col bg-white rounded-xl p-10 ml-10 maincontainer w-full max-w-7xl h-[calc(100vh-28px)]">
-        <div className="relative w-full h-3 bg-white rounded-lg mb-6 ml-2">
-          <div
-            className="absolute h-full bg-lime-green rounded-lg transition-all duration-500"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
+        <ProgressBar progress={progress} />
 
         <div className="w-full mt-24">
           <h2 className="text-3xl font-bold text-dark-blue text-center mb-4">
