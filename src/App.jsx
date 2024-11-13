@@ -15,7 +15,58 @@ import { AuthProvider } from "./context/AuthContext";
 import { Navigate } from "react-router-dom";
 
 function App() {
-  const [formData, setFormData] = useState({});
+  const sampleData = {
+    jobTitle: "software engineer",
+    location: "Spain",
+    "first name": "Zoe",
+    "last name": "Laventhol",
+    email: "zoe.lavethol@gmail.com",
+    phone: "1234567",
+    linkedin: "fenfjewr",
+    github: "xcvbnm",
+    website: "qwerty",
+    ethnicity: "white",
+    gender: "female",
+    lgbtq: "bi",
+    authorization: "",
+    sponsorship: "",
+    address: "",
+    city: "Oakland",
+    state: "CA",
+    zip: "",
+
+    experiences: [
+      {
+        title: "Climate Programs Director",
+        date: "July 2019 – July 2021",
+        company: "Bay Area Community Resources",
+        location: "El Cerrito, California, USA",
+        description:
+          "Led 50% program growth and increased retention by 14%, and supported launch of a second program California Climate Action Corps with the Governor's office, for over 60 participants. Managed over 50 Fellows placed in over 30 climate projects across California. Streamlined operations through automation in Salesforce and other tools, saving significant staff time.",
+      },
+      { company: "Bay Area Community Resources", date: "Se…" },
+    ],
+
+    education: [
+      {
+        date: "December 2022",
+        degree: "Certificate in Ful…",
+        institution: "asdfgh",
+        major: "qwerty",
+      },
+      { date: "September 2015", degree: "Bachelor of Arts …" },
+    ],
+
+    skills: ["Python", "C", "Java"],
+    languages: [
+      { language: "English", level: "native" },
+      { language: "Portuguese", level: "advanced" },
+      { language: "Spanish", level: "advanced" },
+    ],
+
+    projects: [],
+  };
+  const [formData, setFormData] = useState(sampleData);
 
   const handleFormDataChange = (data) => {
     setFormData(data);

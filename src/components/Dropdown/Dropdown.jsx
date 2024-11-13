@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Dropdown = ({ options, fieldName, handleChange }) => {
+const Dropdown = ({ options, fieldName, handleChange, defaultValue }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
 
@@ -25,7 +25,7 @@ const Dropdown = ({ options, fieldName, handleChange }) => {
         aria-haspopup="true"
       >
         <span className="text-gray-400 font-semibold">
-          {selectedOption || "Options"}
+          {selectedOption || defaultValue || "Options"}
         </span>
         <svg
           className="h-5 w-5 text-gray-400"

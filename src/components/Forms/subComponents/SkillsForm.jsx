@@ -1,31 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import searchIcon from "../../../assets/searchIcon.svg";
-import LanguageRow from "./LanguageRow";
 import ProgressBar from "./ProgressBar";
+import Languages from "./Languages";
 
-const SkillsForm = ({ onNext }) => {
-  const [skills, setSkills] = useState([]);
+const SkillsForm = ({ onNext, skillsData, languageData }) => {
+  const EMTPY_LANG = {
+    id: Date.now(),
+    language: "",
+    level: "",
+  };
+  const [skills, setSkills] = useState(skillsData.length ? skillsData : []);
   const [searchTerm, setSearchTerm] = useState("");
   const [limitReached, setLimitReached] = useState(false);
-  const [languages, setLanguages] = useState([
-    {
-      id: Date.now(),
-      language: "",
-      level: "",
-    },
-  ]);
+  const [languages, setLanguages] = useState(
+    languageData.length
+      ? languageData.map((l, index) => ({ ...l, id: l.id || index }))
+      : [EMTPY_LANG]
+  );
 
   const progress = (6 / 8) * 100;
 
   const handleAddLanguage = () => {
-    setLanguages([
-      ...languages,
-      {
-        id: Date.now(),
-        language: "",
-        level: "",
-      },
-    ]);
+    setLanguages([...languages, EMTPY_LANG]);
   };
 
   const handleDeleteLanguage = (id) => {
@@ -34,7 +30,7 @@ const SkillsForm = ({ onNext }) => {
 
   const handleLanguageChange = (id, field, value) => {
     setLanguages(
-      languages.map((l) => (l.id === id ? { ...l, [field]: value } : id))
+      languages.map((l) => (l.id === id ? { ...l, [field]: value } : l))
     );
   };
 
@@ -53,16 +49,18 @@ const SkillsForm = ({ onNext }) => {
     e.preventDefault();
     onNext({
       skills,
-      languages: languages.map((l) => ({
-        language: l.language,
-        level: l.level,
-      })),
+      languages: languages
+        .filter((l) => l.language)
+        .map((l) => ({
+          language: l.language,
+          level: l.level,
+        })),
     });
   };
 
   return (
     <div className="ml-2 mr-10">
-      <div className="flex flex-col bg-white rounded-xl p-10 ml-10 maincontainer w-full max-w-7xl h-[calc(100vh-28px)]">
+      <div className="flex flex-col bg-white rounded-xl p-10 ml-10 maincontainer w-full max-w-7xl h-[calc(100vh-28px)] overflow-y-scroll">
         <ProgressBar progress={progress} />
 
         <div className="w-full mt-24">
@@ -112,29 +110,12 @@ const SkillsForm = ({ onNext }) => {
               ))}
             </div>
 
-            <p className="text-center text-sm mb-8 text-dark-purple">
-              Add any languages you speak, and your level.
-            </p>
-            {languages.map((lang) => (
-              <LanguageRow
-                key={lang.id}
-                formData={lang}
-                onChange={(field, value) =>
-                  handleLanguageChange(lang.id, field, value)
-                }
-                onDelete={() => handleDeleteLanguage(lang.id)}
-              />
-            ))}
-
-            <div className="lg:col-span-4 flex md:col-span-2 sm:col-span-1 xs:col-span-1 mc:col-span-1 flex justify-center mt-4">
-              <button
-                type="button"
-                onClick={handleAddLanguage}
-                className="text-light-purple border-pale-purple border-2 rounded-2xl px-3 py-2 hover:bg-pale-purple"
-              >
-                Add Language
-              </button>
-            </div>
+            <Languages
+              languages={languages}
+              handleAddLanguage={handleAddLanguage}
+              handleDeleteLanguage={handleDeleteLanguage}
+              handleLanguageChange={handleLanguageChange}
+            />
 
             <div className="lg:col-span-4 flex md:col-span-2 sm:col-span-1 xs:col-span-1 mc:col-span-1 flex justify-center mt-4">
               <button

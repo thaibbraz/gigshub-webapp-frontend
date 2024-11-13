@@ -2,31 +2,24 @@ import { useState } from "react";
 import ExperienceRow from "./ExperienceRow";
 import ProgressBar from "./ProgressBar";
 
-const ExperienceForm = ({ onNext }) => {
-  const [experienceList, setExperienceList] = useState([
-    {
-      id: Date.now(),
-      company: "",
-      title: "",
-      startDate: "",
-      endDate: "",
-      description: "",
-      currentWorkplace: false,
-    },
-  ]);
+const ExperienceForm = ({ onNext, data }) => {
+  const EMPTY_EXPERIENCE = {
+    id: Date.now(),
+    company: "",
+    title: "",
+    startDate: "",
+    endDate: "",
+    description: "",
+    currentWorkplace: false,
+  };
+  const [experienceList, setExperienceList] = useState(
+    data
+      ? data.map((ex, index) => ({ ...ex, id: ex.id || index }))
+      : [EMPTY_EXPERIENCE]
+  );
 
   const handleAddExperience = () => {
-    setExperienceList([
-      ...experienceList,
-      {
-        id: Date.now(),
-        company: "",
-        title: "",
-        startDate: "",
-        endDate: "",
-        currentWorkplace: false,
-      },
-    ]);
+    setExperienceList([...experienceList, EMPTY_EXPERIENCE]);
   };
 
   const handleDeleteExperience = (id) => {
@@ -43,7 +36,21 @@ const ExperienceForm = ({ onNext }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onNext({ experience: experienceList });
+    onNext({
+      experiences: experienceList
+        // keep only rows with data entered
+        .filter(
+          (e) => e.title || e.company || e.date || e.location || e.description
+        )
+        // remove the id & format date
+        .map((e) => ({
+          title: e.title,
+          date: `${e.startDate} - ${e.endDate}`,
+          company: e.company,
+          location: e.location,
+          description: e.description,
+        })),
+    });
   };
 
   const progress = (5 / 8) * 100;
@@ -64,7 +71,7 @@ const ExperienceForm = ({ onNext }) => {
               onSubmit={handleSubmit}
               className="w-full max-w-4xl mx-auto space-y-6"
             >
-              {experienceList.map((experience) => (
+              {experienceList.map((experience, i) => (
                 <ExperienceRow
                   key={experience.id}
                   formData={experience}

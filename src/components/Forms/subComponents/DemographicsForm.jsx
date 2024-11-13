@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import Dropdown from "../../Dropdown/Dropdown";
 import ProgressBar from "./ProgressBar";
 
-const DemographicsForm = () => {
+const DemographicsForm = ({ onNext, data }) => {
   const [formData, setFormData] = useState({
-    gender: "",
-    ethnicity: "",
-    veteran_status: "",
-    disability_status: "",
-    lgbt: "",
+    gender: data.gender || "",
+    ethnicity: data.ethnicity || "",
+    veteran_status: data.veteran_status || "",
+    disability_status: data.disability_status || "",
+    lgbtq: data.lgbtq || "",
   });
   const genderOptions = [
     "Male",
@@ -64,12 +64,13 @@ const DemographicsForm = () => {
   };
 
   const handleConfirm = () => {
+    onNext(formData);
     navigate("/dashboard");
   };
 
   return (
     <div className="ml-2 mr-10">
-      <div className="flex flex-col bg-white rounded-xl p-10 ml-10 maincontainer w-full max-w-7xl h-[calc(100vh-28px)]">
+      <div className="flex flex-col bg-white rounded-xl p-10 ml-10 maincontainer w-full max-w-7xl h-[calc(100vh-28px)] overflow-y-scroll">
         <ProgressBar progress={progress} />
 
         <div className="w-full mt-24 mx-auto">
@@ -88,7 +89,8 @@ const DemographicsForm = () => {
               <label className="text-light-liliac text-sm mb-2">Gender</label>
               <Dropdown
                 options={genderOptions}
-                fieldName={formData.gender}
+                fieldName="gender"
+                defaultValue={formData.gender}
                 handleChange={handleChange}
                 className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-full shadow dark-blue"
               />
@@ -100,7 +102,8 @@ const DemographicsForm = () => {
               </label>
               <Dropdown
                 options={ethnicityOptions}
-                fieldName={formData.ethnicity}
+                fieldName="ethnicity"
+                defaultValue={formData.ethnicity}
                 handleChange={handleChange}
                 className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-full shadow dark-blue"
               />
@@ -112,7 +115,8 @@ const DemographicsForm = () => {
               </label>
               <Dropdown
                 options={veteranOptions}
-                fieldName={formData.veteran_status}
+                fieldName="veteran_status"
+                defaultValue={formData.veteran_status}
                 handleChange={handleChange}
                 className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-full shadow dark-blue"
               />
@@ -124,7 +128,8 @@ const DemographicsForm = () => {
               </label>
               <Dropdown
                 options={disabilityOptions}
-                fieldName={formData.disability_status}
+                fieldName="disability_status"
+                defaultValue={formData.disability_status}
                 handleChange={handleChange}
                 className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-full shadow dark-blue"
               />
@@ -136,7 +141,8 @@ const DemographicsForm = () => {
               </label>
               <Dropdown
                 options={lgbtOptions}
-                fieldName={formData.lgbt}
+                fieldName="lgbtq"
+                defaultValue={formData.lgbtq}
                 handleChange={handleChange}
                 className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-full shadow dark-blue"
               />

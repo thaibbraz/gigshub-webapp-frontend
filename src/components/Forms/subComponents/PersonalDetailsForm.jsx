@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import ProgressBar from "./ProgressBar";
 
 const PersonalDetailsForm = ({ onNext, data }) => {
-  const [formData, setFormData] = useState({ data });
+  const [formData, setFormData] = useState(data);
 
-  const handleChange = () => {};
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((state) => ({ ...state, [name]: value }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();

@@ -18,12 +18,20 @@ const EducationRow = ({ formData, onChange, onDelete }) => {
     <div className="grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-x-4 w-full border-b-2 py-4">
       <div className="flex flex-col">
         <label className="text-light-liliac text-sm mb-2">Degree</label>
-        <Dropdown
-          options={degreeOptions}
-          handleChange={handleChange}
-          fieldName={fieldName}
-          className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
-        />
+        {formData.degree ? (
+          <input
+            type="text"
+            value={formData.degree}
+            className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+          />
+        ) : (
+          <Dropdown
+            options={degreeOptions}
+            handleChange={handleChange}
+            fieldName={fieldName}
+            className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+          />
+        )}
       </div>
 
       <div className="flex flex-col">
@@ -58,7 +66,7 @@ const EducationRow = ({ formData, onChange, onDelete }) => {
           name="date"
           value={formData.date}
           onChange={handleChange}
-          placeholder="YYYY"
+          placeholder="Month YYYY"
           className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
         />
       </div>

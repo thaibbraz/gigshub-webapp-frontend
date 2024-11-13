@@ -28,7 +28,9 @@ const ProjectsForm = ({ onNext }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onNext({
-      projects: projects.map((p) => `${p.title} ${p.url} ${p.description}`),
+      projects: projects
+        .filter((p) => p.title || p.url || p.description)
+        .map((p) => `${p.title} ${p.url} ${p.description}`),
     });
   };
 

@@ -63,8 +63,8 @@ const ExperienceRow = ({ formData, onChange, onDelete }) => {
         </button>
       </div>
 
-      <label className="text-light-liliac text-sm mb-2">Description</label>
       <div className="flex flex-col col-span-4 mt-4">
+        <label className="text-light-liliac text-sm mb-2">Description</label>
         <textarea
           name="description"
           value={formData.description}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import EducationRow from "./EducationRow";
 import ProgressBar from "./ProgressBar";
 
@@ -10,8 +10,11 @@ const EducationForm = ({ onNext, data }) => {
     date: "",
     major: "",
   };
-  const [formData, setFormData] = useState(EMPTY_EDUCATION);
-  const [education, setEducation] = useState(data ? data : [EMPTY_EDUCATION]);
+  const [education, setEducation] = useState(
+    data
+      ? data.map((ed, index) => ({ ...ed, id: ed.id || index }))
+      : [EMPTY_EDUCATION]
+  );
 
   const handleAddEducation = () => {
     setEducation([...education, EMPTY_EDUCATION]);
@@ -29,7 +32,19 @@ const EducationForm = ({ onNext, data }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onNext(formData);
+
+    onNext({
+      education: education
+        // keep only rows with data entered
+        .filter((e) => e.degree || e.institution || e.major)
+        // remove the id
+        .map((e) => ({
+          degree: e.degree,
+          institution: e.institution,
+          major: e.major,
+          date: e.date,
+        })),
+    });
   };
 
   const progress = (4 / 8) * 100;
@@ -52,6 +67,7 @@ const EducationForm = ({ onNext, data }) => {
             >
               {education.map((e) => (
                 <EducationRow
+                  key={e.id}
                   formData={e}
                   onChange={(field, value) =>
                     handleEducationChange(e.id, field, value)

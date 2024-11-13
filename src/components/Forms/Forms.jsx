@@ -53,10 +53,29 @@ const Forms = ({ formData, onSetFormData }) => {
       {step === 4 && (
         <EducationForm onNext={handleNext} data={formData.education} />
       )}
-      {step === 5 && <ExperienceForm onNext={handleNext} />}
-      {step === 6 && <SkillsForm onNext={handleNext} />}
-      {step === 7 && <ProjectsForm onNext={handleNext} />}
-      {step === 8 && <DemographicsForm onNext={handleNext} />}
+      {step === 5 && (
+        <ExperienceForm onNext={handleNext} data={formData.experiences} />
+      )}
+      {step === 6 && (
+        <SkillsForm
+          onNext={handleNext}
+          skillsData={formData.skills}
+          languageData={formData.languages}
+        />
+      )}
+      {step === 7 && (
+        <ProjectsForm onNext={handleNext} data={formData.projects} />
+      )}
+      {step === 8 && (
+        <DemographicsForm
+          onNext={handleNext}
+          data={{
+            ethnicity: formData.ethnicity,
+            gender: formData.gender,
+            lgbtq: formData.lgbtq,
+          }}
+        />
+      )}
     </div>
   );
 };
