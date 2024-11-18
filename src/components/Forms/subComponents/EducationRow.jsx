@@ -15,21 +15,21 @@ const EducationRow = ({ formData, onChange, onDelete }) => {
   };
 
   return (
-    <div className="grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-x-4 w-full border-b-2 py-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_auto] gap-x-4 gap-y-4 w-full border-b-2 py-4">
       <div className="flex flex-col">
         <label className="text-light-liliac text-sm mb-2">Degree</label>
         {formData.degree ? (
           <input
             type="text"
             value={formData.degree}
-            className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+            className="border border-gray-300 rounded-2xl h-input py-3 px-4 shadow dark-blue"
           />
         ) : (
           <Dropdown
             options={degreeOptions}
             handleChange={handleChange}
             fieldName={fieldName}
-            className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+            className="border border-gray-300 rounded-2xl h-input py-3 px-4 shadow dark-blue"
           />
         )}
       </div>
@@ -43,7 +43,7 @@ const EducationRow = ({ formData, onChange, onDelete }) => {
           value={formData.institution}
           onChange={handleChange}
           placeholder="Institution name"
-          className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+          className="border border-gray-300 rounded-2xl h-input py-3 px-4 shadow dark-blue"
         />
       </div>
 
@@ -54,7 +54,7 @@ const EducationRow = ({ formData, onChange, onDelete }) => {
           value={formData.major}
           onChange={handleChange}
           placeholder="Field of study"
-          className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+          className="border border-gray-300 rounded-2xl h-input py-3 px-4 shadow dark-blue"
         />
       </div>
 
@@ -67,7 +67,7 @@ const EducationRow = ({ formData, onChange, onDelete }) => {
           value={formData.date}
           onChange={handleChange}
           placeholder="Month YYYY"
-          className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-auto shadow dark-blue"
+          className="border border-gray-300 rounded-2xl h-input py-3 px-4 shadow dark-blue"
         />
       </div>
 

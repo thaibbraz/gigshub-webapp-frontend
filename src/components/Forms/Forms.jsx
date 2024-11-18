@@ -7,15 +7,28 @@ import ExperienceForm from "./subComponents/ExperienceForm";
 import SkillsForm from "./subComponents/SkillsForm";
 import ProjectsForm from "./subComponents/ProjectsForm";
 import DemographicsForm from "./subComponents/DemographicsForm";
+import { sendRequest } from "../../utils/api.js";
 
 const Forms = ({ formData, onSetFormData }) => {
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   const handleNext = (data) => {
     onSetFormData({ ...formData, ...data });
     setStep((prevStep) => {
       return prevStep + 1;
     });
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      await sendRequest(formData, "/client-info");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -59,8 +72,8 @@ const Forms = ({ formData, onSetFormData }) => {
       {step === 6 && (
         <SkillsForm
           onNext={handleNext}
-          skillsData={formData.skills}
-          languageData={formData.languages}
+          skillsData={formData.skills ? formData.skills[0].list : []}
+          languageData={formData.languages ? formData.languages : []}
         />
       )}
       {step === 7 && (
@@ -69,6 +82,7 @@ const Forms = ({ formData, onSetFormData }) => {
       {step === 8 && (
         <DemographicsForm
           onNext={handleNext}
+          handleSubmit={handleSubmit}
           data={{
             ethnicity: formData.ethnicity,
             gender: formData.gender,

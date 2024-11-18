@@ -20,8 +20,8 @@ const ExperienceRow = ({ formData, onChange, onDelete }) => {
       <div className="flex flex-col">
         <label className="text-light-liliac text-sm mb-2">Job title</label>
         <input
-          name="jobTitle"
-          value={formData.jobTitle}
+          name="title"
+          value={formData.title}
           onChange={handleChange}
           placeholder="Job title"
           className="border border-gray-300 rounded-2xl h-input py-3 px-4 w-full shadow dark-blue"

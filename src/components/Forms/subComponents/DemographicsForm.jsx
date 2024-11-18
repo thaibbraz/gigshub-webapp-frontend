@@ -3,14 +3,15 @@ import { useNavigate } from "react-router-dom";
 import Dropdown from "../../Dropdown/Dropdown";
 import ProgressBar from "./ProgressBar";
 
-const DemographicsForm = ({ onNext, data }) => {
-  const [formData, setFormData] = useState({
+const DemographicsForm = ({ onNext, data, handleSubmit }) => {
+  const INITIAL_FORM = {
     gender: data.gender || "",
     ethnicity: data.ethnicity || "",
     veteran_status: data.veteran_status || "",
     disability_status: data.disability_status || "",
     lgbtq: data.lgbtq || "",
-  });
+  };
+  const [formData, setFormData] = useState(INITIAL_FORM);
   const genderOptions = [
     "Male",
     "Female",
@@ -53,8 +54,6 @@ const DemographicsForm = ({ onNext, data }) => {
 
   const navigate = useNavigate();
 
-  const progress = (8 / 8) * 100;
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -65,8 +64,11 @@ const DemographicsForm = ({ onNext, data }) => {
 
   const handleConfirm = () => {
     onNext(formData);
+    handleSubmit();
     navigate("/dashboard");
   };
+
+  const progress = (8 / 8) * 100;
 
   return (
     <div className="ml-2 mr-10">

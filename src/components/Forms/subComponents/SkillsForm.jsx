@@ -48,7 +48,7 @@ const SkillsForm = ({ onNext, skillsData, languageData }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onNext({
-      skills,
+      // skills,
       languages: languages
         .filter((l) => l.language)
         .map((l) => ({

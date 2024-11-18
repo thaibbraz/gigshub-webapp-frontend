@@ -89,7 +89,7 @@ const PersonalDetailsForm = ({ onNext, data }) => {
                     LinkedIn
                   </label>
                   <input
-                    name="linkedin_url"
+                    name="linkedin"
                     value={formData.linkedin}
                     onChange={handleChange}
                     placeholder="LinkedIn profile"
@@ -102,7 +102,7 @@ const PersonalDetailsForm = ({ onNext, data }) => {
                     GitHub
                   </label>
                   <input
-                    name="github_url"
+                    name="github"
                     value={formData.github}
                     onChange={handleChange}
                     placeholder="GitHub profile"
