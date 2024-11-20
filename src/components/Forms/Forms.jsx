@@ -8,7 +8,7 @@ import SkillsForm from "./subComponents/SkillsForm";
 import ProjectsForm from "./subComponents/ProjectsForm";
 import DemographicsForm from "./subComponents/DemographicsForm";
 import { sendRequest } from "../../utils/api.js";
-
+import { database, ref, set }from "../../utils/firebase.js";
 const Forms = ({ formData, onSetFormData }) => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -20,21 +20,30 @@ const Forms = ({ formData, onSetFormData }) => {
     });
   };
 
-  const handleSubmit = async () => {
-    setLoading(true);
-    try {
-      const updatedFields = {};
-      for (let field in formData) {
-        if (formData[field]) {
-          updatedFields[field] = formData[field];
-        }
+    const handleSubmit = async () => {
+      setLoading(true);
+      try {
+          const updatedFields = {};
+          for (let field in formData) {
+              if (formData[field]) {
+                  updatedFields[field] = formData[field];
+              }
+          }
+
+          // Save to Firebase Realtime Database
+          const timestamp = Date.now(); // Generate a unique key
+          await set(ref(database, `formSubmissions/${timestamp}`), updatedFields);
+
+          // Optionally, send to your API as well
+          await sendRequest(updatedFields, "/client-info");
+
+          alert("Submission successful!");
+      } catch (error) {
+          console.error("Error submitting form: ", error);
+          alert("Error submitting the form. Please try again.");
+      } finally {
+          setLoading(false);
       }
-      await sendRequest(updatedFields, "/client-info");
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (

@@ -9,6 +9,7 @@ import Error from "../Error/Error.jsx";
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { getDatabase, ref, get, child } from "firebase/database";
+import { da } from "date-fns/locale";
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -24,6 +25,7 @@ const Login = () => {
       const firebaseConfig = {
 
     };
+    
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
@@ -31,11 +33,14 @@ const Login = () => {
     const provider = new GoogleAuthProvider();
 
     const db = getDatabase(app);
+
+   
     async function checkUserExists(userId) {
       try {
         console.log("Checking user with ID:", userId); // Debug log
         const dbRef = ref(db); // Reference to the database
-        const snapshot = await get(child(dbRef, `users/${userId}`)); // Path to the user node
+        console.log("Database reference:", dbRef);
+        const snapshot = await get(child(dbRef, `/`)); // Path to the user node
         
         console.log("Snapshot fetched:", snapshot); // Log the snapshot object
     
@@ -66,10 +71,12 @@ const Login = () => {
 
           // Redirect to Dashboard
           login();
-          if (!await checkUserExists(user.uid)) {
+          if (await checkUserExists(user.uid) === false) {
             navigate("/welcome");
+          }else{
+            navigate("/dashboard");
           }
-          navigate("/dashboard");
+          
       } catch (error) {
           console.error("Error during login:", error);
       }

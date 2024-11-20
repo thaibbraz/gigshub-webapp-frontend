@@ -35,6 +35,7 @@ const Navigation = ({ className }) => {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem("user");
     logout();
     navigate("/login");
   };

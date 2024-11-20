@@ -170,7 +170,7 @@ const CVUpload = ({ onNext }) => {
                       className="flex items-center justify-center w-buttonSize h-input bg-dark-blue rounded-2xl border-5 cursor-not-allowed opacity-50"
                     >
                       <span className="text-sm text-white font-normal">
-                        Continue
+                        Analysing your CV
                       </span>
                     </button>
                   ) : (
