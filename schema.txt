@@ -1,0 +1,59 @@
+YES "first name"
+YES "last name"
+YES "email"
+YES "phone"
+YES "linkedin"
+YES "github"
+YES "website"
+YES "ethnicity"
+YES "gender"
+YES "lgbtq"
+YES "authorization"
+YES "sponsorship"
+NO (n/a) "address"
+YES "city"
+YES "state"
+YES "zip"
+YES "experiences": [
+    {
+    YES "title"
+    NO (can convert: start date & end date) "date"
+    YES "company"
+    NO "location"
+    YES "description"
+    }
+],
+"education": [
+    {
+    YES "degree"
+    YES "date"
+    YES "institution"
+    }
+],
+YES "skills": [
+    {
+    NO "list": [
+        "Python",
+        "NodeJS",
+        "Java",
+        "JavaScript",
+        "React",
+        "SQL",
+        "Tailwind",
+        "Firebase",
+        "AWS"
+    ]
+    }
+],
+YES "languages": [
+    {
+    YES "language": "",
+    YES "level": ""
+    }
+],
+"projects": [
+    "Authentication with Rate Limiters (Backend) NodeJS and Redis. https://github.com/thainabraz/auth_be Basic auth middleware implemented with JWT. 2 types of routes: public and private. Private routes used the auth middleware to assure the user is authenticated. Rate limiter of 200/hour requests for private routes and 100/hour for public requests. App has a 60ms of latency on 1k requests per second.",
+    "Reporting Script (Backend) Python and Firebase. https://drive.google.com/file/d/12E2ERavAYgEpuBshLu_EhrpBlXublu/view?usp=sharing Backend App that sends reports to Slack with the data from Zoom, Slack, YouTube and Firebase. Upload zoom meeting recordings to YouTube, send attendance lists to Slack, store in a Firebase real time database all information about the zoom recording.",
+    "LMS Admin platform (full stack) React, JavaScript, MySQL and Bootstrap. https://github.com/thainabraz/admin_LMS Full stack app that allows class administration. Main features: management of classes, students, instructors and attendance."
+]
+

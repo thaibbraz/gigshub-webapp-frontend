@@ -15,10 +15,10 @@ import { AuthProvider } from "./context/AuthContext";
 import { Navigate } from "react-router-dom";
 
 function App() {
-  const [formData, setFormData] = useState({}); // Initialize formData
+  const [formData, setFormData] = useState({});
 
   const handleFormDataChange = (data) => {
-    setFormData(data); // Update formData when form is submitted
+    setFormData(data);
   };
   return (
     <AuthProvider>
@@ -34,7 +34,10 @@ function App() {
               <Route
                 path="/forms"
                 element={
-                  <Forms formData={formData} onSetFormData={setFormData} />
+                  <Forms
+                    formData={formData}
+                    onSetFormData={handleFormDataChange}
+                  />
                 }
               />
               <Route

@@ -1,59 +1,40 @@
 import { useState } from "react";
-import ExperienceRow from "./ExperienceRow";
+import ProjectRow from "./ProjectRow";
 import ProgressBar from "./ProgressBar";
 
-const ExperienceForm = ({ onNext, data }) => {
-  const EMPTY_EXPERIENCE = {
+const ProjectsForm = ({ onNext }) => {
+  const EMPTY_PROJECT = {
     id: Date.now(),
-    company: "",
     title: "",
-    startDate: "",
-    endDate: "",
+    url: "",
     description: "",
-    currentWorkplace: false,
   };
-  const [experienceList, setExperienceList] = useState(
-    data
-      ? data.map((ex, index) => ({ ...ex, id: ex.id || index }))
-      : [EMPTY_EXPERIENCE]
-  );
+  const [projects, setProjects] = useState([EMPTY_PROJECT]);
 
-  const handleAddExperience = () => {
-    setExperienceList([...experienceList, EMPTY_EXPERIENCE]);
+  const handleAddProject = () => {
+    setProjects([...projects, EMPTY_PROJECT]);
   };
 
-  const handleDeleteExperience = (id) => {
-    setExperienceList(experienceList.filter((exp) => exp.id !== id));
+  const handleDeleteProject = (id) => {
+    setProjects(projects.filter((exp) => exp.id !== id));
   };
 
-  const handleExperienceChange = (id, field, value) => {
-    setExperienceList(
-      experienceList.map((exp) =>
-        exp.id === id ? { ...exp, [field]: value } : exp
-      )
+  const handleProjectChange = (id, field, value) => {
+    setProjects(
+      projects.map((p) => (p.id === id ? { ...p, [field]: value } : p))
     );
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onNext({
-      experiences: experienceList
-        // keep only rows with data entered
-        .filter(
-          (e) => e.title || e.company || e.date || e.location || e.description
-        )
-        // remove the id & format date
-        .map((e) => ({
-          title: e.title,
-          date: `${e.startDate} - ${e.endDate}`,
-          company: e.company,
-          location: e.location,
-          description: e.description,
-        })),
+      projects: projects
+        .filter((p) => p.title || p.url || p.description)
+        .map((p) => `${p.title} ${p.url} ${p.description}`),
     });
   };
 
-  const progress = (5 / 8) * 100;
+  const progress = (7 / 8) * 100;
 
   return (
     <div className="ml-2 mr-10">
@@ -62,32 +43,32 @@ const ExperienceForm = ({ onNext, data }) => {
           <ProgressBar progress={progress} />
           <div className="w-full mt-28">
             <h2 className="text-3xl font-bold text-dark-blue text-center mb-4">
-              Experience
+              Projects
             </h2>
             <p className="text-center text-sm mb-8 text-dark-purple">
-              Please provide details of your most relevant work experience.
+              Please share about any of your recent projects.
             </p>
             <form
               onSubmit={handleSubmit}
               className="w-full max-w-4xl mx-auto space-y-6"
             >
-              {experienceList.map((experience, i) => (
-                <ExperienceRow
-                  key={experience.id}
-                  formData={experience}
+              {projects.map((p) => (
+                <ProjectRow
+                  key={p.id}
+                  formData={p}
                   onChange={(field, value) =>
-                    handleExperienceChange(experience.id, field, value)
+                    handleProjectChange(p.id, field, value)
                   }
-                  onDelete={() => handleDeleteExperience(experience.id)}
+                  onDelete={() => handleDeleteProject(p.id)}
                 />
               ))}
               <div className="lg:col-span-4 flex md:col-span-2 sm:col-span-1 xs:col-span-1 mc:col-span-1 flex justify-center mt-4">
                 <button
                   type="button"
-                  onClick={handleAddExperience}
+                  onClick={handleAddProject}
                   className="text-light-purple border-pale-purple border-2 rounded-2xl px-3 py-2 hover:bg-pale-purple"
                 >
-                  Add Experience
+                  Add Project
                 </button>
               </div>
               <div className="lg:col-span-4 flex justify-center mt-4">
@@ -110,4 +91,4 @@ const ExperienceForm = ({ onNext, data }) => {
   );
 };
 
-export default ExperienceForm;
+export default ProjectsForm;

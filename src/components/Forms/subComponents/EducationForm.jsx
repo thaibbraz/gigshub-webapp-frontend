@@ -1,59 +1,53 @@
-import { useState } from "react";
-import ExperienceRow from "./ExperienceRow";
+import React, { useState, useEffect } from "react";
+import EducationRow from "./EducationRow";
 import ProgressBar from "./ProgressBar";
 
-const ExperienceForm = ({ onNext, data }) => {
-  const EMPTY_EXPERIENCE = {
+const EducationForm = ({ onNext, data }) => {
+  const EMPTY_EDUCATION = {
     id: Date.now(),
-    company: "",
-    title: "",
-    startDate: "",
-    endDate: "",
-    description: "",
-    currentWorkplace: false,
+    degree: "",
+    institution: "",
+    date: "",
+    major: "",
   };
-  const [experienceList, setExperienceList] = useState(
+  const [education, setEducation] = useState(
     data
-      ? data.map((ex, index) => ({ ...ex, id: ex.id || index }))
-      : [EMPTY_EXPERIENCE]
+      ? data.map((ed, index) => ({ ...ed, id: ed.id || index }))
+      : [EMPTY_EDUCATION]
   );
 
-  const handleAddExperience = () => {
-    setExperienceList([...experienceList, EMPTY_EXPERIENCE]);
+  const handleAddEducation = () => {
+    setEducation([...education, EMPTY_EDUCATION]);
   };
 
-  const handleDeleteExperience = (id) => {
-    setExperienceList(experienceList.filter((exp) => exp.id !== id));
+  const handleDeleteEducation = (id) => {
+    setEducation(education.filter((ed) => ed.id !== id));
   };
 
-  const handleExperienceChange = (id, field, value) => {
-    setExperienceList(
-      experienceList.map((exp) =>
-        exp.id === id ? { ...exp, [field]: value } : exp
-      )
+  const handleEducationChange = (id, field, value) => {
+    setEducation(
+      education.map((ed) => (ed.id === id ? { ...ed, [field]: value } : ed))
     );
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     onNext({
-      experiences: experienceList
+      education: education
         // keep only rows with data entered
-        .filter(
-          (e) => e.title || e.company || e.date || e.location || e.description
-        )
-        // remove the id & format date
+        .filter((e) => e.degree || e.institution || e.major)
+        // remove the id
         .map((e) => ({
-          title: e.title,
-          date: `${e.startDate} - ${e.endDate}`,
-          company: e.company,
-          location: e.location,
-          description: e.description,
+          degree: e.degree,
+          institution: e.institution,
+          major: e.major,
+          date: e.date,
         })),
     });
   };
 
-  const progress = (5 / 8) * 100;
+  const progress = (4 / 8) * 100;
 
   return (
     <div className="ml-2 mr-10">
@@ -62,38 +56,40 @@ const ExperienceForm = ({ onNext, data }) => {
           <ProgressBar progress={progress} />
           <div className="w-full mt-28">
             <h2 className="text-3xl font-bold text-dark-blue text-center mb-4">
-              Experience
+              Education
             </h2>
             <p className="text-center text-sm mb-8 text-dark-purple">
-              Please provide details of your most relevant work experience.
+              Please provide details about your education.
             </p>
             <form
               onSubmit={handleSubmit}
               className="w-full max-w-4xl mx-auto space-y-6"
             >
-              {experienceList.map((experience, i) => (
-                <ExperienceRow
-                  key={experience.id}
-                  formData={experience}
+              {education.map((e) => (
+                <EducationRow
+                  key={e.id}
+                  formData={e}
                   onChange={(field, value) =>
-                    handleExperienceChange(experience.id, field, value)
+                    handleEducationChange(e.id, field, value)
                   }
-                  onDelete={() => handleDeleteExperience(experience.id)}
+                  onDelete={() => handleDeleteEducation(e.id)}
                 />
               ))}
+
               <div className="lg:col-span-4 flex md:col-span-2 sm:col-span-1 xs:col-span-1 mc:col-span-1 flex justify-center mt-4">
                 <button
                   type="button"
-                  onClick={handleAddExperience}
+                  onClick={handleAddEducation}
                   className="text-light-purple border-pale-purple border-2 rounded-2xl px-3 py-2 hover:bg-pale-purple"
                 >
-                  Add Experience
+                  Add Education
                 </button>
               </div>
-              <div className="lg:col-span-4 flex justify-center mt-4">
+
+              <div className="lg:col-span-4 flex md:col-span-2 sm:col-span-1 xs:col-span-1 mc:col-span-1 flex justify-center mt-4">
                 <button
-                  type="submit"
                   className="flex items-center justify-center h-input mt-4 py-6 px-1 rounded-3xl border-2 border-pale-purple"
+                  type="submit"
                 >
                   <div className="flex items-center justify-center w-buttonSize h-input bg-dark-blue rounded-2xl border-5">
                     <span className="text-sm text-white font-normal">
@@ -110,4 +106,4 @@ const ExperienceForm = ({ onNext, data }) => {
   );
 };
 
-export default ExperienceForm;
+export default EducationForm;
