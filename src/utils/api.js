@@ -5,13 +5,18 @@ const BASE_URL =
   "http://localhost:8000";
 export async function sendRequest(data, endpoint) {
   try {
+    const token = localStorage.getItem("token");
     let options = {
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     };
     let response = await axios.post(`${BASE_URL}${endpoint}`, data, options);
-    if (response.status === 200) {
+    if (
+      (endpoint === "/login" || endpoint === "/signup") &&
+      response.status === 200
+    ) {
       const token = response.data.access_token;
       localStorage.setItem("token", token);
     }

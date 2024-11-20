@@ -23,7 +23,13 @@ const Forms = ({ formData, onSetFormData }) => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      await sendRequest(formData, "/client-info");
+      const updatedFields = {};
+      for (let field in formData) {
+        if (formData[field]) {
+          updatedFields[field] = formData[field];
+        }
+      }
+      await sendRequest(updatedFields, "/client-info");
     } catch (error) {
       console.error(error);
     } finally {
