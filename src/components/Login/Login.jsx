@@ -23,7 +23,14 @@ const Login = () => {
   const [formData, setFormData] = useState(EMPTY_FORM);
       // Firebase configuration
       const firebaseConfig = {
-
+        apiKey: "AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
+        authDomain: "gdfsaddsfeapp.com",
+        projectId: "bfdsbfdbfg-bfdbvfdbfd",
+        storageBucket: "gfbdbfdsbfdbfdukmjhngbvfc.app",
+        databaseURL: "AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
+        messagingSenderId: "AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
+        appId: "1:AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8:web:AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
+        measurementId: "aaa-AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
     };
     
 
@@ -34,7 +41,6 @@ const Login = () => {
 
     const db = getDatabase(app);
 
-   
     async function checkUserExists(userId) {
       try {
         console.log("Checking user with ID:", userId); // Debug log

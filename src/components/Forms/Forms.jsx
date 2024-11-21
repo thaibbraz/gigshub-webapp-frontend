@@ -19,33 +19,24 @@ const Forms = ({ formData, onSetFormData }) => {
       return prevStep + 1;
     });
   };
-
     const handleSubmit = async () => {
       setLoading(true);
       try {
-          const updatedFields = {};
-          for (let field in formData) {
-              if (formData[field]) {
-                  updatedFields[field] = formData[field];
-              }
+        const updatedFields = {};
+        for (let field in formData) {
+          if (formData[field]) {
+            updatedFields[field] = formData[field];
           }
-
-          // Save to Firebase Realtime Database
-          const timestamp = Date.now(); // Generate a unique key
-          await set(ref(database, `formSubmissions/${timestamp}`), updatedFields);
-
-          // Optionally, send to your API as well
-          await sendRequest(updatedFields, "/client-info");
-
-          alert("Submission successful!");
+        }
+        await sendRequest(updatedFields, "/client-info");
       } catch (error) {
-          console.error("Error submitting form: ", error);
-          alert("Error submitting the form. Please try again.");
+        console.error(error);
       } finally {
-          setLoading(false);
+        setLoading(false);
       }
-  };
+    };
 
+    
   return (
     <div>
       {step === 1 && <CVUpload onNext={handleNext} />}

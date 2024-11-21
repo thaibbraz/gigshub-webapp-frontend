@@ -1,20 +1,41 @@
 import React, { useState, useEffect } from "react"; // Added useEffect here
 import starsUnfilled from "../../../assets/starsUnfilled.svg";
-
+import { database, ref, set, get } from "../../../utils/firebase.js";
+import { add } from "date-fns";
 const UserDashboard = ({ formData }) => {
   const [jobs, setJobs] = useState([]);
   const [jobTitle, setJobTitle] = useState(formData.jobTitle);
   const [location, setLocation] = useState(formData.location);
   const [cvFormData, setcvFormData] = useState(formData);
-
+  const [loading, setLoading] = useState(false);
   // Function to fetch job data
   const fetchJobs = async () => {
     console.log("cvFormData", cvFormData);
 
     const requestBody = cvFormData;
-
+      try {
+          setLoading(true);
+          if (cvFormData.cv.education[0].major) {
+              cvFormData.cv.education[0].major = "";
+          }
+          const user = JSON.parse(localStorage.getItem("user"));
+          const userId = user?.uid; // Ensure user ID is valid
+          const newUserData = {
+            email: user?.email || "",
+            displayName: user?.displayName || "",
+            photoURL: user?.photoURL || "",
+            cv: requestBody,
+          };
+          await addUserData(userId, newUserData);
+          alert("Submission successful!");
+      } catch (error) {
+          console.error("Error submitting form: ", error);
+          alert("Error submitting the form. Please try again.");
+      } finally {
+          setLoading(false);
+      }
     // Add jobTitle and location to the request body
-    const bodyWithJobDetails = { ...requestBody, jobTitle, location };
+    const bodyWithJobDetails = { ...requestBody, jobTitle, location};
     console.log("bodyWithJobDetails", JSON.stringify(bodyWithJobDetails));
 
     try {
@@ -34,15 +55,13 @@ const UserDashboard = ({ formData }) => {
       }
 
       const data = await response.json();
-      console.log("data", data);
-
-      // Filter out jobs with 0 compatibility score
       const filteredJobs = data.jobs.filter(
         (job) => formatScoreAsPercentage(job.compatibility_score) > 10
       );
       console.log(filteredJobs);
-
-      // Set the filtered jobs to state
+      const timestamp = Date.now();
+      localStorage.setItem("timestamp", timestamp);
+      localStorage.setItem("jobs", JSON.stringify(filteredJobs));
       setJobs(filteredJobs);
     } catch (error) {
       console.error("Error fetching jobs:", error);
@@ -59,6 +78,25 @@ const UserDashboard = ({ formData }) => {
       fetchJobs();
     }
   }, [jobs]); // Empty dependency array makes it run only once on mount
+
+
+  const addUserData = async (userId, data) => {
+    try {
+      if (!userId) throw new Error("User ID is undefined");
+      if (!data || typeof data !== "object") throw new Error("Invalid data");
+      const snapshot = await get(ref(database, `users/${userId}`));
+      if (snapshot.exists()) {
+        console.log("User data already exists.");
+        return;
+      }
+      const sanitizedData = JSON.parse(JSON.stringify(data)); // Remove undefined values
+      const userRef = ref(database, `users/${userId}`);
+      await set(userRef, sanitizedData); // Completely writes data for the first time
+      console.log("User data successfully added.");
+    } catch (error) {
+      console.error("Error adding user data:", error);
+    }
+  };
 
   return (
     <div className="ml-2 mr-10">
