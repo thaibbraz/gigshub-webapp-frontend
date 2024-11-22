@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
-import starsUnfilled from "../../../assets/starsUnfilled.svg";
-import { addUserData } from "../../../utils/firebase.js";
-import { useNavigate } from "react-router-dom";
-
+import React, { useState, useEffect } from "react"; // Added useEffect here
+import { database } from "../../../utils/firebase.js";
+import { ref, set, get} from "firebase/database";
 const UserDashboard = ({ formData }) => {
   const [jobs, setJobs] = useState([]);
   const [jobTitle, setJobTitle] = useState(formData.jobTitle);

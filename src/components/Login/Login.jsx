@@ -12,28 +12,85 @@ const Login = () => {
   const { login } = useAuth();
   const [error, setError] = useState(null);
 
-    const handleGoogleLogin = async () => {
-      try {
-          const result = await signInWithPopup(auth, provider);
-          const user = result.user;
+  const EMPTY_FORM = {
+    email: "",
+    password: "",
+  };
+  const [formData, setFormData] = useState(EMPTY_FORM);
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDmAVvW60ypN8PQv7Rgf_LeI05RkOICME8",
+    authDomain: "gigshub-ff21e.firebaseapp.com",
+    projectId: "gigshub-ff21e",
+    storageBucket: "gigshub-ff21e.firebasestorage.app",
+    databaseURL:
+      "https://gigshub-ff21e-default-rtdb.europe-west1.firebasedatabase.app",
+    messagingSenderId: "390721411415",
+    appId: "1:390721411415:web:1452cdfe1b079b6f544612",
+    measurementId: "G-1WKWMLX4SP",
+  };
 
-          localStorage.setItem("user", JSON.stringify({ 
-              uid: user.uid,
-              displayName: user.displayName, 
-              email: user.email, 
-              photoURL: user.photoURL 
-          }));
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
 
-          login();
-          if (await checkUserExists(user.uid) === false) {
-            navigate("/welcome");
-          }else{
-            navigate("/dashboard");
-          }
-          
-      } catch (error) {
-          console.error("Error during login:", error);
+  const db = getDatabase(app);
+
+  async function checkUserExists(userId) {
+    try {
+      console.log("Checking user with ID:", userId); // Debug log
+      const dbRef = ref(db); // Reference to the database
+      console.log("Database reference:", dbRef);
+      const snapshot = await get(child(dbRef, `/`)); // Path to the user node
+
+      console.log("Snapshot fetched:", snapshot); // Log the snapshot object
+
+      if (snapshot.exists()) {
+        console.log("User exists:", snapshot.val());
+        return true;
+      } else {
+        console.log("User does not exist or no users node in the database.");
+        return false;
       }
+    } catch (error) {
+      console.error("Error checking user:", error);
+      return false;
+    }
+  }
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      const token = await user.getIdToken();
+      // extension ID
+      const extensionId = "jphiibpfnbfejbglddjlcgnlfdallbak";
+      if (user !== undefined && user !== null) {
+        try {
+          const response = await window.chrome.runtime.sendMessage(
+            extensionId,
+            {
+              action: "login",
+              token: token,
+            }
+          );
+          console.log("Response from extension:", response);
+        } catch (error) {
+          console.error("Error sending message to extension:", error);
+        }
+      }
+
+      // Redirect to Dashboard
+      login();
+      if ((await checkUserExists(user.uid)) === false) {
+        navigate("/welcome");
+      } else {
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
   };
 
   return (
@@ -46,16 +103,59 @@ const Login = () => {
         />
         <img src={logoTextGigshub} alt="Logo text" className=" mb-8" />
         {error && <Error message={error} />}
-      
-        <div className="flex flex-col w-80">
-        <button onClick={handleGoogleLogin} className="relative flex items-center justify-center w-full h-10 mt-4 py-0.5 px-0.5 bg-white border border-white rounded-md cursor-pointer hover:shadow-lg transition duration-300 ease-in-out" >
+        {/*<form className="flex flex-col w-80" onSubmit={handleLogin}>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="E-mail"
+            className="mb-4 py-4 px-6 border rounded-md focus:outline-none focus:border-dark-blue h-input font-light placeholder-gray-400 placeholder-opacity-100 focus:placeholder-dark-blue shadow-md dark-blue"
+          />
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Password"
+            className="mb-4 py-4 px-6 border rounded-md focus:outline-none focus:border-dark-blue h-input font-light placeholder-gray-400 placeholder-opacity-100 focus:placeholder-dark-blue shadow-md dark-blue"
+          />
+          <button onClick={handleGoogleLogin} className="relative flex items-center justify-center w-full h-10 mt-4 py-0.5 px-0.5 bg-white border border-white rounded-md cursor-pointer hover:shadow-lg transition duration-300 ease-in-out" >
                 <img
                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png"
                     alt="Google logo"
                     style={googleLogoStyle}
                 />
-                <span>Sign in with Google</span>
-        </button></div>
+                <span>Continue with Google</span>
+            </button>
+          <button
+            type="submit"
+            className="relative flex items-center justify-center w-full h-10 mt-4 py-0.5 px-0.5 bg-bright-purple text-white border border-white rounded-md cursor-pointer hover:bg-dark-purple hover:shadow-lg transition duration-300 ease-in-out"
+          >
+            <div className="flex items-center justify-center w-full h-full bg-bright-purple border border-white rounded-md hover:bg-dark-purple">
+              <span className="text-md font-normal">
+                {loading ? "Logging in..." : "Log In"}
+              </span>
+            </div>
+          </button>
+        </form>*/}
+        <div className="flex flex-col w-80">
+          <button
+            onClick={handleGoogleLogin}
+            className="relative flex items-center justify-center w-full h-10 mt-4 py-0.5 px-0.5 bg-white border border-white rounded-md cursor-pointer hover:shadow-lg transition duration-300 ease-in-out"
+          >
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png"
+              alt="Google logo"
+              style={googleLogoStyle}
+            />
+            <span>Sign in with Google</span>
+          </button>
+        </div>
+        {/*<p className="mt-6 text-center text-lg text-white">
+          Don’t have an account?{" "}
+          <span onClick={() => navigate("/signup")} className="cursor-pointer">Sign up</span>
+        </p>*/}
       </div>
     </Container>
   );
