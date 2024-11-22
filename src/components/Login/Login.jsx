@@ -21,75 +21,81 @@ const Login = () => {
     password: "",
   };
   const [formData, setFormData] = useState(EMPTY_FORM);
-      // Firebase configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
-        authDomain: "gdfsaddsfeapp.com",
-        projectId: "bfdsbfdbfg-bfdbvfdbfd",
-        storageBucket: "gfbdbfdsbfdbfdukmjhngbvfc.app",
-        databaseURL: "AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
-        messagingSenderId: "AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
-        appId: "1:AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8:web:AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
-        measurementId: "aaa-AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
-    };
-    
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-
-    const db = getDatabase(app);
-
-    async function checkUserExists(userId) {
-      try {
-        console.log("Checking user with ID:", userId); // Debug log
-        const dbRef = ref(db); // Reference to the database
-        console.log("Database reference:", dbRef);
-        const snapshot = await get(child(dbRef, `/`)); // Path to the user node
-        
-        console.log("Snapshot fetched:", snapshot); // Log the snapshot object
-    
-        if (snapshot.exists()) {
-          console.log("User exists:", snapshot.val());
-          return true;
-        } else {
-          console.log("User does not exist or no users node in the database.");
-          return false;
-        }
-      } catch (error) {
-        console.error("Error checking user:", error);
-        return false;
-      }
-    }
-
-    const handleGoogleLogin = async () => {
-      try {
-          const result = await signInWithPopup(auth, provider);
-          const user = result.user;
-
-          // Save user info to localStorage
-          localStorage.setItem("user", JSON.stringify({ 
-              displayName: user.displayName, 
-              email: user.email, 
-              photoURL: user.photoURL 
-          }));
-
-          // Redirect to Dashboard
-          login();
-          if (await checkUserExists(user.uid) === false) {
-            navigate("/welcome");
-          }else{
-            navigate("/dashboard");
-          }
-          
-      } catch (error) {
-          console.error("Error during login:", error);
-      }
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDmAVvW60ypN8PQv7Rgf_LeI05RkOICME8",
+    authDomain: "gigshub-ff21e.firebaseapp.com",
+    projectId: "gigshub-ff21e",
+    storageBucket: "gigshub-ff21e.firebasestorage.app",
+    databaseURL:
+      "https://gigshub-ff21e-default-rtdb.europe-west1.firebasedatabase.app",
+    messagingSenderId: "390721411415",
+    appId: "1:390721411415:web:1452cdfe1b079b6f544612",
+    measurementId: "G-1WKWMLX4SP",
   };
 
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
 
+  const db = getDatabase(app);
 
+  async function checkUserExists(userId) {
+    try {
+      console.log("Checking user with ID:", userId); // Debug log
+      const dbRef = ref(db); // Reference to the database
+      console.log("Database reference:", dbRef);
+      const snapshot = await get(child(dbRef, `/`)); // Path to the user node
+
+      console.log("Snapshot fetched:", snapshot); // Log the snapshot object
+
+      if (snapshot.exists()) {
+        console.log("User exists:", snapshot.val());
+        return true;
+      } else {
+        console.log("User does not exist or no users node in the database.");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error checking user:", error);
+      return false;
+    }
+  }
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      const token = await user.getIdToken();
+      // extension ID
+      const extensionId = "jphiibpfnbfejbglddjlcgnlfdallbak";
+      if (user !== undefined && user !== null) {
+        try {
+          const response = await window.chrome.runtime.sendMessage(
+            extensionId,
+            {
+              action: "login",
+              token: token,
+            }
+          );
+          console.log("Response from extension:", response);
+        } catch (error) {
+          console.error("Error sending message to extension:", error);
+        }
+      }
+
+      // Redirect to Dashboard
+      login();
+      if ((await checkUserExists(user.uid)) === false) {
+        navigate("/welcome");
+      } else {
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
+  };
 
   return (
     <Container className="bg-bright-purple">
@@ -138,14 +144,18 @@ const Login = () => {
           </button>
         </form>*/}
         <div className="flex flex-col w-80">
-        <button onClick={handleGoogleLogin} className="relative flex items-center justify-center w-full h-10 mt-4 py-0.5 px-0.5 bg-white border border-white rounded-md cursor-pointer hover:shadow-lg transition duration-300 ease-in-out" >
-                <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png"
-                    alt="Google logo"
-                    style={googleLogoStyle}
-                />
-                <span>Sign in with Google</span>
-        </button></div>
+          <button
+            onClick={handleGoogleLogin}
+            className="relative flex items-center justify-center w-full h-10 mt-4 py-0.5 px-0.5 bg-white border border-white rounded-md cursor-pointer hover:shadow-lg transition duration-300 ease-in-out"
+          >
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png"
+              alt="Google logo"
+              style={googleLogoStyle}
+            />
+            <span>Sign in with Google</span>
+          </button>
+        </div>
         {/*<p className="mt-6 text-center text-lg text-white">
           Don’t have an account?{" "}
           <span onClick={() => navigate("/signup")} className="cursor-pointer">Sign up</span>

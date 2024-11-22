@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react"; // Added useEffect here
-import starsUnfilled from "../../../assets/starsUnfilled.svg";
-import { database, ref, set, get } from "../../../utils/firebase.js";
-import { add } from "date-fns";
+import { database } from "../../../utils/firebase.js";
+import { ref, set, get} from "firebase/database";
 const UserDashboard = ({ formData }) => {
   const [jobs, setJobs] = useState([]);
   const [jobTitle, setJobTitle] = useState(formData.jobTitle);

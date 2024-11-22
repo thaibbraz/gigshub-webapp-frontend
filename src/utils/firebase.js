@@ -8,14 +8,14 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
-    authDomain: "gdfsaddsfeapp.com",
-    projectId: "bfdsbfdbfg-bfdbvfdbfd",
-    storageBucket: "gfbdbfdsbfdbfdukmjhngbvfc.app",
-    databaseURL: "AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
-    messagingSenderId: "AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
-    appId: "1:AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8:web:AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
-    measurementId: "aaa-AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
+    apiKey: "AIzaSyDmAVvW60ypN8PQv7Rgf_LeI05RkOICME8",
+    authDomain: "gigshub-ff21e.firebaseapp.com",
+    projectId: "gigshub-ff21e",
+    storageBucket: "gigshub-ff21e.firebasestorage.app",
+    databaseURL: "https://gigshub-ff21e-default-rtdb.europe-west1.firebasedatabase.app",
+    messagingSenderId: "390721411415",
+    appId: "1:390721411415:web:1452cdfe1b079b6f544612",
+    measurementId: "G-1WKWMLX4SP",
 };
 
 
