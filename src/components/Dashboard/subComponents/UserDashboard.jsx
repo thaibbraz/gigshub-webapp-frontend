@@ -1,44 +1,53 @@
-import React, { useState, useEffect } from "react"; // Added useEffect here
+import React, { useState, useEffect } from "react";
 import starsUnfilled from "../../../assets/starsUnfilled.svg";
-import { database, ref, set, get } from "../../../utils/firebase.js";
-import { add } from "date-fns";
+import { addUserData } from "../../../utils/firebase.js";
+import { useNavigate } from "react-router-dom";
+
 const UserDashboard = ({ formData }) => {
   const [jobs, setJobs] = useState([]);
   const [jobTitle, setJobTitle] = useState(formData.jobTitle);
   const [location, setLocation] = useState(formData.location);
   const [cvFormData, setcvFormData] = useState(formData);
   const [loading, setLoading] = useState(false);
-  // Function to fetch job data
-  const fetchJobs = async () => {
-    console.log("cvFormData", cvFormData);
+  const navigate = useNavigate();
 
-    const requestBody = cvFormData;
-      try {
-          setLoading(true);
-          if (cvFormData.cv.education[0].major) {
-              cvFormData.cv.education[0].major = "";
-          }
-          const user = JSON.parse(localStorage.getItem("user"));
-          const userId = user?.uid; // Ensure user ID is valid
-          const newUserData = {
-            email: user?.email || "",
-            displayName: user?.displayName || "",
-            photoURL: user?.photoURL || "",
-            cv: requestBody,
-          };
-          await addUserData(userId, newUserData);
-          alert("Submission successful!");
-      } catch (error) {
-          console.error("Error submitting form: ", error);
-          alert("Error submitting the form. Please try again.");
-      } finally {
-          setLoading(false);
-      }
-    // Add jobTitle and location to the request body
-    const bodyWithJobDetails = { ...requestBody, jobTitle, location};
-    console.log("bodyWithJobDetails", JSON.stringify(bodyWithJobDetails));
+  // Utility to format compatibility score
+  const formatScoreAsPercentage = (score) => score * 1000;
+
+  // Fetch and store jobs
+  const fetchJobs = async () => {
+    console.log("Fetching jobs...");
+    
+    if (!cvFormData) return;
+
+    const user = JSON.parse(localStorage.getItem("user"));
+    const userId = user?.uid;
+    const requestBody = { ...cvFormData, jobTitle, location };
 
     try {
+      const newUserData = {
+        email: user?.email || "",
+        displayName: user?.displayName || "",
+        photoURL: user?.photoURL || "",
+        cv: cvFormData,
+      };
+      await addUserData(userId, newUserData);
+    } catch (error) {
+      console.error("Error submitting form: ", error);
+    } 
+
+    // Check localStorage for cached jobs
+    try {
+      const cachedJobs = localStorage.getItem("jobs");
+      const timestamp = localStorage.getItem("timestamp");
+
+      if (cachedJobs?.length > 0 && Date.now() - timestamp < 86400000) {
+        setJobs(JSON.parse(cachedJobs));
+        console.log("here");
+        return;
+      }
+
+      // Fetch new jobs from API
       const response = await fetch(
         "https://fastapi-job-matcher-05-160893319817.europe-southwest1.run.app/api/jobs",
         {
@@ -46,21 +55,21 @@ const UserDashboard = ({ formData }) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(bodyWithJobDetails),
+          body: JSON.stringify(requestBody),
         }
       );
 
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error("Failed to fetch jobs from API");
       }
 
       const data = await response.json();
       const filteredJobs = data.jobs.filter(
         (job) => formatScoreAsPercentage(job.compatibility_score) > 10
       );
-      console.log(filteredJobs);
-      const timestamp = Date.now();
-      localStorage.setItem("timestamp", timestamp);
+
+      // Update localStorage and state
+      localStorage.setItem("timestamp", Date.now());
       localStorage.setItem("jobs", JSON.stringify(filteredJobs));
       setJobs(filteredJobs);
     } catch (error) {
@@ -68,35 +77,10 @@ const UserDashboard = ({ formData }) => {
     }
   };
 
-  const formatScoreAsPercentage = (score) => {
-    return score * 1000; // Convert to percentage and format as string
-  };
-
-  // UseEffect to fetch jobs once when component mounts
+  // Fetch jobs on mount
   useEffect(() => {
-    if (jobs.length === 0) {
-      fetchJobs();
-    }
-  }, [jobs]); // Empty dependency array makes it run only once on mount
-
-
-  const addUserData = async (userId, data) => {
-    try {
-      if (!userId) throw new Error("User ID is undefined");
-      if (!data || typeof data !== "object") throw new Error("Invalid data");
-      const snapshot = await get(ref(database, `users/${userId}`));
-      if (snapshot.exists()) {
-        console.log("User data already exists.");
-        return;
-      }
-      const sanitizedData = JSON.parse(JSON.stringify(data)); // Remove undefined values
-      const userRef = ref(database, `users/${userId}`);
-      await set(userRef, sanitizedData); // Completely writes data for the first time
-      console.log("User data successfully added.");
-    } catch (error) {
-      console.error("Error adding user data:", error);
-    }
-  };
+    if (jobs.length === 0) fetchJobs();
+  }, [jobs]);
 
   return (
     <div className="ml-2 mr-10">
@@ -117,10 +101,10 @@ const UserDashboard = ({ formData }) => {
         {/* Job List Section */}
         <div className="flex flex-col justify-center items-center ml-10 bg-white rounded-xl w-full max-w-6xl h-[calc(79vh-70px)] overflow-y-auto p-4">
           <div className="w-full max-w-6xl">
-            {jobs.length === 0 ? (
-              <p className="text-dark-blue text-lg">
-                Loading your daily jobs...
-              </p>
+            {loading ? (
+              <p className="text-dark-blue text-lg">Loading your daily jobs...</p>
+            ) : jobs.length === 0 ? (
+              <p className="text-dark-blue text-lg">No jobs available</p>
             ) : (
               jobs.map((job, index) => (
                 <div
@@ -142,6 +126,7 @@ const UserDashboard = ({ formData }) => {
                     )}
                   </div>
 
+                  {/* Job Details */}
                   <div className="col-span-2 flex flex-col justify-center border-r-2 border-dotted border-pale-purple my-4">
                     <a
                       target="_blank"
@@ -152,16 +137,16 @@ const UserDashboard = ({ formData }) => {
                         {job.title}
                       </p>
                     </a>
-                    {/* Contract Type and Salary */}
                     <div className="flex flex-wrap gap-1 mt-1">
-                      <div className="bg-soft-liliac rounded-lg py-1 px-2 text-xs h-auto">
+                      <div className="bg-soft-liliac rounded-lg py-1 px-2 text-xs">
                         <span className="text-dark-purple">{job.company}</span>
                       </div>
-                      <div className="bg-soft-liliac rounded-lg py-1 px-3 text-xs h-auto">
+                      <div className="bg-soft-liliac rounded-lg py-1 px-3 text-xs">
                         <span className="text-dark-purple">{job.site}</span>
                       </div>
                     </div>
                   </div>
+
                   {/* Company and Location */}
                   <div className="col-span-1 flex flex-col justify-center border-r-2 border-dotted border-pale-purple my-4">
                     <a
@@ -173,9 +158,6 @@ const UserDashboard = ({ formData }) => {
                         {job.location}
                       </p>
                     </a>
-                  </div>
-                  <div className="col-span-1 flex flex-col text-xs justify-center border-r-2 border-dotted border-pale-purple my-4">
-                    <div className="flex flex-wrap gap-1 mt-1"></div>
                   </div>
                 </div>
               ))

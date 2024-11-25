@@ -1,28 +1,72 @@
 // firebase.js
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set, get} from "firebase/database";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getDatabase, ref, set, get, child} from "firebase/database";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
-    authDomain: "gdfsaddsfeapp.com",
-    projectId: "bfdsbfdbfg-bfdbvfdbfd",
-    storageBucket: "gfbdbfdsbfdbfdukmjhngbvfc.app",
-    databaseURL: "AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
-    messagingSenderId: "AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
-    appId: "1:AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8:web:AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
-    measurementId: "aaa-AIzaSyDmsdfaddsfdsfdsfeI05RkOICME8",
+    apiKey: "",
+    authDomain: "",
+    projectId: "",
+    storageBucket: "",
+    databaseURL: "",
+    messagingSenderId: "",
+    appId: "",
+    measurementId: "",
 };
-
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const database = getDatabase(app);
 
+async function checkUserExists(userId) {
+    try {
+        console.log("Checking user with ID:", userId); // Debug log
+        const dbRef = ref(database); // Reference to the database
+        console.log("Database reference:", dbRef);
+        const snapshot = await get(child(dbRef, `users/${userId}`)); // Path to the user node
+        
+        console.log("Snapshot fetched:", snapshot); // Log the snapshot object
+    
+        if (snapshot.exists()) {
+            console.log("User exists:", snapshot.val());
+            return true;
+        } else {
+            console.log("User does not exist or no users node in the database.");
+            return false;
+        }
+        } catch (error) {
+        console.error("Error checking user:", error);
+        return false;
+        }
+}
 
-export { database, ref, set, get, auth, provider };
+
+const addUserData = async (userId, data) => {
+    try {
+        if (!userId) throw new Error("User ID is undefined");
+        if (!data || typeof data !== "object") throw new Error("Invalid data");
+        
+        // Sanitize the data to remove any undefined or circular references
+        const sanitizedData = JSON.parse(JSON.stringify(data));
+
+        // Reference to the user's data in the database
+        const userRef = ref(database, `users/${userId}`);
+        
+        // Check if the user already exists in the database
+        const snapshot = await get(userRef);
+        if (snapshot.exists()) {
+            // If user exists, returns
+            return;
+        }
+
+        // If user does not exist, create new user data
+        await set(userRef, sanitizedData);
+        console.log("User data successfully added.");
+    } catch (error) {
+        console.error("Error adding or updating user data:", error);
+    }
+};
+
+
+export { database, ref, set, get, auth, provider, addUserData, checkUserExists, signInWithPopup };
