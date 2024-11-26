@@ -8,7 +8,7 @@ import SkillsForm from "./subComponents/SkillsForm";
 import ProjectsForm from "./subComponents/ProjectsForm";
 import DemographicsForm from "./subComponents/DemographicsForm";
 import { sendRequest } from "../../utils/api.js";
-
+import { database, ref, set }from "../../utils/firebase.js";
 const Forms = ({ formData, onSetFormData }) => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -19,24 +19,24 @@ const Forms = ({ formData, onSetFormData }) => {
       return prevStep + 1;
     });
   };
-
-  const handleSubmit = async () => {
-    setLoading(true);
-    try {
-      const updatedFields = {};
-      for (let field in formData) {
-        if (formData[field]) {
-          updatedFields[field] = formData[field];
+    const handleSubmit = async () => {
+      setLoading(true);
+      try {
+        const updatedFields = {};
+        for (let field in formData) {
+          if (formData[field]) {
+            updatedFields[field] = formData[field];
+          }
         }
+        await sendRequest(updatedFields, "/client-info");
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
       }
-      await sendRequest(updatedFields, "/client-info");
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
+    
   return (
     <div>
       {step === 1 && <CVUpload onNext={handleNext} />}
