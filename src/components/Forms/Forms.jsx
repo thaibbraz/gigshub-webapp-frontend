@@ -8,7 +8,6 @@ import SkillsForm from "./subComponents/SkillsForm";
 import ProjectsForm from "./subComponents/ProjectsForm";
 import DemographicsForm from "./subComponents/DemographicsForm";
 import { sendRequest } from "../../utils/api.js";
-import { database, ref, set } from "../../utils/firebase.js";
 const Forms = ({ formData, onSetFormData }) => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
