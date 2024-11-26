@@ -1,10 +1,10 @@
-import { createContext, useState, useContext, useEffect } from "react";
+import { createContext, useState, useContext } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState(() => {
-    return localStorage.getItem("loggedIn") === "true";
+    return !!localStorage.getItem("user");
   });
 
   const login = () => {
@@ -13,7 +13,6 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setLoggedIn(false);
-    localStorage.removeItem("loggedIn");
     localStorage.removeItem("user");
     localStorage.removeItem("jobs");
     localStorage.removeItem("timestamp");
