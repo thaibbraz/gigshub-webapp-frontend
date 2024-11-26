@@ -4,14 +4,14 @@ import { getDatabase, ref, set, get, child} from "firebase/database";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const firebaseConfig = {
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    storageBucket: "",
-    databaseURL: "",
-    messagingSenderId: "",
-    appId: "",
-    measurementId: "",
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  databaseURL: "",
+  messagingSenderId: "",
+  appId: "",
+  measurementId: "",
 };
 
 const app = initializeApp(firebaseConfig);
