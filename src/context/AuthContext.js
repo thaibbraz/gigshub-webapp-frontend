@@ -7,6 +7,10 @@ export const AuthProvider = ({ children }) => {
     return localStorage.getItem("loggedIn") === "true";
   });
 
+  useEffect(() => {
+    localStorage.setItem("loggedIn", loggedIn);
+  }, [loggedIn]);
+
   const login = () => {
     setLoggedIn(true);
   };
@@ -14,9 +18,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setLoggedIn(false);
     localStorage.removeItem("loggedIn");
-    localStorage.removeItem("user");
-    localStorage.removeItem("jobs");
-    localStorage.removeItem("timestamp");
+    localStorage.removeItem("token");
   };
 
   return (
