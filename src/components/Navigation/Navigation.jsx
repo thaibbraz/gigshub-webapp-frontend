@@ -34,9 +34,18 @@ const Navigation = ({ className }) => {
     navigate(`/${page}`);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.removeItem("user");
     logout();
+    try {
+      const extensionId = "jphiibpfnbfejbglddjlcgnlfdallbak";
+      // Send both ID token and refresh token to the Chrome extension
+      const response = await window.chrome.runtime.sendMessage(extensionId, {
+        action: "logout",
+      });
+    } catch (error) {
+      console.error("Error sending message to extension:", error);
+    }
     navigate("/login");
   };
 

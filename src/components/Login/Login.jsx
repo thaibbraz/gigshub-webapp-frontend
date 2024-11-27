@@ -3,9 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { Container } from "../Container/Container";
 import logoTextGigshub from "../../assets/logo-text-gigshub.png";
 import logoLightPurple from "../../assets/logoLightPurple.svg";
-import { auth, provider, checkUserExists, signInWithPopup } from "../../utils/firebase.js";
+import { auth, provider, checkUserExists } from "../../utils/firebase.js";
 import { useAuth } from "../../context/AuthContext";
 import Error from "../Error/Error.jsx";
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, set, get, child } from "firebase/database";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -39,18 +42,11 @@ const Login = () => {
 
   async function checkUserExists(userId) {
     try {
-      console.log("Checking user with ID:", userId); // Debug log
       const dbRef = ref(db); // Reference to the database
-      console.log("Database reference:", dbRef);
       const snapshot = await get(child(dbRef, `/`)); // Path to the user node
-
-      console.log("Snapshot fetched:", snapshot); // Log the snapshot object
-
       if (snapshot.exists()) {
-        console.log("User exists:", snapshot.val());
         return true;
       } else {
-        console.log("User does not exist or no users node in the database.");
         return false;
       }
     } catch (error) {
@@ -63,19 +59,22 @@ const Login = () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      const token = await user.getIdToken();
-      // extension ID
+      const token = await user.getIdToken(); // Fetch ID token
+      const refreshToken = user.refreshToken; // Get the refresh token
+      // Extension ID
       const extensionId = "jphiibpfnbfejbglddjlcgnlfdallbak";
-      if (user !== undefined && user !== null) {
+
+      if (user) {
         try {
+          // Send both ID token and refresh token to the Chrome extension
           const response = await window.chrome.runtime.sendMessage(
             extensionId,
             {
               action: "login",
               token: token,
+              refreshToken: refreshToken,
             }
           );
-          console.log("Response from extension:", response);
         } catch (error) {
           console.error("Error sending message to extension:", error);
         }

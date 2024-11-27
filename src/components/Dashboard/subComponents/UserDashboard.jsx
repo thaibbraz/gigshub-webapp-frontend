@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react"; // Added useEffect here
+import { addUserData } from "../../../utils/firebase.js";
+import { useNavigate } from "react-router-dom";
 import { database } from "../../../utils/firebase.js";
-import { ref, set, get} from "firebase/database";
+import { ref, set, get } from "firebase/database";
 const UserDashboard = ({ formData }) => {
   const [jobs, setJobs] = useState([]);
   const [jobTitle, setJobTitle] = useState(formData.jobTitle);
@@ -15,7 +17,7 @@ const UserDashboard = ({ formData }) => {
   // Fetch and store jobs
   const fetchJobs = async () => {
     console.log("Fetching jobs...");
-    
+
     if (!cvFormData) return;
 
     const user = JSON.parse(localStorage.getItem("user"));
@@ -32,7 +34,7 @@ const UserDashboard = ({ formData }) => {
       await addUserData(userId, newUserData);
     } catch (error) {
       console.error("Error submitting form: ", error);
-    } 
+    }
 
     // Check localStorage for cached jobs
     try {
@@ -100,7 +102,9 @@ const UserDashboard = ({ formData }) => {
         <div className="flex flex-col justify-center items-center ml-10 bg-white rounded-xl w-full max-w-6xl h-[calc(79vh-70px)] overflow-y-auto p-4">
           <div className="w-full max-w-6xl">
             {loading ? (
-              <p className="text-dark-blue text-lg">Loading your daily jobs...</p>
+              <p className="text-dark-blue text-lg">
+                Loading your daily jobs...
+              </p>
             ) : jobs.length === 0 ? (
               <p className="text-dark-blue text-lg">No jobs available</p>
             ) : (
