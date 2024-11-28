@@ -99,7 +99,7 @@ const UserDashboard = ({ formData }) => {
         </div>
 
         {/* Job List Section */}
-        <div className="flex flex-col justify-center items-center ml-10 bg-white rounded-xl w-full max-w-6xl h-[calc(79vh-70px)] overflow-y-auto p-4">
+        <div className="flex flex-col justify-center items-center ml-10 bg-white rounded-xl w-full max-w-6xl h-[calc(81vh-70px)] overflow-y-auto p-4">
           <div className="w-full max-w-6xl">
             {loading ? (
               <p className="text-dark-blue text-lg">Loading your daily jobs...</p>

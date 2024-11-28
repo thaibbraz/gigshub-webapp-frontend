@@ -55,7 +55,7 @@ const Navigation = ({ className }) => {
         className={`fixed top-2 left-4 bottom-2 flex flex-col ${
           isExpanded ? "items-start pl-4" : "items-center"
         } bg-white ${
-          location.pathname === "/dashboard" ? "h-5/6" : "h-auto"
+          location.pathname === "/dashboard" ? "h-6/6" : "h-auto"
         } py-6 ${
           isExpanded ? "w-48" : "w-24"
         } transition-all duration-300 rounded-xl`}
