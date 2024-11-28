@@ -68,5 +68,26 @@ const addUserData = async (userId, data) => {
     }
 };
 
+const getUserCVData = async (userId) => {
+  try {
+      if (!userId) throw new Error("User ID is undefined");
 
-export { database, ref, set, get, auth, provider, addUserData, checkUserExists, signInWithPopup };
+      // Reference to the CV data in the database
+      const cvRef = ref(database, `users/${userId}/cv`);
+
+      // Fetch the CV data
+      const snapshot = await get(cvRef);
+      if (snapshot.exists()) {
+          console.log("CV data fetched:", snapshot.val());
+          return snapshot.val();
+      } else {
+          console.log("No CV data found for this user.");
+          return null;
+      }
+  } catch (error) {
+      console.error("Error fetching CV data:", error);
+      return null;
+  }
+};
+
+export { database, ref, set, get, auth, provider, addUserData, checkUserExists, signInWithPopup, getUserCVData };

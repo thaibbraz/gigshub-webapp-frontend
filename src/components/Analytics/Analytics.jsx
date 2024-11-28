@@ -1,135 +1,113 @@
-import React from "react";
-import filterIcon from "../../assets/filterIcon.svg";
+import React, { useEffect, useState } from "react";
+import { getUserCVData } from "../../utils/firebase.js";
+import './styles.css';
 
 const Analytics = () => {
-  const jobs = [
-    {
-      title: "Front-end developer",
-      contractType: "Permanent contract",
-      salary: "$40,000",
-      company: "AIRBNB",
-      location: "Barcelona, Spain",
-      appliedDate: "04/09/2024, 20:04",
-    },
-    {
-      title: "Full Stack Developer",
-      contractType: "Permanent contract",
-      salary: "$55,000",
-      company: "SPOTIFY",
-      location: "Stockholm, Sweden",
-      appliedDate: "02/09/2024, 09:30",
-    },
-    {
-      title: "Mobile App Developer (iOS)",
-      contractType: "Permanent contract",
-      salary: "$50,000",
-      company: "N26",
-      location: "Berlin, Germany",
-      appliedDate: "02/09/2024, 09:10",
-    },
-    {
-      title: "Front-end developer",
-      contractType: "Permanent contract",
-      salary: "$45,000",
-      company: "TYPEFORM",
-      location: "Barcelona, Spain",
-      appliedDate: "02/09/2024, 15:00",
-    },
-  ];
+    const [cvData, setCvData] = useState(null);
 
-  return (
-    // Main Container
-    <div className="ml-2 mr-10">
-      {/* Jobs Applied Section */}
-      <div className="flex flex-col items-center ml-10 bg-white rounded-xl w-full max-w-7xl h-[calc(100vh-28px)] overflow-y-auto">
-        <div className="w-full px-9">
-          <div className="border-2 border-pale-purple mt-10 rounded-xl">
-            <div className="flex justify-between items-center my-10 mx-10">
-              <p className="text-dark-blue text-2xl font-extrabold">
-                Jobs applied to
-              </p>
-              <img
-                src={filterIcon}
-                alt="Filter Icon"
-                className="h-6 w-6 cursor-pointer"
-              />
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        const userId = user?.uid;
+        const fetchCV = async () => {
+            if (!userId) {
+                console.error("User ID is missing");
+                return;
+            }
+            const data = await getUserCVData(userId);
+            setCvData(data);
+        };
+
+        fetchCV();
+    }, []);
+
+    if (!cvData) {
+        return <p>Loading CV data...</p>; // Show a loading message while fetching data
+    }
+
+    const {
+        jobTitle,
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        phone,
+        linkedin,
+        github,
+        address,
+        experiences = [],
+        education = [],
+        skills = []
+    } = cvData;
+
+    return (
+        <div className="App">
+            <div className="container">
+                <div className="sidebar">
+                    <div className="matching-score">
+                        <h2>Matching Score</h2>
+                        <div className="score-circle">
+                            <span>75</span>
+                        </div>
+                        <p>8 issues found</p>
+                    </div>
+                    <div className="section">
+                        <h3>Job Title Match</h3>
+                        <p>{jobTitle}</p>
+                        <a href="#" className="apply-all">apply all</a>
+                    </div>
+                </div>
+                <div className="main-content">
+                    <div className="download-cv-button-box">
+                        <h2>Optimized Resume</h2>
+                        <button className="upload-cv-btn">
+                            <span>Download pdf</span>
+                        </button>
+                    </div>
+                    <div className="content-box">
+                        <div id="resumePreview">
+                            <h2 id="previewName">{`${cvData["first name"]} ${cvData["last name"]}`}</h2>
+                            <p id="previewJobTitle">{jobTitle}</p>
+                            <div className="preview-section">
+                                <h3>Contact Information</h3>
+                                <p id="previewEmail">{email}</p>
+                                <p id="previewPhone">{phone}</p>
+                                <p id="previewLinkedIn">{linkedin}</p>
+                                <p id="previewGitHub">{github}</p>
+                                <p id="previewAddress">{address}</p>
+                            </div>
+                            <div className="experiences-original-section">
+                                <h3>Experience</h3>
+                                {experiences.map((exp, index) => (
+                                    <div key={index}>
+                                        <p>
+                                            <strong>{exp.title}</strong> <span>{exp.date === "undefined - undefined" ? "" : exp.date}</span>
+                                        </p>
+                                        <p><em>{exp.company}</em></p>
+                                        <p>{exp.description}</p>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="education-original-section">
+                                <h3>Education</h3>
+                                {education.map((edu, index) => (
+                                    <p key={index}>
+                                        <strong>{edu.degree}</strong> - {edu.institution} {edu.date || ""}
+                                    </p>
+                                ))}
+                            </div>
+                            <div className="preview-section">
+                                <h3>Skills</h3>
+                                <ul>
+                                    {skills?.[0]?.list.map((skill, index) => (
+                                        <li key={index}>{skill}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            {jobs.map((job, index) => (
-              <div
-                key={index}
-                className={`h-[112px] w-full md:w-[1000px] lg:w-[1200px] grid grid-cols-4 ${
-                  index !== jobs.length - 1
-                    ? "border-b-2 border-pale-purple"
-                    : ""
-                }`}
-              >
-                {/* Job Title */}
-                <div className="col-span-2 flex flex-col justify-center border-r-2 border-dotted border-pale-purple my-4 ml-10">
-                  <p className="text-lg font-extrabold text-dark-blue sm:hidden">
-                    {job.title.length > 8
-                      ? `${job.title.slice(0, 8)}...`
-                      : job.title}
-                  </p>
-                  <p className="text-lg font-extrabold text-dark-blue hidden sm:block">
-                    {job.title}
-                  </p>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    <div className="bg-soft-liliac rounded-lg py-1 px-3 text-sm h-auto hidden sm:flex">
-                      <span className="text-xs text-dark-purple">
-                        {job.contractType}
-                      </span>
-                    </div>
-
-                    <div className="bg-soft-liliac rounded-lg py-1 px-3 text-sm h-auto hidden sm:flex">
-                      <span className="text-xs text-dark-purple">
-                        {job.salary}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Company and Location */}
-                <div className="col-span-1 flex flex-col justify-center border-r-2 border-dotted border-pale-purple my-4 ml-10">
-                  <p className="text-lg font-extrabold text-dark-blue sm:hidden">
-                    {job.company.length > 4
-                      ? `${job.company.slice(0, 4)}...`
-                      : job.company}
-                  </p>
-                  <p className="text-lg font-extrabold text-dark-blue hidden sm:block">
-                    {job.company}
-                  </p>
-                  <p className="text-lg font-thin text-dark-blue sm:hidden">
-                    {job.location.length > 8
-                      ? `${job.location.slice(0, 8)}...`
-                      : job.location}
-                  </p>
-                  <p className="text-lg font-thin text-dark-blue hidden sm:block">
-                    {job.location}
-                  </p>
-                </div>
-
-                <div className="col-span-1 flex items-center ml-10 hidden sm:flex">
-                  <p className="text-dark-blue font-thin">{job.appliedDate}</p>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
-        <div className="grid grid-cols-2 gap-8 mt-10 w-full px-9 pb-9 h-full">
-          <div className="border-2 border-pale-purple rounded-xl">
-            <p className="my-10 mx-10 text-dark-blue text-2xl font-extrabold">
-              Graph Title
-            </p>
-          </div>
-          <div className="border-2 border-pale-purple rounded-xl">
-            <p className="my-10 mx-10 text-dark-blue text-2xl font-extrabold">
-              Graph Title
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default Analytics;

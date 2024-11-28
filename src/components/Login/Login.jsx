@@ -16,6 +16,9 @@ const Login = () => {
       try {
           const result = await signInWithPopup(auth, provider);
           const user = result.user;
+          const token = await user.getIdToken();
+          const refreshToken = user.refreshToken;
+          const extensionId = "jphiibpfnbfejbglddjlcgnlfdallbak";
 
           localStorage.setItem("user", JSON.stringify({ 
               uid: user.uid,
@@ -23,7 +26,21 @@ const Login = () => {
               email: user.email, 
               photoURL: user.photoURL 
           }));
-
+          if (user) {
+            try {
+              // Send both ID token and refresh token to the Chrome extension
+              const response = await window.chrome.runtime.sendMessage(
+                extensionId,
+                {
+                  action: "login",
+                  token: token,
+                  refreshToken: refreshToken,
+                }
+              );
+            } catch (error) {
+              console.error("Error sending message to extension:", error);
+            }
+          }
           login();
           if (await checkUserExists(user.uid) === false) {
             navigate("/welcome");
