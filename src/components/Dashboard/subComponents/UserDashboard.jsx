@@ -80,7 +80,7 @@ const UserDashboard = ({ formData }) => {
   // Fetch jobs on mount
   useEffect(() => {
     if (jobs.length === 0) fetchJobs();
-  }, [jobs]);
+  }, [cvFormData, jobTitle, location]);
 
   return (
     <div className="ml-2 mr-10">

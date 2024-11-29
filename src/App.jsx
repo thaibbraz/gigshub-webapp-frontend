@@ -27,7 +27,7 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route path="/" element={<Navigate to="/signup" />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+            <Route path="/signup" element={<Login />} />
 
             {/* only available to logged-in users */}
             <Route element={<ProtectedRoute />}>
@@ -45,7 +45,7 @@ function App() {
                 element={<UserDashboard formData={formData} />}
               />
               <Route path="/jobs" element={<Dashboard />} />
-              <Route path="/analytics" element={<Analytics />} />
+              <Route path="/resume" element={<Analytics />} />
               <Route path="/welcome" element={<Explanation />} />
               <Route path="/ai-job-match" element={<AIJobMatch />} />
               <Route path="/settings" element={<Settings />} />

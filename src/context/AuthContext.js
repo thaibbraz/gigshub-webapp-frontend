@@ -18,8 +18,12 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setLoggedIn(false);
     localStorage.removeItem("user");
-    localStorage.removeItem("jobs");
+    let jobList = localStorage.getItem("jobs");
+    if  (jobList.length === 0) {
+      localStorage.removeItem("jobs");
+    }
     localStorage.removeItem("timestamp");
+    
   };
 
   return (

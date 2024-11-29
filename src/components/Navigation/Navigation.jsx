@@ -108,11 +108,11 @@ const Navigation = ({ className }) => {
             className={`flex ${
               isExpanded ? "justify-start" : "justify-center"
             } items-center space-x-4 cursor-pointer`}
-            onClick={() => handleClick("analytics")}
+            onClick={() => handleClick("resume")}
           >
             <img
               src={
-                activePage === "analytics" ? analyticsIconDark : analyticsIcon
+                activePage === "resume" ? analyticsIconDark : analyticsIcon
               }
               alt="Analytics"
               className="h-6 w-6"
@@ -120,12 +120,12 @@ const Navigation = ({ className }) => {
             {isExpanded && (
               <span
                 className={`font-small font-sans ${
-                  activePage === "analytics"
+                  activePage === "resume"
                     ? "text-dark-blue"
                     : "text-light-liliac"
                 }`}
               >
-                Analytics
+                Resume builder
               </span>
             )}
           </div>
