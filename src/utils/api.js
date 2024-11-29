@@ -19,7 +19,8 @@ export async function sendRequest(data, endpoint) {
     ) {
       const token = response.data.access_token;
       localStorage.setItem("token", token);
-    }
+    }else
+    return response.data;
   } catch (error) {
     throw new Error(error);
   }
