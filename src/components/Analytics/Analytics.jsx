@@ -3,15 +3,17 @@ import { getUserCVData } from "../../utils/firebase.js";
 import "./styles.css";
 import { sendRequest } from "../../utils/api.js";
 import starsUnfilled from "../../assets/starsUnfilled.svg";
+import Select from "react-select";
 
 const Analytics = () => {
+    const [loading, setLoading] = useState(false);
     const [cvData, setCvData] = useState(null);
     const [showPopup, setShowPopup] = useState(false);
     const [jobDescription, setJobDescription] = useState("");
     const [analysisData, setAnalysisData] = useState(null);
     const [showExperienceModal, setShowExperienceModal] = useState(false); 
     const [selectedCompanies, setSelectedCompanies] = useState("");
-    
+    const [experience, setExperience] = useState("");
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem("user"));
         const userId = user?.uid;
@@ -28,6 +30,8 @@ const Analytics = () => {
     }, []);
 
     const handleSendToBackend = async () => {
+        togglePopup();
+        setLoading(true);
         if (!jobDescription.trim()) {
             alert("Please enter a job description.");
             return;
@@ -41,9 +45,9 @@ const Analytics = () => {
         try {
             const response = await sendRequest(payload, "/optimize-cv-for-job");
             console.log("Response from backend:", response);
-
+            setLoading(false);
             setAnalysisData(response.resume_data);
-            alert("Data sent successfully!");
+            
         } catch (error) {
             console.error("Error sending data:", error);
             alert("Failed to send data.");
@@ -72,7 +76,9 @@ const Analytics = () => {
             skills: [{ ...prev.skills[0], list: updatedSkills }],
         }));
     };
+
     const handleExperienceAdd = async () => {
+        
         if (selectedCompanies.length === 0) {
             alert("Please select at least one company and provide a description.");
             return;
@@ -80,17 +86,16 @@ const Analytics = () => {
 
         // Prepare the payload
         const payload = {
-            experiences: "to be added",
+            experiences: experience,
             description: selectedCompanies.map((company) => ({
                 ...cvData.experiences.find((exp) => exp.company === company.value)}))
             
         };
-
+        setExperience("");
         try {
             const response = await sendRequest(payload, "/add-experience");
             console.log("Experience added successfully:", response);
 
-            // Optionally update state or give feedback
             alert("Experiences added successfully!");
             toggleExperienceModal();
         } catch (error) {
@@ -104,8 +109,10 @@ const Analytics = () => {
     }
     
     const togglePopup = () => setShowPopup(!showPopup);
-    const toggleExperienceModal = () => setShowExperienceModal(!showExperienceModal);
-
+    const toggleExperienceModal = (role) => {
+        setExperience(role)
+        setShowExperienceModal(!showExperienceModal)
+    }
     const {
         matching_score,
         keyword_analysis,
@@ -139,12 +146,17 @@ const Analytics = () => {
         <div className="App">
             <div className="container">
                 <div className="sidebar">
+                
+
                     <div className="btn-tailor-job-box">
                         <button className="upload-cv-btn-ghost" onClick={togglePopup}>
                             <span>Tailor to job</span>
                         </button>
                     </div>
-
+    {loading && analysisData === null && <div className="loading-spinner-container">
+        <div className="loading-spinner"></div>
+        <p>Loading...</p>
+    </div>}
     {analysisData && (
         <>
           {/* Matching Score */}
@@ -204,13 +216,18 @@ const Analytics = () => {
                 <div className="section">
                     <h3>Experience Gaps</h3>
                     <ul className="flex">
-                        {experience_gaps.unrepresented_roles.map((role, index) => (
-                            <li className="mr-2" key={index}> {role}</li>
-                        ))} <button className="experence-btn" onClick={toggleExperienceModal}>Add to experience
-                        <img
-                        src={starsUnfilled}
-                        alt="Stars Icon"
-                        /></button>
+                        {
+                        experience_gaps.unrepresented_roles.map((role, index) => (
+                            <>
+                                <li className="mr-2" key={index}> {role}</li>
+                                <button className="experence-btn" onClick={() => toggleExperienceModal(role)}>Add to experience
+                                <img
+                                src={starsUnfilled}
+                                alt="Stars Icon"
+                                className="w-2 h-2"
+                                /></button>
+                            </>
+                        ))} 
                     </ul>
                 </div>
             )}
@@ -310,25 +327,43 @@ const Analytics = () => {
         {showExperienceModal && (
                 <div className="popup-overlay">
                     <div className="popup-content">
-                        <h3>What job did you use this experience?</h3>
-                        <div>
-                            <label htmlFor="companySelect">Select Company:</label>
-                            <select
+                        <h3 className="mb-4 p-4 text-center text-2xl font-bold">What job did you use this experience?</h3>
+                        <div className="mb-8 text-center">
+
+                            
+                            <Select
+                                id="companySelect"
+                                options={experiences && experiences.map((exp) => ({
+                                    value: exp.company,
+                                    label: exp.company,
+                                }))}
+
+                                
+                                isMulti // Enables multi-select
+                                value={selectedCompanies}
+                                onChange={(selected) => setSelectedCompanies(selected || [])}
+                                placeholder="Select companies..."
+                            />
+                            { /*<select
                                 id="companySelect"
                                 value={selectedCompanies}
                                 onChange={(e) => setSelectedCompanies(e.target.value)}
                             >
                                 <option value="">-- Select a Company --</option>
-                                {experiences.map((exp, index) => (
+                                {experiences && experiences.map((exp, index) => (
                                     <option key={index} value={exp.company}>
                                         {exp.company}
                                     </option>
                                 ))}
-                            </select>
+                            </select>*/}
                         </div>
                         <div className="popup-buttons">
                             <button className="upload-cv-btn" onClick={handleExperienceAdd}>
-                                Add keyword with AI
+                                Add keyword with AI <img
+                                src={starsUnfilled}
+                                alt="Stars Icon"
+                                className="ml-2 w-4 h-4"
+                                />
                             </button>
                             <button
                                 className="upload-cv-btn-cancel"
@@ -353,7 +388,7 @@ const Analytics = () => {
                     />
                     <div className="popup-buttons">
                         <button className="upload-cv-btn" onClick={handleSendToBackend}>
-                            Send
+                            Analyse job
                         </button>
                         <button className="upload-cv-btn-cancel" onClick={togglePopup}>
                             Cancel
