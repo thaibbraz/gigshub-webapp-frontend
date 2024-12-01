@@ -54,7 +54,7 @@ const Analytics = () => {
         }
     };
     const handleSkillClick = (skill) => {
-        // Remove the skill from missing_skills.hard_skills
+        if (!analysisData || !cvData?.skills?.[0]?.list) return;
         const updatedMissingSkills = analysisData.missing_skills.hard_skills.filter(
             (item) => item !== skill
         );
@@ -86,15 +86,17 @@ const Analytics = () => {
 
         // Prepare the payload
         const payload = {
-            experiences: experience,
-            description: selectedCompanies.map((company) => ({
-                ...cvData.experiences.find((exp) => exp.company === company.value)}))
+            experience_gap: [{"value":experience,"skills":analysisData }],
+            exp_description: selectedCompanies.map((company) => ({
+                ...cvData.experiences.find((exp) => exp.company === company.value).description}))
             
         };
         setJobDescription("");
         setExperience("");
         try {
             const response = await sendRequest(payload, "/add-experience");
+        //  setCvData(() => ({ ...cvData, experiences: [...cvData.experiences.map(e => e.company === company.value ? response : e)] }));
+        // setCvData(selectedCompanies.map((company) => ({...cvData.experiences.find((exp) => exp.company === company.value).description})))
             console.log("Experience added successfully:", response);
 
             alert("Experiences added successfully!");
@@ -290,8 +292,8 @@ const Analytics = () => {
             )}
 
             {/* Preparation Assistance */}
-            {preparation_assistance?.interview_questions?.length > 0 || preparation_assistance?.preparation_checklist?.length > 0 (
-                <div className="section">
+            {preparation_assistance?.interview_questions?.length > 0 || preparation_assistance?.preparation_checklist?.length > 0 && (
+                    <div className="section">
                     <h3>Preparation Assistance</h3>
                     {preparation_assistance?.interview_questions?.length > 0 && (
                         <>
