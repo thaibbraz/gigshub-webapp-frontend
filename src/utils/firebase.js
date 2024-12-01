@@ -1,7 +1,7 @@
 // firebase.js
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, set, get, child} from "firebase/database";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth, setPersistence, browserLocalPersistence, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDmAVvW60ypN8PQv7Rgf_LeI05RkOICME8",
@@ -15,7 +15,13 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
+
 const auth = getAuth(app);
+setPersistence(auth, browserLocalPersistence).catch((error) => {
+    console.error("Error setting persistence:", error);
+});
+
 const provider = new GoogleAuthProvider();
 const database = getDatabase(app);
 

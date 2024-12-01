@@ -38,7 +38,7 @@ const Navigation = ({ className }) => {
     localStorage.removeItem("user");
     logout();
     try {
-      const extensionId = "jphiibpfnbfejbglddjlcgnlfdallbak";
+      const extensionId = "klipnhphhcgopjomkcdocooeadokcgdj";
       // Send both ID token and refresh token to the Chrome extension
       const response = await window.chrome.runtime.sendMessage(extensionId, {
         action: "logout",

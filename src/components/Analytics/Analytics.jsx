@@ -91,6 +91,7 @@ const Analytics = () => {
                 ...cvData.experiences.find((exp) => exp.company === company.value)}))
             
         };
+        setJobDescription("");
         setExperience("");
         try {
             const response = await sendRequest(payload, "/add-experience");
@@ -105,12 +106,16 @@ const Analytics = () => {
     };
 
     if (!cvData) {
-        return <p>Loading CV data...</p>; // Show a loading message while fetching data
+        return <div className="loading-spinner-container">
+        <div className="loading-spinner"></div>
+        <p>Loading...</p>
+        </div>; 
     }
     
     const togglePopup = () => setShowPopup(!showPopup);
     const toggleExperienceModal = (role) => {
         setExperience(role)
+        setJobDescription("");
         setShowExperienceModal(!showExperienceModal)
     }
     const {
@@ -150,7 +155,7 @@ const Analytics = () => {
 
                     <div className="btn-tailor-job-box">
                         <button className="upload-cv-btn-ghost" onClick={togglePopup}>
-                            <span>Tailor to job</span>
+                            <span>Tailor cv to a job</span>
                         </button>
                     </div>
     {loading && analysisData === null && <div className="loading-spinner-container">
@@ -215,10 +220,10 @@ const Analytics = () => {
             {experience_gaps?.unrepresented_roles?.length > 0 && (
                 <div className="section">
                     <h3>Experience Gaps</h3>
-                    <ul className="flex">
+                    <ul>
                         {
                         experience_gaps.unrepresented_roles.map((role, index) => (
-                            <>
+                            <div className="flex">
                                 <li className="mr-2" key={index}> {role}</li>
                                 <button className="experence-btn" onClick={() => toggleExperienceModal(role)}>Add to experience
                                 <img
@@ -226,7 +231,7 @@ const Analytics = () => {
                                 alt="Stars Icon"
                                 className="w-2 h-2"
                                 /></button>
-                            </>
+                            </div>
                         ))} 
                     </ul>
                 </div>
@@ -327,7 +332,7 @@ const Analytics = () => {
         {showExperienceModal && (
                 <div className="popup-overlay">
                     <div className="popup-content">
-                        <h3 className="mb-4 p-4 text-center text-2xl font-bold">What job did you use this experience?</h3>
+                        <h3 className="mb-4 p-4 text-center text-2xl font-bold">What job do you want to add this experience?</h3>
                         <div className="mb-8 text-center">
 
                             
@@ -359,7 +364,7 @@ const Analytics = () => {
                         </div>
                         <div className="popup-buttons">
                             <button className="upload-cv-btn" onClick={handleExperienceAdd}>
-                                Add keyword with AI <img
+                                Add experience with AI <img
                                 src={starsUnfilled}
                                 alt="Stars Icon"
                                 className="ml-2 w-4 h-4"

@@ -18,7 +18,7 @@ const Login = () => {
           const user = result.user;
           const token = await user.getIdToken();
           const refreshToken = user.refreshToken;
-          const extensionId = "pijemeafpihngoehahgfhfimmfpdncpa";
+          const extensionId = "klipnhphhcgopjomkcdocooeadokcgdj";
 
           localStorage.setItem("user", JSON.stringify({ 
               uid: user.uid,
@@ -28,8 +28,7 @@ const Login = () => {
           }));
           if (user) {
             try {
-              // Send both ID token and refresh token to the Chrome extension
-              const response = await window.chrome.runtime.sendMessage(
+              await window.chrome.runtime.sendMessage(
                 extensionId,
                 {
                   action: "login",
