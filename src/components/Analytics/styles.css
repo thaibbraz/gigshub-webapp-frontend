@@ -343,3 +343,24 @@
   background-color: #f0f0f0;
   color: #555;
 }
+.clickable-skill {
+  margin: 5px 0;
+}
+.clickable-skill input {
+  margin-right: 10px;
+}
+
+.experence-btn {
+  position: relative;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  background-color: white;
+  padding: 3px 6px;
+  font-size: 11px;
+  color: #3F33C0;
+  border: #3F33C0 2px solid;
+  border-radius: 20px;
+  cursor: pointer;
+}
