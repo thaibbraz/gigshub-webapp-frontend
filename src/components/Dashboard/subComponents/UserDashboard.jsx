@@ -41,13 +41,15 @@ const UserDashboard = ({ formData }) => {
       const cachedJobs = localStorage.getItem("jobs");
       const timestamp = localStorage.getItem("timestamp");
 
-      if (cachedJobs?.length > 0 && Date.now() - timestamp < 86400000) {
+      if (JSON.parse(cachedJobs)?.length > 0 && Date.now() - timestamp < 86400000) {
         setJobs(JSON.parse(cachedJobs));
-        console.log("here");
+        console.log("Already had job cached", cachedJobs);
         return;
       }
 
       // Fetch new jobs from API
+      // https://fastapi-job-matcher-05-160893319817.europe-southwest1.run.app
+      // http://localhost:8080/api/jobs
       const response = await fetch(
         "https://fastapi-job-matcher-05-160893319817.europe-southwest1.run.app/api/jobs",
         {
@@ -70,7 +72,9 @@ const UserDashboard = ({ formData }) => {
 
       // Update localStorage and state
       localStorage.setItem("timestamp", Date.now());
-      localStorage.setItem("jobs", JSON.stringify(filteredJobs));
+      localStorage.setItem("jobs", JSON.stringify(data));
+      console.log("got here", filteredJobs);
+      
       setJobs(filteredJobs);
     } catch (error) {
       console.error("Error fetching jobs:", error);
@@ -103,10 +107,8 @@ const UserDashboard = ({ formData }) => {
           <div className="w-full max-w-6xl">
             {loading ? (
               <p className="text-dark-blue text-lg">Loading your daily jobs...</p>
-            ) : jobs.length === 0 ? (
-              <p className="text-dark-blue text-lg">No jobs available</p>
-            ) : (
-              jobs.map((job, index) => (
+            )  : (
+              jobs && jobs.map((job, index) => (
                 <div
                   key={index}
                   className={`h-[80px] w-full grid grid-cols-4 gap-4 ${

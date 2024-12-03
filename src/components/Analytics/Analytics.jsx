@@ -13,7 +13,7 @@ const Analytics = () => {
     const [analysisData, setAnalysisData] = useState(null);
     const [showExperienceModal, setShowExperienceModal] = useState(false); 
     const [selectedCompanies, setSelectedCompanies] = useState("");
-    const [experience, setExperience] = useState("");
+    const [optimizationSuggestion, setOptimizationSuggestion] = useState("");
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem("user"));
         const userId = user?.uid;
@@ -77,35 +77,7 @@ const Analytics = () => {
         }));
     };
 
-    const handleExperienceAdd = async () => {
-        
-        if (selectedCompanies.length === 0) {
-            alert("Please select at least one company and provide a description.");
-            return;
-        }
-
-        // Prepare the payload
-        const payload = {
-            experience_gap: [{"value":experience,"skills":analysisData }],
-            exp_description: selectedCompanies.map((company) => ({
-                ...cvData.experiences.find((exp) => exp.company === company.value).description}))
-            
-        };
-        setJobDescription("");
-        setExperience("");
-        try {
-            const response = await sendRequest(payload, "/add-experience");
-        //  setCvData(() => ({ ...cvData, experiences: [...cvData.experiences.map(e => e.company === company.value ? response : e)] }));
-        // setCvData(selectedCompanies.map((company) => ({...cvData.experiences.find((exp) => exp.company === company.value).description})))
-            console.log("Experience added successfully:", response);
-
-            alert("Experiences added successfully!");
-            toggleExperienceModal();
-        } catch (error) {
-            console.error("Error adding experiences:", error);
-            alert("Failed to add experiences.");
-        }
-    };
+    
 
     if (!cvData) {
         return <div className="loading-spinner-container">
@@ -116,8 +88,9 @@ const Analytics = () => {
     
     const togglePopup = () => setShowPopup(!showPopup);
     const toggleExperienceModal = (role) => {
-        setExperience(role)
+        setOptimizationSuggestion(role)
         setJobDescription("");
+        setSelectedCompanies([]);
         setShowExperienceModal(!showExperienceModal)
     }
     const {
@@ -149,6 +122,44 @@ const Analytics = () => {
         skills = [],
     } = cvData;
 
+
+    const handleExperienceAdd = async () => {
+        
+        if (selectedCompanies.length === 0) {
+            alert("Please select at least one company and provide a description.");
+            return;
+        }
+        let experience_worked = selectedCompanies.map((company) => ({...cvData.experiences.find((exp) => exp.company === company.value.company)}))
+
+        const payload = {
+            experience_gap: optimizationSuggestion,
+            exp_description: experience_worked[0].description
+            
+        };
+
+        try {
+            const response = await sendRequest(payload, "/add-experience");
+            setCvData((prevState) => ({
+                ...prevState,
+                experiences: prevState.experiences.map((exp) =>
+                    exp.company === selectedCompanies[0].value.company && selectedCompanies[0].value.title === exp.title
+                        ? { ...exp, description: response.resume_data.experience_updated }
+                        : exp
+                ),
+            }));
+            
+            console.log("Experience added successfully:", response);
+            
+            alert("Experiences added successfully!");
+            toggleExperienceModal();
+        } catch (error) {
+            console.error("Error adding experiences:", error);
+            alert("Failed to add experiences.");
+        }
+        setJobDescription("");
+        setOptimizationSuggestion("");
+        setSelectedCompanies([]);
+    };
     return (
         <div className="App">
             <div className="container">
@@ -218,7 +229,7 @@ const Analytics = () => {
                 </div>
             )}
 
-            {/* Experience Gaps */}
+            {/* Experience Gaps 
             {experience_gaps?.unrepresented_roles?.length > 0 && (
                 <div className="section">
                     <h3>Experience Gaps</h3>
@@ -237,7 +248,7 @@ const Analytics = () => {
                         ))} 
                     </ul>
                 </div>
-            )}
+            )}*/}
 
             {/* Education Requirements */}
             {education_requirements?.missing_degrees_or_certifications?.length > 0 && (
@@ -259,23 +270,20 @@ const Analytics = () => {
                     <h3>Optimization Suggestions</h3>
                     <ul>
                         {optimization_suggestions.map((suggestion, index) => (
-                            <li key={index}>✔ {suggestion}</li>
+                            <div className="flex">
+                                <li key={index}>✔ {suggestion}</li>
+                                <button className="experence-btn" onClick={() => toggleExperienceModal(suggestion)}>Add
+                                <img
+                                src={starsUnfilled}
+                                alt="Stars Icon"
+                                className="ml-1 mr-1 w-2 h-2"
+                                /></button>
+                            </div>
                         ))}
                     </ul>
                 </div>
             )}
 
-            {/* Customization Suggestions */}
-            {customization_suggestions?.length > 0 && (
-                <div className="section">
-                    <h3>Customization Suggestions</h3>
-                    <ul>
-                        {customization_suggestions.map((suggestion, index) => (
-                            <li key={index}>✔ {suggestion}</li>
-                        ))}
-                    </ul>
-                </div>
-            )}
 
             {/* Recruiters' Tips */}
             {recruiters_tips && Object.keys(recruiters_tips).length > 0 && (
@@ -334,15 +342,15 @@ const Analytics = () => {
         {showExperienceModal && (
                 <div className="popup-overlay">
                     <div className="popup-content">
-                        <h3 className="mb-4 p-4 text-center text-2xl font-bold">What job do you want to add this experience?</h3>
+                        <h3 className="mb-4 p-4 text-center text-2xl font-bold">Where did you use this skill?</h3>
                         <div className="mb-8 text-center">
 
                             
                             <Select
                                 id="companySelect"
                                 options={experiences && experiences.map((exp) => ({
-                                    value: exp.company,
-                                    label: exp.company,
+                                    value: exp,
+                                    label: exp.title +" at " +exp.company,
                                 }))}
 
                                 

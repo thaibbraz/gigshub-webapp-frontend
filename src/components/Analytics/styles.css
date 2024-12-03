@@ -83,6 +83,7 @@
   .section ul li {
     margin-bottom: 5px;
     color: #555;
+    max-width: 479px;
   }
   
   .section ul li::before {
@@ -351,20 +352,7 @@
   margin-right: 10px;
 }
 
-.experence-btn {
-  position: relative;
-  height: 26px;
-  display: flex;
-  align-items: center;
-  font-weight: 400;
-  background-color: white;
-  padding: 3px 6px;
-  font-size: 11px;
-  color: #3F33C0;
-  border: #3F33C0 2px solid;
-  border-radius: 20px;
-  cursor: pointer;
-}
+
 /* Spinner Container */
 .loading-spinner-container {
   display: flex;
@@ -401,4 +389,20 @@
   font-size: 1rem;
   color: #3F33C0;
   font-weight: bold;
+}
+
+.experence-btn {
+  position: relative;
+  height: 19px;
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  background-color: #3F33C0;
+  padding: 1px 10px 0px 10px;
+  font-size: 11px;
+  color:  white;
+  border: #3F33C0 2px solid;
+  width: auto;
+  border-radius: 20px;
+  cursor: pointer;
 }
