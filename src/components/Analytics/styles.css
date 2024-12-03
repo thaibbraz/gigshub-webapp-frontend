@@ -48,22 +48,21 @@
   
   .matching-score h2 {
     font-size: 1.2rem;
-    color: #3F33C0;
+    color: #3f33c0;
+    margin-bottom: 10px;
   }
   
   .score-circle {
-    width: 80px;
+    display: inline-block;
+    width: 80px; /* Adjust size to fit */
     height: 80px;
-    margin: 10px auto;
-    background-color: #ffe0b3;
-    color: #ff7d00;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.5rem;
+  }
+  
+  .score-circle text {
+    font-size: 0.7rem;
     font-weight: bold;
   }
+  
   
   .section {
     margin-top: 20px;
@@ -87,9 +86,9 @@
   }
   
   .section ul li::before {
-    content: '⚠';
+    content: '•';
     margin-right: 8px;
-    color: orange;
+    color: #333;
   }
   
   .section ul li:has(.success)::before {
@@ -404,5 +403,26 @@
   border: #3F33C0 2px solid;
   width: auto;
   border-radius: 20px;
+  cursor: pointer;
+}
+
+.highlight {
+  background-color: #b3aeeb30;
+  color: #3f33c0;
+  padding: 0px 4px;
+  border-radius: 3px;
+  display: inline;
+}
+.match-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  background-color: #3f33c000;
+  padding: 1px 10px 0px 10px;
+  font-size: 14px;
+  color:#3F33C0;
+  width: auto;
+
   cursor: pointer;
 }
