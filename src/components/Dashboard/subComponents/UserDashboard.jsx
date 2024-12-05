@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import starsUnfilled from "../../../assets/starsUnfilled.svg";
-import { addUserData } from "../../../utils/firebase.js";
+import { addUserData,getUserCVData } from "../../../utils/firebase.js";
 import { useNavigate } from "react-router-dom";
 
 const UserDashboard = ({ formData }) => {
@@ -18,68 +18,78 @@ const UserDashboard = ({ formData }) => {
   const fetchJobs = async () => {
     console.log("Fetching jobs...");
     
-    if (!cvFormData || !jobTitle || !location) {
-      console.error("Missing required fields: cvFormData, jobTitle, or location");
-      return;
-    }
-
     const user = JSON.parse(localStorage.getItem("user"));
     const userId = user?.uid;
-    const requestBody = { ...cvFormData, jobTitle, location };
-
-    try {
-      const newUserData = {
-        email: user?.email || "",
-        displayName: user?.displayName || "",
-        photoURL: user?.photoURL || "",
-        cv: cvFormData,
-      };
-      await addUserData(userId, newUserData);
-    } catch (error) {
-      console.error("Error submitting form: ", error);
-    } 
-
+    console.log("user id", userId);
+    console.log("cvFormData", cvFormData);
+    if (!user) {
+      console.log("no user found");
+      
+      try {
+        const newUserData = {
+          email: user?.email || "",
+          displayName: user?.displayName || "",
+          photoURL: user?.photoURL || "",
+          cv: cvFormData,
+        };
+        await addUserData(userId, newUserData);
+      } catch (error) {
+        console.error("Error submitting form: ", error);
+      } 
+    }
+    if(Object.keys(cvFormData).length === 0) {
+      console.error("cvFormData is missing");
+      const data = await getUserCVData(userId);
+      setcvFormData(data);
+    }
+    if (!jobTitle && cvFormData) {
+        const jobTittle = cvFormData.jobTitle;
+        setJobTitle(jobTittle);
+    }
+    if (!location && cvFormData) {
+        const location = cvFormData.location;
+        setLocation(location);
+    }
+    
     // Check localStorage for cached jobs
     try {
       const cachedJobs = localStorage.getItem("jobs");
       const timestamp = localStorage.getItem("timestamp");
+      const requestBody = { ...cvFormData, jobTitle, location };
 
-      if (JSON.parse(cachedJobs)?.length > 0 && Date.now() - timestamp < 86400000) {
+      if (JSON.parse(cachedJobs)?.length > 0 && jobs.length === 0 && Date.now() - timestamp < 86400000) {
         setJobs(JSON.parse(cachedJobs));
         console.log("Already had job cached", cachedJobs);
         return;
-      }
-
-      // Fetch new jobs from API
-      // https://fastapi-job-matcher-05-160893319817.europe-southwest1.run.app
-      // http://localhost:8080/api/jobs
-      const response = await fetch(
-        "https://fastapi-job-matcher-05-160893319817.europe-southwest1.run.app/api/jobs",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody),
+      }else if (!JSON.parse(cachedJobs)) {
+        const response = await fetch(
+          "https://fastapi-job-matcher-05-160893319817.europe-southwest1.run.app/api/jobs",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+          }
+        );
+  
+        if (!response.ok) {
+          throw new Error("Failed to fetch jobs from API");
         }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch jobs from API");
-      }
-
-      const data = await response.json();
-      const filteredJobs = data.jobs.filter(
-        (job) => formatScoreAsPercentage(job.compatibility_score) > 10
-      );
-
-      // Update localStorage and state
-      localStorage.setItem("timestamp", Date.now());
-      localStorage.setItem("jobs", JSON.stringify(data));
-      console.log("got here", filteredJobs);
-      
-      setJobs(filteredJobs);
-    } catch (error) {
+  
+        const data = await response.json();
+        const filteredJobs = data.jobs.filter(
+          (job) => formatScoreAsPercentage(job.compatibility_score) > 10
+        );
+  
+        // Update localStorage and state
+        localStorage.setItem("timestamp", Date.now());
+        localStorage.setItem("jobs", JSON.stringify(data));
+        console.log("got here", filteredJobs);
+        
+        setJobs(filteredJobs);
+      } 
+    }catch (error) {
       console.error("Error fetching jobs:", error);
     }
   };

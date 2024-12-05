@@ -11,10 +11,17 @@ const Analytics = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [jobDescription, setJobDescription] = useState("");
     const [analysisData, setAnalysisData] = useState(null);
-    const [showExperienceModal, setShowExperienceModal] = useState(false); 
+    const [showExperienceModal, setShowExperienceModal] = useState(false);
     const [selectedCompanies, setSelectedCompanies] = useState("");
     const [optimizationSuggestion, setOptimizationSuggestion] = useState("");
     const [highlightedSkills, setHighlightedSkills] = useState([]);
+
+    const weights = {
+        missing_keywords: 2,
+        missing_skills: 3,
+        experience_gaps: 5,
+        grammar_issues: 1,
+    };
 
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem("user"));
@@ -31,11 +38,27 @@ const Analytics = () => {
         fetchCV();
     }, []);
 
+    const calculateMatchingScore = () => {
+        if (!analysisData || !analysisData.summary_of_issues) return 0;
+        const { missing_keywords_count, missing_skills_count, experience_gaps_count, grammar_issues_count } =
+            analysisData.summary_of_issues;
+
+        const newScore =
+            100 -
+            (missing_keywords_count * weights.missing_keywords +
+                missing_skills_count * weights.missing_skills +
+                experience_gaps_count * weights.experience_gaps +
+                grammar_issues_count * weights.grammar_issues);
+
+        return Math.max(0, Math.min(100, newScore)); // Ensure score is between 0 and 100
+    };
+
     const handleSendToBackend = async () => {
         togglePopup();
         setLoading(true);
         if (!jobDescription.trim()) {
             alert("Please enter a job description.");
+            setLoading(false);
             return;
         }
 
@@ -47,57 +70,133 @@ const Analytics = () => {
         try {
             const response = await sendRequest(payload, "/optimize-cv-for-job");
             console.log("Response from backend:", response);
-            setLoading(false);
             setAnalysisData(response.resume_data);
-            
+            setLoading(false);
         } catch (error) {
             console.error("Error sending data:", error);
             alert("Failed to send data.");
+            setLoading(false);
         }
     };
+
     const handleSkillClick = (skill) => {
         if (!analysisData || !cvData?.skills?.[0]?.list) return;
-        const updatedMissingSkills = analysisData.missing_skills.hard_skills.filter(
-            (item) => item !== skill
-        );
 
-        // Add the skill to cvData.skills.list
+        const updatedMissingSkills = analysisData.missing_skills.hard_skills.filter((item) => item !== skill);
+
         const updatedSkills = [...cvData.skills[0].list, skill];
-        
+
         setHighlightedSkills((prev) => [...prev, skill]);
-        // Update state
         setAnalysisData((prev) => ({
             ...prev,
             missing_skills: {
                 ...prev.missing_skills,
                 hard_skills: updatedMissingSkills,
             },
+            summary_of_issues: {
+                ...prev.summary_of_issues,
+                missing_skills_count: prev.summary_of_issues.missing_skills_count - 1,
+                total_issues_count: prev.summary_of_issues.total_issues_count - 1,
+            },
+            matching_score: calculateMatchingScore(),
         }));
-
         setCvData((prev) => ({
             ...prev,
             skills: [{ ...prev.skills[0], list: updatedSkills }],
         }));
     };
 
-    
+    const handleExperienceAdd = async () => {
+        if (selectedCompanies.length === 0) {
+            alert("Please select at least one company and provide a description.");
+            return;
+        }
 
-    if (!cvData) {
-        return <div className="loading-spinner-container">
-        <div className="loading-spinner"></div>
-        <p>Loading...</p>
-        </div>; 
-    }
-    
+        const experienceWorked = selectedCompanies.map((company) => ({
+            ...cvData.experiences.find((exp) => exp.company === company.value.company),
+        }));
+
+        const payload = {
+            experience_gap: optimizationSuggestion,
+            exp_description: experienceWorked[0].description,
+        };
+
+        try {
+            const response = await sendRequest(payload, "/add-experience");
+            const updatedDescription = response.resume_data.experience_updated;
+
+            setCvData((prevState) => ({
+                ...prevState,
+                experiences: prevState.experiences.map((exp) =>
+                    exp.company === selectedCompanies[0].value.company && selectedCompanies[0].value.title === exp.title
+                        ? {
+                              ...exp,
+                              description: highlightAddedText(exp.description, updatedDescription),
+                          }
+                        : exp
+                ),
+            }));
+
+            setAnalysisData((prev) => ({
+                ...prev,
+                experience_gaps: {
+                    unrepresented_roles: prev.experience_gaps.unrepresented_roles.slice(1),
+                },
+                summary_of_issues: {
+                    ...prev.summary_of_issues,
+                    experience_gaps_count: prev.summary_of_issues.experience_gaps_count - 1,
+                    total_issues_count: prev.summary_of_issues.total_issues_count - 1,
+                },
+                matching_score: calculateMatchingScore(),
+            }));
+
+            console.log("Experience added successfully:", response);
+            toggleExperienceModal();
+        } catch (error) {
+            console.error("Error adding experiences:", error);
+            alert("We had a problem adding your experience. Please try again.");
+        }
+        setJobDescription("");
+        setOptimizationSuggestion("");
+        setSelectedCompanies([]);
+    };
+
+    const highlightAddedText = (originalText, updatedText) => {
+        if (!originalText || !updatedText) return updatedText;
+
+        const newText = updatedText.replace(originalText, "");
+
+        return updatedText.replace(newText, `<span class="highlight">${newText}</span>`);
+    };
+
+    const handleRecruitersTips = (value) => {
+        if (value === false) {
+            setCvData((prevCvData) => ({
+                ...prevCvData,
+                job_summary: analysisData.user_summary,
+            }));
+        }
+    };
+
+    const handleJobTitle = (job_title_match) => {
+        if (job_title_match?.length > 0) {
+            setCvData((prevCvData) => ({
+                ...prevCvData,
+                jobTitle: analysisData.job_title_match,
+            }));
+        }
+    };
+
     const togglePopup = () => setShowPopup(!showPopup);
     const toggleExperienceModal = (role) => {
-        setOptimizationSuggestion(role)
+        setOptimizationSuggestion(role);
         setJobDescription("");
         setSelectedCompanies([]);
-        setShowExperienceModal(!showExperienceModal)
-    }
+        setShowExperienceModal(!showExperienceModal);
+    };
+
     const {
-        matching_score,
+        matching_score = 0,
         keyword_analysis,
         missing_skills,
         experience_gaps,
@@ -109,7 +208,6 @@ const Analytics = () => {
         recruiters_tips,
         preparation_assistance,
         grammar_corrections,
-        change_log,
         summary_of_issues,
     } = analysisData || {};
 
@@ -123,92 +221,18 @@ const Analytics = () => {
         experiences = [],
         education = [],
         skills = [],
-    } = cvData;
+    } = cvData || {};
+
     const strokeColor =
-    matching_score < 30
-      ? "#E74C3C"
-      : matching_score > 65
-      ? "#27AE60"
-      : "#F2994A";
+        matching_score < 30 ? "#E74C3C" : matching_score > 65 ? "#27AE60" : "#F2994A";
 
-
-        const handleExperienceAdd = async () => {
-            if (selectedCompanies.length === 0) {
-                alert("Please select at least one company and provide a description.");
-                return;
-            }
-            const experienceWorked = selectedCompanies.map((company) => ({
-                ...cvData.experiences.find((exp) => exp.company === company.value.company),
-            }));
-        
-            const payload = {
-                experience_gap: optimizationSuggestion,
-                exp_description: experienceWorked[0].description,
-            };
-        
-            try {
-                const response = await sendRequest(payload, "/add-experience");
-                const updatedDescription = response.resume_data.experience_updated;
-        
-                setCvData((prevState) => ({
-                    ...prevState,
-                    experiences: prevState.experiences.map((exp) =>
-                        exp.company === selectedCompanies[0].value.company && selectedCompanies[0].value.title === exp.title
-                            ? {
-                                ...exp,
-                                description: highlightAddedText(exp.description, updatedDescription),
-                            }
-                            : exp
-                    ),
-                }));
-        
-                console.log("Experience added successfully:", response);
-                alert("Experiences added successfully!");
-                toggleExperienceModal();
-            } catch (error) {
-                console.error("Error adding experiences:", error);
-                alert("Failed to add experiences.");
-            }
-            setJobDescription("");
-            setOptimizationSuggestion("");
-            setSelectedCompanies([]);
-        };
-        
-        // Helper Function to Highlight Added Text
-        const highlightAddedText = (originalText, updatedText) => {
-            if (!originalText || !updatedText) return updatedText;
-        
-            // Find the new text by comparing the updated text with the original
-            const newText = updatedText.replace(originalText, "");
-            
-            // Highlight the new text
-            return updatedText.replace(newText, `<span class="highlight">${newText}</span>`);
-        };
-        const handleRecruitersTips = (value) => {
-            if (value === false) {
-                setCvData((prevCvData) => ({
-                    ...prevCvData,
-                    job_summary: analysisData.user_summary, 
-                }));
-            }
-        };
-        const handleJobTitle = (job_title_match) => {
-            if (job_title_match?.length > 0) {
-                setCvData((prevCvData) => ({
-                    ...prevCvData,
-                    jobTitle: analysisData.job_title_match, 
-                }));
-            }
-        };
-        
-        
     return (
         <div className="App">
             <div className="container">
                 <div className="sidebar">
                     <div className="btn-tailor-job-box">
                         <button className="upload-cv-btn-ghost" onClick={togglePopup}>
-                            <span>Tailor cv to a job</span>
+                            <span>Tailor CV to a Job</span>
                         </button>
                     </div>
     {loading && analysisData === null && <div className="loading-spinner-container">
@@ -522,7 +546,7 @@ const Analytics = () => {
                     </div>
                     <div className="content-box">
                         <div id="resumePreview">
-                            <h2 id="previewName">{`${cvData["first name"]} ${cvData["last name"]}`}</h2>
+                            <h2 id="previewName">{cvData? `${cvData["first name"]} ${cvData["last name"]}`: ""}</h2>
                             <p id="previewJobTitle">{jobTitle}</p>
                             <p id="previewJobSummary" className="pb-2">{cvData?.job_summary ? cvData.job_summary : ""}</p>
                             <div className="preview-section">
