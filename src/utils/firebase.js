@@ -1,21 +1,27 @@
 // firebase.js
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, set, get, child} from "firebase/database";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth, setPersistence, browserLocalPersistence, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDmAVvW60ypN8PQv7Rgf_LeI05RkOICME8",
-  authDomain: "gigshub-ff21e.firebaseapp.com",
-  projectId: "gigshub-ff21e",
-  storageBucket: "gigshub-ff21e.firebasestorage.app",
-  databaseURL: "https://gigshub-ff21e-default-rtdb.europe-west1.firebasedatabase.app",
-  messagingSenderId: "390721411415",
-  appId: "1:390721411415:web:1452cdfe1b079b6f544612",
-  measurementId: "G-1WKWMLX4SP",
+    apiKey: "AIzaSyDmAVvW60ypN8PQv7Rgf_LeI05RkOICME8",
+    authDomain: "gigshub-ff21e.firebaseapp.com",
+    projectId: "gigshub-ff21e",
+    storageBucket: "gigshub-ff21e.firebasestorage.app",
+    databaseURL: "https://gigshub-ff21e-default-rtdb.europe-west1.firebasedatabase.app",
+    messagingSenderId: "390721411415",
+    appId: "1:390721411415:web:1452cdfe1b079b6f544612",
+    measurementId: "G-1WKWMLX4SP",
 };
 
 const app = initializeApp(firebaseConfig);
+
+
 const auth = getAuth(app);
+setPersistence(auth, browserLocalPersistence).catch((error) => {
+    console.error("Error setting persistence:", error);
+});
+
 const provider = new GoogleAuthProvider();
 const database = getDatabase(app);
 
