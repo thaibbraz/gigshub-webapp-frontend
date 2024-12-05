@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import starsUnfilled from "../../../assets/starsUnfilled.svg";
 import { addUserData } from "../../../utils/firebase.js";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const UserDashboard = ({ formData }) => {
   const [jobs, setJobs] = useState([]);
@@ -18,11 +19,15 @@ const UserDashboard = ({ formData }) => {
   const fetchJobs = async () => {
     console.log("Fetching jobs...");
     
-    if (!cvFormData) return;
+    if (!cvFormData || !jobTitle || !location) {
+      console.error("Missing required fields: cvFormData, jobTitle, or location");
+      return;
+    }
 
     const user = JSON.parse(localStorage.getItem("user"));
     const userId = user?.uid;
-    const requestBody = { ...cvFormData, jobTitle, location };
+   
+    
 
     try {
       const newUserData = {
@@ -50,17 +55,12 @@ const UserDashboard = ({ formData }) => {
       // Fetch new jobs from API
       // https://fastapi-job-matcher-05-160893319817.europe-southwest1.run.app
       // http://localhost:8080/api/jobs
-      const response = await fetch(
-        "https://fastapi-job-matcher-05-160893319817.europe-southwest1.run.app/api/jobs",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
-
+      const response = await axios.post("https://fastapi-job-matcher-05-160893319817.europe-southwest1.run.app/api/jobs", {
+        search_term: jobTitle,
+        location: location,
+        resume_data: cvFormData,
+        results_wanted: 20,
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch jobs from API");
       }

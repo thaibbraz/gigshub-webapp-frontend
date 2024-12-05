@@ -193,8 +193,6 @@ const Analytics = () => {
             }
         };
         const handleJobTitle = (job_title_match) => {
-            console.log("Job title match:", job_title_match,job_title_match.length, typeof job_title_match);
-            
             if (job_title_match?.length > 0) {
                 setCvData((prevCvData) => ({
                     ...prevCvData,
@@ -517,7 +515,7 @@ const Analytics = () => {
 
                 <div className="main-content">
                     <div className="download-cv-button-box">
-                        <h2>Optimized Resume</h2>
+                        <h2>Preview CV</h2>
                         <button className="upload-cv-btn">
                             <span>Download pdf</span>
                         </button>
