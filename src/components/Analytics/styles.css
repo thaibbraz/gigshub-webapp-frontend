@@ -426,3 +426,24 @@
 
   cursor: pointer;
 }
+
+.skills-list {
+  display: flex; /* Use flexbox for layout */
+  flex-wrap: wrap; /* Wrap items to the next line if necessary */
+  gap: 10px; /* Space between items */
+  list-style: none; /* Remove bullet points */
+  padding: 0; /* Remove default padding */
+  margin: 0; /* Remove default margin */
+}
+
+.skills-list li {
+  background-color: #f4f4f4; /* Light background for better visibility */
+  padding: 2px 3px; /* Add some padding */
+  border-radius: 5px; /* Rounded corners */
+
+}
+
+.skills-list li.highlight {
+  background-color: #fffae6; /* Highlighted skill background */
+  font-weight: bold; /* Emphasize text */
+}

@@ -24,20 +24,19 @@ const Analytics = () => {
     };
 
     useEffect(() => {
-        const user = JSON.parse(localStorage.getItem("user"));
-        const userId = user?.uid;
-        const fetchCV = async () => {
-            if (!userId) {
-                console.error("User ID is missing");
-                return;
-            }
-            const data = await getUserCVData(userId);
-            setCvData(data);
-        };
-
         fetchCV();
     }, []);
+    const fetchCV = async () => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        const userId = user?.uid;
+        if (!userId) {
+            console.error("User ID is missing");
+            return;
+        }
+        const data = await getUserCVData(userId);
 
+        setCvData(data);
+    };
     const calculateMatchingScore = () => {
         if (!analysisData || !analysisData.summary_of_issues) return 0;
         const { missing_keywords_count, missing_skills_count, experience_gaps_count, grammar_issues_count } =
@@ -52,10 +51,11 @@ const Analytics = () => {
 
         return Math.max(0, Math.min(100, newScore)); // Ensure score is between 0 and 100
     };
-
-    const handleSendToBackend = async () => {
-        togglePopup();
+    
+    const handleJobAnalyse = async () => {
         setLoading(true);
+        togglePopup();
+        fetchCV();
         if (!jobDescription.trim()) {
             alert("Please enter a job description.");
             setLoading(false);
@@ -169,13 +169,21 @@ const Analytics = () => {
         return updatedText.replace(newText, `<span class="highlight">${newText}</span>`);
     };
 
-    const handleRecruitersTips = (value) => {
+    const handleRecruitersTips = (value, key) => {
         if (value === false) {
             setCvData((prevCvData) => ({
                 ...prevCvData,
                 job_summary: analysisData.user_summary,
             }));
         }
+
+        setAnalysisData((prev) => ({
+            ...prev,
+            recruiters_tips: {
+                ...prev.recruiters_tips,
+                [key]: true,
+            },
+        }));
     };
 
     const handleJobTitle = (job_title_match) => {
@@ -185,6 +193,16 @@ const Analytics = () => {
                 jobTitle: analysisData.job_title_match,
             }));
         }
+
+        setTimeout(() => {
+            setAnalysisData((prev) => ({
+                ...prev,
+                job_title_match: {
+                    ...prev.job_title_match,
+                    job_title_match: "",
+                },
+            }));
+        }, 1000);
     };
 
     const togglePopup = () => setShowPopup(!showPopup);
@@ -193,6 +211,7 @@ const Analytics = () => {
         setJobDescription("");
         setSelectedCompanies([]);
         setShowExperienceModal(!showExperienceModal);
+        
     };
 
     const {
@@ -235,7 +254,7 @@ const Analytics = () => {
                             <span>Tailor CV to a Job</span>
                         </button>
                     </div>
-    {loading && analysisData === null && <div className="loading-spinner-container">
+    {loading && <div className="loading-spinner-container">
         <div className="loading-spinner"></div>
         <p>Loading...</p>
     </div>}
@@ -410,12 +429,21 @@ const Analytics = () => {
                         {Object.entries(recruiters_tips).map(([key, value], index) => (
                             <div className="flex"><li key={index}>
                                 {value ? "✔" : "⚠"} {key.replace(/_/g, " ")}
-                            </li><button className="ml-2 experence-btn" onClick={() => handleRecruitersTips(value)}>Add
-                                <img
-                                src={starsUnfilled}
-                                alt="Stars Icon"
-                                className="ml-1 mr-1 w-2 h-2"
-                                /></button>
+                            </li>
+                            {key === "personal_summary" && cvData?.job_summary ? (
+                                <></>
+                            ):
+                            (<button
+                                    className="ml-2 experence-btn"
+                                    onClick={() => handleRecruitersTips(value, key)}
+                                >
+                                    Add
+                                    <img
+                                        src={starsUnfilled}
+                                        alt="Stars Icon"
+                                        className="ml-1 mr-1 w-2 h-2"
+                                    />
+                                </button>)}
                             </div>
                         ))}
                     </ul>
@@ -525,7 +553,7 @@ const Analytics = () => {
                         cols="50"
                     />
                     <div className="popup-buttons">
-                        <button className="upload-cv-btn" onClick={handleSendToBackend}>
+                        <button className="upload-cv-btn" onClick={handleJobAnalyse}>
                             Analyse job
                         </button>
                         <button className="upload-cv-btn-cancel" onClick={togglePopup}>
@@ -579,7 +607,7 @@ const Analytics = () => {
                             </div>
                             <div className="preview-section">
                                 <h3>Skills</h3>
-                                <ul>
+                                <ul className="skills-list">
                                     {cvData?.skills?.[0]?.list.map((skill, index) => (
                                         <li key={index}>
                                             <span className={highlightedSkills.includes(skill) ? "highlight" : ""}>

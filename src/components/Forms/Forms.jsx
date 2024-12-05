@@ -27,7 +27,7 @@ const Forms = ({ formData, onSetFormData }) => {
             updatedFields[field] = formData[field];
           }
         }
-        await sendRequest(updatedFields, "/client-info");
+        //await sendRequest(updatedFields, "/client-info");
       } catch (error) {
         console.error(error);
       } finally {

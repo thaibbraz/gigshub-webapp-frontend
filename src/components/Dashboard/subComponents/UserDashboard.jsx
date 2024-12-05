@@ -19,10 +19,12 @@ const UserDashboard = ({ formData }) => {
     console.log("Fetching jobs...");
     
     const user = JSON.parse(localStorage.getItem("user"));
+    const cv = localStorage.getItem("cv");
     const userId = user?.uid;
     console.log("user id", userId);
     console.log("cvFormData", cvFormData);
-    if (!user) {
+    
+    if (!user || !cv) {
       console.log("no user found");
       
       try {
@@ -32,6 +34,8 @@ const UserDashboard = ({ formData }) => {
           photoURL: user?.photoURL || "",
           cv: cvFormData,
         };
+        localStorage.setItem("user", JSON.stringify(newUserData));
+        localStorage.setItem("cv", JSON.stringify(cvFormData));
         await addUserData(userId, newUserData);
       } catch (error) {
         console.error("Error submitting form: ", error);
@@ -69,7 +73,10 @@ const UserDashboard = ({ formData }) => {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(requestBody),
+            body: JSON.stringify({
+              "search_term": jobTitle,
+              "location": location
+            }),
           }
         );
   
