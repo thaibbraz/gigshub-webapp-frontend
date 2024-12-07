@@ -5,6 +5,8 @@ import { sendRequest } from "../../utils/api.js";
 import starsUnfilled from "../../assets/starsUnfilled.svg";
 import editIcon from "../../assets/editIcon.svg";
 import Select from "react-select";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 const Analytics = () => {
     const [loading, setLoading] = useState(false);
@@ -40,21 +42,27 @@ const Analytics = () => {
         setCvData(data);
     };
 
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
+
     const calculateMatchingScore = () => {
         if (!analysisData || !analysisData.summary_of_issues) return 0;
-        const { optimization_suggestions_count, missing_skills_count, experience_gaps_count, grammar_issues_count } =
+        const { optimization_suggestions_count, missing_skills_count, total_issues_count} =
             analysisData.summary_of_issues;
+
+        if (total_issues_count === 0) {
+            return 100;
+        }
+        // Ensure no negative values
+        const safeMissingSkillsCount = Math.max(0, missing_skills_count);
+
+        const safeOptimizationSuggestionsCount = Math.max(0, optimization_suggestions_count);
 
         const newScore =
             100 -
             (
-                missing_skills_count * weights.missing_skills +
-                optimization_suggestions_count * weights.experience_gaps);
+                safeMissingSkillsCount * weights.missing_skills +
+                safeOptimizationSuggestionsCount * weights.experience_gaps);
 
-        return Math.max(0, Math.min(100, newScore)); // Ensure score is between 0 and 100
+        return Math.max(0, Math.min(100, newScore)); 
     };
     
     const handleJobAnalyse = async () => {
@@ -93,7 +101,10 @@ const Analytics = () => {
         const updatedSkills = [...cvData.skills[0].list, skill];
 
         setHighlightedSkills((prev) => [...prev, skill]);
-    
+        
+         // Ensure counts never go below zero
+        const newMissingSkillsCount = Math.max(0, analysisData.summary_of_issues.missing_skills_count - 1);
+        const newTotalIssuesCount = Math.max(0, analysisData.summary_of_issues.total_issues_count - 1);
     
         setAnalysisData((prev) => ({
             ...prev,
@@ -103,8 +114,8 @@ const Analytics = () => {
             },
             summary_of_issues: {
                 ...prev.summary_of_issues,
-                missing_skills_count: prev.summary_of_issues.missing_skills_count - 1,
-                total_issues_count: prev.summary_of_issues.total_issues_count - 1,
+                missing_skills_count: newMissingSkillsCount,
+                total_issues_count: newTotalIssuesCount,
             },
             matching_score: calculateMatchingScore(),
         }));
@@ -179,12 +190,12 @@ const Analytics = () => {
     };
 
     const handleRecruitersTips = (value, key) => {
-        if (value === false) {
+
             setCvData((prevCvData) => ({
                 ...prevCvData,
                 job_summary: highlightAddedText("original text",analysisData.user_summary),
             }));
-        }
+
 
         setAnalysisData((prev) => ({
             ...prev,
@@ -254,7 +265,66 @@ const Analytics = () => {
 
     const strokeColor =
         matching_score < 30 ? "#E74C3C" : matching_score > 65 ? "#27AE60" : "#F2994A";
-
+    const handleEditClick = () => {
+        setIsEditing((prev) => !prev);
+        const element = document.getElementById("resumePreview");
+        if (element) {
+            element.contentEditable = !isEditing;
+            element.focus();
+            }
+        };
+        
+        const handleDownloadPDF = async () => {
+            try {
+              const resumeElement = document.getElementById("resumePreview");
+          
+              if (!resumeElement) {
+                console.error("Resume element not found");
+                return;
+              }
+          
+              // Use html2canvas to render the content of the resume
+              const canvas = await html2canvas(resumeElement, { scale: 2 });
+              const imgData = canvas.toDataURL("image/png");
+          
+              // Create a jsPDF instance
+              const pdf = new jsPDF("p", "mm", "a4");
+              const pdfWidth = 210; // A4 width in mm
+              const pdfHeight = (canvas.height * pdfWidth) / canvas.width; // Scale the content
+          
+              const pageHeight = 297; // A4 page height in mm
+              let currentHeight = 0; // Track the current height in the PDF
+          
+              // Add the first page
+              pdf.addImage(imgData, "PNG", 0, currentHeight, pdfWidth, pdfHeight);
+          
+              currentHeight += pdfHeight;
+          
+              // Check if content overflows and add pages
+              while (currentHeight > pageHeight) {
+                const remainingHeight = currentHeight - pageHeight;
+          
+                // Add a new page
+                pdf.addPage();
+          
+                // Shift the content to fit the remaining part of the canvas
+                const canvasSection = await html2canvas(resumeElement, {
+                  scale: 2,
+                  y: remainingHeight, // Capture only the remaining part of the content
+                });
+                const sectionImgData = canvasSection.toDataURL("image/png");
+                pdf.addImage(sectionImgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+          
+                currentHeight -= pageHeight;
+              }
+          
+              // Download the PDF
+              pdf.save("my_updated_resume.pdf");
+            } catch (error) {
+              console.error("Error generating PDF:", error);
+            }
+          };
+        
     return (
         <div className="App">
             <div className="container">
@@ -584,7 +654,7 @@ const Analytics = () => {
                         
                        
                         </div>
-                        <button className="upload-cv-btn">
+                        <button className="upload-cv-btn" onClick={handleDownloadPDF}>
                             <span>Download pdf</span>
                         </button>
                         
