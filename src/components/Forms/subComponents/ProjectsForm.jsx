@@ -1,8 +1,8 @@
 import { useState } from "react";
 import ProjectRow from "./ProjectRow";
 import FormLayout from "./FormLayout";
-import Button from "./Button";
-import ButtonBorder from "./ButtonBorder";
+import ButtonFill from "../../Elements/ButtonFill";
+import ButtonBorder from "../../Elements/ButtonBorder";
 import ButtonContainer from "./ButtonContainer";
 
 const ProjectsForm = ({ onNext, onBack }) => {
@@ -70,7 +70,7 @@ const ProjectsForm = ({ onNext, onBack }) => {
         </div>
         <ButtonContainer>
           <ButtonBorder type="button" action={onBack} text="Back" />
-          <Button type="submit" action={handleSubmit} text="Continue" />
+          <ButtonFill type="submit" action={handleSubmit} text="Continue" />
         </ButtonContainer>
       </form>
     </FormLayout>

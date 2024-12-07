@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import FormLayout from "./FormLayout";
-import Button from "./Button";
-import ButtonBorder from "./ButtonBorder";
+import ButtonFill from "../../Elements/ButtonFill";
+import ButtonBorder from "../../Elements/ButtonBorder";
 import ButtonContainer from "./ButtonContainer";
 
 const PersonalDetailsForm = ({ onNext, onBack, data }) => {
@@ -112,7 +112,7 @@ const PersonalDetailsForm = ({ onNext, onBack, data }) => {
 
           <ButtonContainer>
             <ButtonBorder type="button" action={onBack} text="Back" />
-            <Button type="submit" action={handleSubmit} text="Continue" />
+            <ButtonFill type="submit" action={handleSubmit} text="Continue" />
           </ButtonContainer>
         </div>
       </form>
