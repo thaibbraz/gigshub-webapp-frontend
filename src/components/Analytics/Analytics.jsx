@@ -3,12 +3,14 @@ import { getUserCVData } from "../../utils/firebase.js";
 import "./styles.css";
 import { sendRequest } from "../../utils/api.js";
 import starsUnfilled from "../../assets/starsUnfilled.svg";
+import editIcon from "../../assets/editIcon.svg";
 import Select from "react-select";
 
 const Analytics = () => {
     const [loading, setLoading] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
     const [cvData, setCvData] = useState(null);
-    const [showPopup, setShowPopup] = useState(false);
+    const [showPopup, setShowPopup] = useState(true);
     const [jobDescription, setJobDescription] = useState("");
     const [analysisData, setAnalysisData] = useState(null);
     const [showExperienceModal, setShowExperienceModal] = useState(false);
@@ -37,22 +39,26 @@ const Analytics = () => {
 
         setCvData(data);
     };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
     const calculateMatchingScore = () => {
         if (!analysisData || !analysisData.summary_of_issues) return 0;
-        const { missing_keywords_count, missing_skills_count, experience_gaps_count, grammar_issues_count } =
+        const { optimization_suggestions_count, missing_skills_count, experience_gaps_count, grammar_issues_count } =
             analysisData.summary_of_issues;
 
         const newScore =
             100 -
-            (missing_keywords_count * weights.missing_keywords +
+            (
                 missing_skills_count * weights.missing_skills +
-                experience_gaps_count * weights.experience_gaps +
-                grammar_issues_count * weights.grammar_issues);
+                optimization_suggestions_count * weights.experience_gaps);
 
         return Math.max(0, Math.min(100, newScore)); // Ensure score is between 0 and 100
     };
     
     const handleJobAnalyse = async () => {
+        setAnalysisData(null)
         setLoading(true);
         togglePopup();
         fetchCV();
@@ -87,6 +93,8 @@ const Analytics = () => {
         const updatedSkills = [...cvData.skills[0].list, skill];
 
         setHighlightedSkills((prev) => [...prev, skill]);
+    
+    
         setAnalysisData((prev) => ({
             ...prev,
             missing_skills: {
@@ -100,6 +108,7 @@ const Analytics = () => {
             },
             matching_score: calculateMatchingScore(),
         }));
+        
         setCvData((prev) => ({
             ...prev,
             skills: [{ ...prev.skills[0], list: updatedSkills }],
@@ -144,7 +153,7 @@ const Analytics = () => {
                 },
                 summary_of_issues: {
                     ...prev.summary_of_issues,
-                    experience_gaps_count: prev.summary_of_issues.experience_gaps_count - 1,
+                    experience_gaps_count: prev.summary_of_issues.optimization_suggestions_count - 1,
                     total_issues_count: prev.summary_of_issues.total_issues_count - 1,
                 },
                 matching_score: calculateMatchingScore(),
@@ -173,7 +182,7 @@ const Analytics = () => {
         if (value === false) {
             setCvData((prevCvData) => ({
                 ...prevCvData,
-                job_summary: analysisData.user_summary,
+                job_summary: highlightAddedText("original text",analysisData.user_summary),
             }));
         }
 
@@ -190,7 +199,7 @@ const Analytics = () => {
         if (job_title_match?.length > 0) {
             setCvData((prevCvData) => ({
                 ...prevCvData,
-                jobTitle: analysisData.job_title_match,
+                jobTitle: highlightAddedText("original text",analysisData.job_title_match),
             }));
         }
 
@@ -207,6 +216,7 @@ const Analytics = () => {
 
     const togglePopup = () => setShowPopup(!showPopup);
     const toggleExperienceModal = (role) => {
+        
         setOptimizationSuggestion(role);
         setJobDescription("");
         setSelectedCompanies([]);
@@ -352,13 +362,13 @@ const Analytics = () => {
                     <h3>Missing Skills</h3>
                     <ul>
                         {missing_skills.hard_skills.map((skill, index) => (
-                            <li key={index} className="clickable-skill">
+                            <li key={`${skill}-${index}`} className="clickable-skill">
                                 <input
                                     type="checkbox"
-                                    id={`skill-${index}`}
+                                    id={`skill-${skill}`}
                                     onChange={() => handleSkillClick(skill)}
                                 />
-                                <label htmlFor={`skill-${index}`}>{skill}</label>
+                                <label htmlFor={`skill-${skill}`}>{skill}</label>
                             </li>
                         ))}
                     </ul>
@@ -567,16 +577,31 @@ const Analytics = () => {
 
                 <div className="main-content">
                     <div className="download-cv-button-box">
-                        <h2>Preview CV</h2>
+                        
+                        <div className="">
+                        
+                        <h2 className="text-dark-blue text-2xl font-extrabold">Preview CV</h2>
+                        
+                       
+                        </div>
                         <button className="upload-cv-btn">
                             <span>Download pdf</span>
                         </button>
+                        
                     </div>
                     <div className="content-box">
+                    <div className="flex justify-end">
+                            <img
+                            src={editIcon}
+                            alt="Edit Icon"
+                            className="h-6 w-6 cursor-pointer"
+                            onClick={handleEditClick}
+                            />
+                        </div>
                         <div id="resumePreview">
                             <h2 id="previewName">{cvData? `${cvData["first name"]} ${cvData["last name"]}`: ""}</h2>
-                            <p id="previewJobTitle">{jobTitle}</p>
-                            <p id="previewJobSummary" className="pb-2">{cvData?.job_summary ? cvData.job_summary : ""}</p>
+                            <p id="previewJobTitle" dangerouslySetInnerHTML={{ __html: jobTitle }}></p>
+                            <p id="previewJobSummary" dangerouslySetInnerHTML={{ __html: cvData?.job_summary ? cvData.job_summary : "" }} className="pb-2"></p>
                             <div className="preview-section">
                                 <h3>Contact Information</h3>
                                 <p id="previewEmail">{email}</p>
