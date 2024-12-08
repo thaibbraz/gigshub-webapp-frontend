@@ -18,7 +18,7 @@ const Login = () => {
           const user = result.user;
           const token = await user.getIdToken();
           const refreshToken = user.refreshToken;
-          const extensionId = "klipnhphhcgopjomkcdocooeadokcgdj";
+          const extensionId = "pijemeafpihngoehahgfhfimmfpdncpa";
 
           localStorage.setItem("user", JSON.stringify({ 
               uid: user.uid,

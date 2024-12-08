@@ -5,8 +5,6 @@ import { sendRequest } from "../../utils/api.js";
 import starsUnfilled from "../../assets/starsUnfilled.svg";
 import editIcon from "../../assets/editIcon.svg";
 import Select from "react-select";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
 
 const Analytics = () => {
     const [loading, setLoading] = useState(false);
@@ -273,8 +271,52 @@ const Analytics = () => {
         };
         
         const handleDownloadPDF = async () => {
-            // Implement the logic to generate and download the PDF here
             console.log("Downloading PDF...");
+        
+            try {
+                const response = await fetch("http://localhost:8000/generate_resume", {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ resume_data: cvData }),
+                });
+            
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+            
+                const data = await response.json();
+                console.log("PDF generation response:", data);
+        
+              const base64Data = data.pdf_base64; // Assuming the base64 data is in the 'pdf_base64' property
+        
+              // Decode the base64 string
+                const binaryData = atob(base64Data);
+            
+                // Convert binary string to ArrayBuffer
+                const byteNumbers = new Uint8Array(binaryData.length);
+                for (let i = 0; i < binaryData.length; i++) {
+                    byteNumbers[i] = binaryData.charCodeAt(i);
+                }
+            
+                // Create a Blob object
+                const blob = new Blob([byteNumbers], { type: "application/pdf" });
+            
+                // Create a temporary URL for the Blob
+                const url = URL.createObjectURL(blob);
+            
+                // Create a download link
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = "my_updated_resume.pdf"; // Replace with desired filename
+                link.click();
+            
+                // Revoke the URL to release memory
+                URL.revokeObjectURL(url);
+                } catch (error) {
+                console.error("Error:", error);
+                }
           };
         
     return (
@@ -665,7 +707,7 @@ const Analytics = () => {
                         {experiences.map((exp, index) => (
                             <div key={index} className="mb-4">
                                 <p className="text-sm font-semibold">
-                                    {exp.title} <span className="text-gray-500">{exp.date}</span>
+                                    {exp.title} <span className="text-gray-500">{exp.date === "undefined - undefined" || exp.date}</span>
                                 </p>
                                 <p className="text-sm italic text-gray-600">{exp.company}</p>
                                 <p
@@ -679,7 +721,7 @@ const Analytics = () => {
                         <h3 className="text-lg font-bold text-indigo-600 mb-3">Education</h3>
                         {education.map((edu, index) => (
                             <p key={index} className="text-sm mb-2">
-                                <strong>{edu.degree}</strong> - {edu.institution} {edu.date || ""}
+                                <strong>{edu.degree}</strong> - {edu.institution} {edu.date === "undefined - undefined"|| edu.date}
                             </p>
                         ))}
                     </div>
