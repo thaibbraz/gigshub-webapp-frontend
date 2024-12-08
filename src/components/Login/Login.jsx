@@ -21,9 +21,6 @@ const Login = () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      const token = await user.getIdToken();
-      const refreshToken = user.refreshToken;
-      const extensionId = "klipnhphhcgopjomkcdocooeadokcgdj";
 
       localStorage.setItem(
         "user",
