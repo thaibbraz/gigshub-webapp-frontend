@@ -28,8 +28,7 @@ const Login = () => {
           }));
           if (user) {
             try {
-              // Send both ID token and refresh token to the Chrome extension
-              const response = await window.chrome.runtime.sendMessage(
+              await window.chrome.runtime.sendMessage(
                 extensionId,
                 {
                   action: "login",

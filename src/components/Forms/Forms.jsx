@@ -8,6 +8,7 @@ import SkillsForm from "./subComponents/SkillsForm";
 import ProjectsForm from "./subComponents/ProjectsForm";
 import DemographicsForm from "./subComponents/DemographicsForm";
 import { sendRequest } from "../../utils/api.js";
+import { database, ref, set } from "../../utils/firebase.js";
 const Forms = ({ formData, onSetFormData }) => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -18,24 +19,28 @@ const Forms = ({ formData, onSetFormData }) => {
       return prevStep + 1;
     });
   };
-    const handleSubmit = async () => {
-      setLoading(true);
-      try {
-        const updatedFields = {};
-        for (let field in formData) {
-          if (formData[field]) {
-            updatedFields[field] = formData[field];
-          }
-        }
-        await sendRequest(updatedFields, "/client-info");
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    
+  const handleBack = () => {
+    setStep((prevStep) => prevStep - 1);
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      const updatedFields = {};
+      for (let field in formData) {
+        if (formData[field]) {
+          updatedFields[field] = formData[field];
+        }
+      }
+      await sendRequest(updatedFields, "/client-info");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
       {step === 1 && <CVUpload onNext={handleNext} />}
@@ -43,6 +48,7 @@ const Forms = ({ formData, onSetFormData }) => {
       {step === 2 && (
         <PersonalDetailsForm
           onNext={handleNext}
+          onBack={handleBack}
           data={{
             "first name": formData["first name"],
             "last name": formData["last name"],
@@ -58,6 +64,7 @@ const Forms = ({ formData, onSetFormData }) => {
       {step === 3 && (
         <LocationForm
           onNext={handleNext}
+          onBack={handleBack}
           data={{
             city: formData.city,
             state: formData.state,
@@ -69,24 +76,38 @@ const Forms = ({ formData, onSetFormData }) => {
         />
       )}
       {step === 4 && (
-        <EducationForm onNext={handleNext} data={formData.education} />
+        <EducationForm
+          onNext={handleNext}
+          onBack={handleBack}
+          data={formData.education}
+        />
       )}
       {step === 5 && (
-        <ExperienceForm onNext={handleNext} data={formData.experiences} />
+        <ExperienceForm
+          onNext={handleNext}
+          onBack={handleBack}
+          data={formData.experiences}
+        />
       )}
       {step === 6 && (
         <SkillsForm
           onNext={handleNext}
+          onBack={handleBack}
           skillsData={formData.skills ? formData.skills[0].list : []}
           languageData={formData.languages ? formData.languages : []}
         />
       )}
       {step === 7 && (
-        <ProjectsForm onNext={handleNext} data={formData.projects} />
+        <ProjectsForm
+          onNext={handleNext}
+          onBack={handleBack}
+          data={formData.projects}
+        />
       )}
       {step === 8 && (
         <DemographicsForm
           onNext={handleNext}
+          onBack={handleBack}
           handleSubmit={handleSubmit}
           data={{
             ethnicity: formData.ethnicity,

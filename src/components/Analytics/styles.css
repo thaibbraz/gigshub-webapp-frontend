@@ -17,10 +17,10 @@
     overflow: hidden;
   }
   
-  /* Sidebar */
+  /* Sidebar #F3F3F6;*/
   .sidebar {
     width: 45%;
-    background-color: #F3F3F6;
+    background-color: rgb(243 243 255 / var(--tw-bg-opacity));
     padding: 27px;
     border-right: 2px solid #ddd;
     overflow-y: auto;
@@ -48,31 +48,31 @@
   
   .matching-score h2 {
     font-size: 1.2rem;
-    color: #3F33C0;
+    color: #3f33c0;
+    margin-bottom: 10px;
   }
   
   .score-circle {
-    width: 80px;
+    display: inline-block;
+    width: 80px; /* Adjust size to fit */
     height: 80px;
-    margin: 10px auto;
-    background-color: #ffe0b3;
-    color: #ff7d00;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.5rem;
+  }
+  
+  .score-circle text {
+    font-size: 0.7rem;
     font-weight: bold;
   }
+  
   
   .section {
     margin-top: 20px;
   }
   
   .section h3 {
-    font-size: 1rem;
+    font-size: 1.2rem;
     color: #333;
     margin-bottom: 10px;
+    font-weight: bold;
   }
   
   .section ul {
@@ -82,12 +82,13 @@
   .section ul li {
     margin-bottom: 5px;
     color: #555;
+    max-width: 479px;
   }
   
   .section ul li::before {
-    content: '⚠';
+    content: '•';
     margin-right: 8px;
-    color: orange;
+    color: #333;
   }
   
   .section ul li:has(.success)::before {
@@ -309,7 +310,7 @@
 
 .popup-content {
   background: white;
-  padding: 20px;
+  padding: 35px;
   border-radius: 8px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 10000;
@@ -342,4 +343,147 @@
 .upload-cv-btn-cancel:hover{
   background-color: #f0f0f0;
   color: #555;
+}
+.clickable-skill {
+  margin: 5px 0;
+  display: flex;
+  align-items: center;
+}
+
+.clickable-skill input {
+  display: none;
+}
+
+.clickable-skill label {
+  position: relative;
+  padding-left: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  user-select: none;
+}
+
+.clickable-skill label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 2px solid #2C2C70;
+  transition: background-color 0.3s, border 0.3s;
+}
+
+.clickable-skill input:checked + label::before {
+  background-color: #D7F77C; 
+  border: 2px solid #2C2C70;
+}
+
+.clickable-skill input:checked + label::after {
+  content: '\2714'; 
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: #2C2C70; 
+}
+
+
+/* Spinner Container */
+.loading-spinner-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+
+}
+
+/* Spinner */
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 6px solid #ddd;
+  border-top: 6px solid #3F33C0;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+/* Spinner Animation */
+@keyframes spin {
+  from {
+      transform: rotate(0deg);
+  }
+  to {
+      transform: rotate(360deg);
+  }
+}
+
+/* Loading Text */
+.loading-spinner-container p {
+  font-size: 1rem;
+  color: #3F33C0;
+  font-weight: bold;
+}
+
+.experence-btn {
+  position: relative;
+  height: 19px;
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  background-color: #3F33C0;
+  padding: 1px 10px 0px 10px;
+  font-size: 11px;
+  color:  white;
+  border: #3F33C0 2px solid;
+  width: auto;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.highlight {
+  background-color: #b3aeeb30;
+  color: #3f33c0;
+  padding: 0px 4px;
+  border-radius: 3px;
+  display: inline;
+}
+.match-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  background-color: #3f33c000;
+  padding: 1px 10px 0px 10px;
+  font-size: 14px;
+  color:#3F33C0;
+  width: auto;
+
+  cursor: pointer;
+}
+
+.skills-list {
+  display: flex; /* Use flexbox for layout */
+  flex-wrap: wrap; /* Wrap items to the next line if necessary */
+  gap: 10px; /* Space between items */
+  list-style: none; /* Remove bullet points */
+  padding: 0; /* Remove default padding */
+  margin: 0; /* Remove default margin */
+}
+
+.skills-list li {
+  background-color: #f4f4f4; /* Light background for better visibility */
+  padding: 2px 3px; /* Add some padding */
+  border-radius: 5px; /* Rounded corners */
+
+}
+
+.skills-list li.highlight {
+  background-color: #fffae6; /* Highlighted skill background */
+  font-weight: bold; /* Emphasize text */
 }
