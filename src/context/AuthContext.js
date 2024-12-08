@@ -4,7 +4,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState(() => {
-    return !!localStorage.getItem("user");
+    return localStorage.getItem("loggedIn") === "true";
   });
 
   useEffect(() => {
@@ -17,13 +17,12 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setLoggedIn(false);
-    localStorage.removeItem("user");
+    localStorage.removeItem("loggedIn");
     let jobList = localStorage.getItem("jobs");
     if  (jobList.length === 0) {
       localStorage.removeItem("jobs");
     }
-    localStorage.removeItem("timestamp");
-    
+    localStorage.removeItem("token");
   };
 
   return (

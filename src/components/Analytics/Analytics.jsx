@@ -273,54 +273,8 @@ const Analytics = () => {
         };
         
         const handleDownloadPDF = async () => {
-            try {
-              const resumeElement = document.getElementById("resumePreview");
-          
-              if (!resumeElement) {
-                console.error("Resume element not found");
-                return;
-              }
-          
-              // Use html2canvas to render the content of the resume
-              const canvas = await html2canvas(resumeElement, { scale: 2 });
-              const imgData = canvas.toDataURL("image/png");
-          
-              // Create a jsPDF instance
-              const pdf = new jsPDF("p", "mm", "a4");
-              const pdfWidth = 210; // A4 width in mm
-              const pdfHeight = (canvas.height * pdfWidth) / canvas.width; // Scale the content
-          
-              const pageHeight = 297; // A4 page height in mm
-              let currentHeight = 0; // Track the current height in the PDF
-          
-              // Add the first page
-              pdf.addImage(imgData, "PNG", 0, currentHeight, pdfWidth, pdfHeight);
-          
-              currentHeight += pdfHeight;
-          
-              // Check if content overflows and add pages
-              while (currentHeight > pageHeight) {
-                const remainingHeight = currentHeight - pageHeight;
-          
-                // Add a new page
-                pdf.addPage();
-          
-                // Shift the content to fit the remaining part of the canvas
-                const canvasSection = await html2canvas(resumeElement, {
-                  scale: 2,
-                  y: remainingHeight, // Capture only the remaining part of the content
-                });
-                const sectionImgData = canvasSection.toDataURL("image/png");
-                pdf.addImage(sectionImgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-          
-                currentHeight -= pageHeight;
-              }
-          
-              // Download the PDF
-              pdf.save("my_updated_resume.pdf");
-            } catch (error) {
-              console.error("Error generating PDF:", error);
-            }
+            // Implement the logic to generate and download the PDF here
+            console.log("Downloading PDF...");
           };
         
     return (
