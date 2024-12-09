@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
-import starsUnfilled from "../../../assets/starsUnfilled.svg";
 import Input from "../../Elements/Input.jsx";
-import ButtonAutoApply from "../../Elements/ButtonAutoApply.jsx";
+import ButtonAI from "../../Elements/ButtonAI.jsx";
 import { addUserData, getUserCVData } from "../../../utils/firebase.js";
-import { useNavigate } from "react-router-dom";
 
 const UserDashboard = ({ formData }) => {
-  const [jobs, setJobs] = useState([]);
+  const [jobs, setJobs] = useState(
+    localStorage.getItem("jobs")
+      ? JSON.parse(localStorage.getItem("jobs")).jobs
+      : []
+  );
   const [jobTitle, setJobTitle] = useState(formData.jobTitle);
   const [location, setLocation] = useState(formData.location);
   const [cvFormData, setcvFormData] = useState(formData);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null); // State for error handling
-  const navigate = useNavigate();
+  const [clicked, setClicked] = useState(false);
+  const [error, setError] = useState(null);
 
   // Utility to format compatibility score
   const formatScoreAsPercentage = (score) => score * 1000;
@@ -20,6 +22,7 @@ const UserDashboard = ({ formData }) => {
   // Fetch and store jobs
   const fetchJobs = async () => {
     console.log("Fetching jobs...");
+    setClicked(true);
 
     const user = JSON.parse(localStorage.getItem("user"));
     const cv = localStorage.getItem("cv");
@@ -28,8 +31,6 @@ const UserDashboard = ({ formData }) => {
     console.log("cvFormData", cvFormData);
 
     if (!user || !cv) {
-      console.log("no user found");
-
       try {
         const newUserData = {
           email: user?.email || "",
@@ -70,11 +71,11 @@ const UserDashboard = ({ formData }) => {
         Date.now() - timestamp < 86400000
       ) {
         setJobs(JSON.parse(cachedJobs));
-        console.log("Already had job cached", cachedJobs);
         return;
       } else if (!JSON.parse(cachedJobs)) {
         const response = await fetch(
-          "https://fastapi-job-matcher-05-160893319817.europe-southwest1.run.app/api/jobs",
+          // "https://fastapi-job-matcher-05-160893319817.europe-southwest1.run.app/api/jobs"
+          "http://127.0.0.1:8001/api/jobs",
           {
             method: "POST",
             headers: {
@@ -83,6 +84,7 @@ const UserDashboard = ({ formData }) => {
             body: JSON.stringify({
               search_term: jobTitle,
               location: location,
+              resume_data: cvFormData,
             }),
           }
         );
@@ -135,7 +137,7 @@ const UserDashboard = ({ formData }) => {
           </div>
 
           {/* Auto Apply Button */}
-          <ButtonAutoApply loading={loading} action={fetchJobs} />
+          <ButtonAI loading={loading} action={fetchJobs} text="Find me a job" />
 
           {/* Daily Limit */}
           <p className="text-light-purple text-xs font-thin mt-6 xl:ml-60 mlg:ml-20"></p>
@@ -148,7 +150,7 @@ const UserDashboard = ({ formData }) => {
             {loading && (
               <p className="text-center text-gray-500">Loading jobs...</p>
             )}
-            {jobs.length === 0 && !loading && (
+            {((jobs.length === 0 && !loading) || !clicked) && (
               <div className="flex flex-col items-center justify-center h-[calc(90vh-28px)]">
                 <h1 className="text-4xl font-semibold text-gray-800 mb-8">
                   Hey there, ready to apply?
