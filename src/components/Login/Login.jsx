@@ -18,7 +18,7 @@ const Login = () => {
           const user = result.user;
           const token = await user.getIdToken();
           const refreshToken = user.refreshToken;
-          const extensionId = "pijemeafpihngoehahgfhfimmfpdncpa";
+          const extensionId = process.env.REACT_APP_EXTENSION_ID;
 
           localStorage.setItem("user", JSON.stringify({ 
               uid: user.uid,
