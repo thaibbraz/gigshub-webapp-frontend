@@ -5,6 +5,9 @@ import { sendRequest } from "../../utils/api.js";
 import starsUnfilled from "../../assets/starsUnfilled.svg";
 import editIcon from "../../assets/editIcon.svg";
 import Select from "react-select";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import { useLocation } from "react-router-dom";
 
 const Analytics = () => {
     const [loading, setLoading] = useState(false);
@@ -17,6 +20,8 @@ const Analytics = () => {
     const [selectedCompanies, setSelectedCompanies] = useState("");
     const [optimizationSuggestion, setOptimizationSuggestion] = useState("");
     const [highlightedSkills, setHighlightedSkills] = useState([]);
+    const location = useLocation();
+
 
     const weights = {
         missing_keywords: 2,
@@ -28,6 +33,17 @@ const Analytics = () => {
     useEffect(() => {
         fetchCV();
     }, []);
+
+    useEffect(() => {
+      const queryParams = new URLSearchParams(location.search);
+      const description = queryParams.get("description");
+      if (description) {
+        setJobDescription(description)
+        console.log("Description from extension:", description);
+      } else {
+        console.log("No description found in URL.");
+      }
+    }, [location.search]);
     const fetchCV = async () => {
         const user = JSON.parse(localStorage.getItem("user"));
         const userId = user?.uid;
