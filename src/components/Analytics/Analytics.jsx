@@ -3,12 +3,14 @@ import { getUserCVData } from "../../utils/firebase.js";
 import "./styles.css";
 import { sendRequest } from "../../utils/api.js";
 import starsUnfilled from "../../assets/starsUnfilled.svg";
+import editIcon from "../../assets/editIcon.svg";
 import Select from "react-select";
 
 const Analytics = () => {
     const [loading, setLoading] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
     const [cvData, setCvData] = useState(null);
-    const [showPopup, setShowPopup] = useState(false);
+    const [showPopup, setShowPopup] = useState(true);
     const [jobDescription, setJobDescription] = useState("");
     const [analysisData, setAnalysisData] = useState(null);
     const [showExperienceModal, setShowExperienceModal] = useState(false);
@@ -37,22 +39,32 @@ const Analytics = () => {
 
         setCvData(data);
     };
+
+
     const calculateMatchingScore = () => {
         if (!analysisData || !analysisData.summary_of_issues) return 0;
-        const { missing_keywords_count, missing_skills_count, experience_gaps_count, grammar_issues_count } =
+        const { optimization_suggestions_count, missing_skills_count, total_issues_count} =
             analysisData.summary_of_issues;
+
+        if (total_issues_count === 0) {
+            return 100;
+        }
+        // Ensure no negative values
+        const safeMissingSkillsCount = Math.max(0, missing_skills_count);
+
+        const safeOptimizationSuggestionsCount = Math.max(0, optimization_suggestions_count);
 
         const newScore =
             100 -
-            (missing_keywords_count * weights.missing_keywords +
-                missing_skills_count * weights.missing_skills +
-                experience_gaps_count * weights.experience_gaps +
-                grammar_issues_count * weights.grammar_issues);
+            (
+                safeMissingSkillsCount * weights.missing_skills +
+                safeOptimizationSuggestionsCount * weights.experience_gaps);
 
-        return Math.max(0, Math.min(100, newScore)); // Ensure score is between 0 and 100
+        return Math.max(0, Math.min(100, newScore)); 
     };
     
     const handleJobAnalyse = async () => {
+        setAnalysisData(null)
         setLoading(true);
         togglePopup();
         fetchCV();
@@ -87,6 +99,11 @@ const Analytics = () => {
         const updatedSkills = [...cvData.skills[0].list, skill];
 
         setHighlightedSkills((prev) => [...prev, skill]);
+        
+         // Ensure counts never go below zero
+        const newMissingSkillsCount = Math.max(0, analysisData.summary_of_issues.missing_skills_count - 1);
+        const newTotalIssuesCount = Math.max(0, analysisData.summary_of_issues.total_issues_count - 1);
+    
         setAnalysisData((prev) => ({
             ...prev,
             missing_skills: {
@@ -95,11 +112,12 @@ const Analytics = () => {
             },
             summary_of_issues: {
                 ...prev.summary_of_issues,
-                missing_skills_count: prev.summary_of_issues.missing_skills_count - 1,
-                total_issues_count: prev.summary_of_issues.total_issues_count - 1,
+                missing_skills_count: newMissingSkillsCount,
+                total_issues_count: newTotalIssuesCount,
             },
             matching_score: calculateMatchingScore(),
         }));
+        
         setCvData((prev) => ({
             ...prev,
             skills: [{ ...prev.skills[0], list: updatedSkills }],
@@ -139,12 +157,10 @@ const Analytics = () => {
 
             setAnalysisData((prev) => ({
                 ...prev,
-                experience_gaps: {
-                    unrepresented_roles: prev.experience_gaps.unrepresented_roles.slice(1),
-                },
+                optimization_suggestions: prev.optimization_suggestions.filter((suggestion) => suggestion !== optimizationSuggestion),
                 summary_of_issues: {
                     ...prev.summary_of_issues,
-                    experience_gaps_count: prev.summary_of_issues.experience_gaps_count - 1,
+                    experience_gaps_count: prev.summary_of_issues.optimization_suggestions_count - 1,
                     total_issues_count: prev.summary_of_issues.total_issues_count - 1,
                 },
                 matching_score: calculateMatchingScore(),
@@ -170,12 +186,12 @@ const Analytics = () => {
     };
 
     const handleRecruitersTips = (value, key) => {
-        if (value === false) {
+
             setCvData((prevCvData) => ({
                 ...prevCvData,
-                job_summary: analysisData.user_summary,
+                job_summary: highlightAddedText("original text",analysisData.user_summary),
             }));
-        }
+
 
         setAnalysisData((prev) => ({
             ...prev,
@@ -190,7 +206,7 @@ const Analytics = () => {
         if (job_title_match?.length > 0) {
             setCvData((prevCvData) => ({
                 ...prevCvData,
-                jobTitle: analysisData.job_title_match,
+                jobTitle: highlightAddedText("original text",analysisData.job_title_match),
             }));
         }
 
@@ -207,6 +223,7 @@ const Analytics = () => {
 
     const togglePopup = () => setShowPopup(!showPopup);
     const toggleExperienceModal = (role) => {
+        
         setOptimizationSuggestion(role);
         setJobDescription("");
         setSelectedCompanies([]);
@@ -244,127 +261,178 @@ const Analytics = () => {
 
     const strokeColor =
         matching_score < 30 ? "#E74C3C" : matching_score > 65 ? "#27AE60" : "#F2994A";
-
-    return (
-        <div className="App">
-            <div className="container">
-                <div className="sidebar">
-                    <div className="btn-tailor-job-box">
-                        <button className="upload-cv-btn-ghost" onClick={togglePopup}>
-                            <span>Tailor CV to a Job</span>
-                        </button>
-                    </div>
-    {loading && <div className="loading-spinner-container">
-        <div className="loading-spinner"></div>
-        <p>Loading...</p>
-    </div>}
-    {analysisData && (
-        <>
-          {/* Matching Score */}
-            {matching_score !== undefined && (
-                <div className="matching-score">
-                    <h2>Matching Score</h2>
-                    <svg
-                        width="80"
-                        height="80"
-                        viewBox="0 0 36 36"
-                        className="score-circle"
-                    >
-                        {/* Background circle */}
-                        <circle
-                        cx="18"
-                        cy="18"
-                        r="16"
-                        stroke="#E0E0E0"
-                        strokeWidth="4"
-                        fill="none"
-                        ></circle>
-
-                        {/* Dynamic progress circle */}
-                        <circle
-                        cx="18"
-                        cy="18"
-                        r="16"
-                        strokeDasharray="100"
-                        strokeDashoffset={100 - matching_score}
-                        stroke={strokeColor}
-                        strokeWidth="4"
-                        fill="none"
-                        strokeLinecap="round"
-                        ></circle>
-
-                        {/* Text in the middle */}
-                        <text
-                        x="50%"
-                        y="50%"
-                        textAnchor="middle"
-                        fill={strokeColor}
-                        fontSize="8px"
-                        dy=".3em"
-                        >
-                        {matching_score}
-                        </text>
-                    </svg>
-                    <p>{summary_of_issues?.total_issues_count || 0} issues found</p>
-                </div>
-            )}
-
-            {/* Job Title Match 
+    const handleEditClick = () => {
+        setIsEditing((prev) => !prev);
+        const element = document.getElementById("resumePreview");
+        if (element) {
+            element.contentEditable = !isEditing;
+            element.focus();
+            }
+        };
+        
+        const handleDownloadPDF = async () => {
+            console.log("Downloading PDF...");
+        
+            try {
+                const response = await fetch("http://localhost:8000/generate_resume", {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ resume_data: cvData }),
+                });
             
-            <button className="match-btn" onClick={() => toggleExperienceModal(job_title_match)}> - Apply
-                            </button>
-                            */}
-            {job_title_match && job_title_match?.length > 0 && (
-                <div className="section">
-                    <h3>Job Title Match</h3>
-                        <div className="flex">
-                            <p>{job_title_match}</p>
-                            <button className="experence-btn ml-2 mt-1" onClick={() => handleJobTitle(job_title_match)}>Add
-                                <img
-                                src={starsUnfilled}
-                                alt="Stars Icon"
-                                className="w-2 h-2"
-                                /></button>
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+            
+                const data = await response.json();
+                console.log("PDF generation response:", data);
+        
+              const base64Data = data.pdf_base64; // Assuming the base64 data is in the 'pdf_base64' property
+        
+              // Decode the base64 string
+                const binaryData = atob(base64Data);
+            
+                // Convert binary string to ArrayBuffer
+                const byteNumbers = new Uint8Array(binaryData.length);
+                for (let i = 0; i < binaryData.length; i++) {
+                    byteNumbers[i] = binaryData.charCodeAt(i);
+                }
+            
+                // Create a Blob object
+                const blob = new Blob([byteNumbers], { type: "application/pdf" });
+            
+                // Create a temporary URL for the Blob
+                const url = URL.createObjectURL(blob);
+            
+                // Create a download link
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = "my_updated_resume.pdf"; // Replace with desired filename
+                link.click();
+            
+                // Revoke the URL to release memory
+                URL.revokeObjectURL(url);
+                } catch (error) {
+                console.error("Error:", error);
+                }
+          };
+        
+    return (
+        <div className="flex w-full max-w-[1496px] bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="w-[45%] bg-gray-100 p-7 border-r-2 border-gray-300 overflow-y-auto sticky top-0">
+            <div className="flex justify-end">
+                <button onClick={togglePopup} className="relative h-[30px] flex items-center font-normal bg-white px-4 py-2 text-sm text-indigo-600 border-2 border-indigo-600 rounded-full shadow-[0_0_0_4px_white,0_0_0_6px_rgb(208,208,255)] cursor-pointer">
+                    <span>Tailor CV to a Job</span>
+                </button>
+            </div>
+            {loading && (
+                <div className="flex flex-col justify-center items-center h-screen">
+                    <div className="w-12 h-12 border-4 border-gray-300 border-t-4 border-t-indigo-600 rounded-full animate-spin mb-2"></div>
+                    <p className="text-indigo-600 font-bold">Loading...</p>
+                </div>
+            )}
+        {analysisData && (
+                <>
+                    {matching_score !== undefined && (
+                        <div className="mt-5 text-center">
+                            <h2 className="text-lg text-indigo-600 mb-2">Matching Score</h2>
+                            <svg width="80" height="80" viewBox="0 0 36 36" className="inline-block">
+                                <circle cx="18" cy="18" r="16" stroke="#E0E0E0" strokeWidth="4" fill="none"></circle>
+                                <circle
+                                    cx="18"
+                                    cy="18"
+                                    r="16"
+                                    strokeDasharray="100"
+                                    strokeDashoffset={100 - matching_score}
+                                    stroke={strokeColor}
+                                    strokeWidth="4"
+                                    fill="none"
+                                    strokeLinecap="round"
+                                ></circle>
+                                <text
+                                    x="50%"
+                                    y="50%"
+                                    textAnchor="middle"
+                                    fill={strokeColor}
+                                    fontSize="8px"
+                                    dy=".3em"
+                                >
+                                    {matching_score}
+                                </text>
+                            </svg>
+                            <p>{summary_of_issues?.total_issues_count || 0} issues found</p>
                         </div>
-                </div>
-            )}
-
-            {/* Searchability */}
-            {searchability && Object.keys(searchability).length > 0 && (
-                <div className="section">
-                    <h3>Searchability</h3>
-                    <ul>
-                        {Object.entries(searchability).map(([key, value], index) => (
-                            <li key={index} >
-                                {key.replace(/_/g, " ")} 
-                                <span className="ml-2" style={{ color: value ? "#13BC4B" : "#FF1212" }}>
-                                    {value ? "Included" : "Missing"}
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
-
-                {/* Missing Skills */}
-                {missing_skills?.hard_skills?.length > 0 && (
-                <div className="section">
-                    <h3>Missing Skills</h3>
-                    <ul>
-                        {missing_skills.hard_skills.map((skill, index) => (
-                            <li key={index} className="clickable-skill">
-                                <input
-                                    type="checkbox"
-                                    id={`skill-${index}`}
-                                    onChange={() => handleSkillClick(skill)}
-                                />
-                                <label htmlFor={`skill-${index}`}>{skill}</label>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
-
+                    )}
+                    {job_title_match?.length > 0 && (
+                        <div className="mt-5">
+                            <h3 className="text-lg font-bold text-gray-800 mb-3">Job Title Match</h3>
+                            <div className="flex">
+                                <p>{job_title_match}</p>
+                                <button
+                                    className="ml-2 mt-1 bg-indigo-600 text-white px-2 py-0 rounded-full text-xs flex items-center"
+                                    onClick={() => handleJobTitle(job_title_match)}
+                                >
+                                    Add
+                                    <img
+                                        src={starsUnfilled}
+                                        alt="Stars Icon"
+                                        className="w-[8px] h-[8px] ml-1"
+                                    />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                    {searchability && Object.keys(searchability).length > 0 && (
+                        <div className="mt-5">
+                            <h3 className="text-lg font-bold text-gray-800 mb-3">Searchability</h3>
+                            <ul className="list-none">
+                                {Object.entries(searchability).map(([key, value], index) => (
+                                    <li
+                                        key={index}
+                                        className="flex items-center justify-between mb-2"
+                                    >
+                                        <span>{key.replace(/_/g, " ")}</span>
+                                        <span
+                                            className={`ml-2 ${
+                                                value ? "text-green-600" : "text-red-600"
+                                            }`}
+                                        >
+                                            {value ? "Included" : "Missing"}
+                                        </span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                    {missing_skills?.hard_skills?.length > 0 && (
+                        <div className="mt-5">
+                            <h3 className="text-lg font-bold text-gray-800 mb-3">Missing Skills</h3>
+                            <ul className="list-none">
+                                {missing_skills.hard_skills.map((skill, index) => (
+                                    <li
+                                        key={`${skill}-${index}`}
+                                        className="flex items-center mb-2 cursor-pointer"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            id={`skill-${skill}`}
+                                            className="hidden"
+                                            onChange={() => handleSkillClick(skill)}
+                                        />
+                                        <label
+                                            htmlFor={`skill-${skill}`}
+                                            className="relative pl-8 text-sm cursor-pointer"
+                                        >
+                                            <span className="absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-white border-2 border-indigo-900 transition"></span>
+                                            {skill}
+                                        </label>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
             {/* Experience Gaps 
             {experience_gaps?.unrepresented_roles?.length > 0 && (
                 <div className="section">
@@ -387,109 +455,124 @@ const Analytics = () => {
             )}
         */}
             {/* Education Requirements */}
-            {education_requirements?.missing_degrees_or_certifications?.length > 0 && (
-                <div className="section">
-                    <h3>Missing Degrees or Certifications</h3>
-                    <ul>
-                        {education_requirements.missing_degrees_or_certifications.map(
-                            (degree, index) => (
-                                <li key={index}> {degree}</li>
-                            )
-                        )}
-                    </ul>
-                </div>
-            )}
-
-            {/* Optimization Suggestions */}
-            {optimization_suggestions?.length > 0 && (
-                <div className="section">
-                    <h3>Optimization Suggestions</h3>
-                    <ul>
-                        {optimization_suggestions.map((suggestion, index) => (
-                            <div className="flex">
-                                <li key={index}>{suggestion}</li>
-                                <button className="experence-btn" onClick={() => toggleExperienceModal(suggestion)}>Add
-                                <img
-                                src={starsUnfilled}
-                                alt="Stars Icon"
-                                className="ml-1 mr-1 w-2 h-2"
-                                /></button>
-                            </div>
-                        ))}
-                    </ul>
-                </div>
-            )}
-
-
-            {/* Recruiters' Tips */}
-            {recruiters_tips && Object.keys(recruiters_tips).length > 0 && (
-                <div className="section">
-                    <h3>Recruiters' Tips</h3>
-                    <ul>
-                        {Object.entries(recruiters_tips).map(([key, value], index) => (
-                            <div className="flex"><li key={index}>
-                                {value ? "✔" : "⚠"} {key.replace(/_/g, " ")}
-                            </li>
-                            {key === "personal_summary" && cvData?.job_summary ? (
-                                <></>
-                            ):
-                            (<button
-                                    className="ml-2 experence-btn"
-                                    onClick={() => handleRecruitersTips(value, key)}
-                                >
-                                    Add
-                                    <img
-                                        src={starsUnfilled}
-                                        alt="Stars Icon"
-                                        className="ml-1 mr-1 w-2 h-2"
-                                    />
-                                </button>)}
-                            </div>
-                        ))}
-                    </ul>
-                </div>
-            )}
-
-            {/* Preparation Assistance */}
-            {preparation_assistance?.interview_questions?.length > 0 || preparation_assistance?.preparation_checklist?.length > 0 && (
-                    <div className="section">
-                    <h3>Preparation Assistance</h3>
-                    {preparation_assistance?.interview_questions?.length > 0 && (
-                        <>
-                            <h4>Interview Questions</h4>
-                            <ul>
-                                {preparation_assistance.interview_questions.map((question, index) => (
-                                    <li key={index}>{question}</li>
+                       {education_requirements?.missing_degrees_or_certifications?.length > 0 && (
+                        <div className="mt-5">
+                            <h3 className="text-lg font-bold text-gray-800 mb-3">
+                                Missing Degrees or Certifications
+                            </h3>
+                            <ul className="list-none">
+                                {education_requirements.missing_degrees_or_certifications.map(
+                                    (degree, index) => (
+                                        <li key={index} className="mb-2 text-sm text-gray-600">
+                                            {degree}
+                                        </li>
+                                    )
+                                )}
+                            </ul>
+                        </div>
+                    )}
+                    {optimization_suggestions?.length > 0 && (
+                        <div className="mt-5">
+                            <h3 className="text-lg font-bold text-gray-800 mb-3">
+                                Optimization Suggestions
+                            </h3>
+                            <ul className="list-none">
+                                {optimization_suggestions.map((suggestion, index) => (
+                                    <div className="flex items-center mb-2" key={index}>
+                                        <li className="text-sm text-gray-600">{suggestion}</li>
+                                        <button
+                                            className="ml-2 bg-indigo-600 text-white px-3 py-0 rounded-full text-xs flex items-center"
+                                            onClick={() => toggleExperienceModal(suggestion)}
+                                        >
+                                            Add
+                                            <img
+                                                src={starsUnfilled}
+                                                alt="Stars Icon"
+                                                className="w-[8px] h-[8px] ml-1"
+                                            />
+                                        </button>
+                                    </div>
                                 ))}
                             </ul>
-                        </>
+                        </div>
                     )}
-                    {preparation_assistance?.preparation_checklist?.length > 0 && (
-                        <>
-                            <h4>Preparation Checklist</h4>
-                            <ul>
-                                {preparation_assistance.preparation_checklist.map((item, index) => (
-                                    <li key={index}>{item}</li>
+                    {recruiters_tips && Object.keys(recruiters_tips).length > 0 && (
+                        <div className="mt-5">
+                            <h3 className="text-lg font-bold text-gray-800 mb-3">Recruiters' Tips</h3>
+                            <ul className="list-none">
+                                {Object.entries(recruiters_tips).map(([key, value], index) => (
+                                    <div className="flex items-center mb-2" key={index}>
+                                        <li className="text-sm text-gray-600">
+                                            {"💡"} {key.replace(/_/g, " ")}
+                                        </li>
+                                        {key === "personal_summary" && cvData?.job_summary ? null : (
+                                            <button
+                                                className="ml-2 bg-indigo-600 text-white px-3 py-0 rounded-full text-xs flex items-center"
+                                                onClick={() => handleRecruitersTips(value, key)}
+                                            >
+                                                Add
+                                                <img
+                                                    src={starsUnfilled}
+                                                    alt="Stars Icon"
+                                                    className="w-[8px] h-[8px] ml-1"
+                                                />
+                                            </button>
+                                        )}
+                                    </div>
                                 ))}
                             </ul>
-                        </>
+                        </div>
                     )}
-                </div>
+                   {/* {preparation_assistance?.interview_questions?.length > 0 || preparation_assistance?.preparation_checklist?.length > 0 ? (
+                        <div className="mt-5">
+                            <h3 className="text-lg font-bold text-gray-800 mb-3">
+                                Preparation Assistance
+                            </h3>
+                            {preparation_assistance?.interview_questions?.length > 0 && (
+                                <>
+                                    <h4 className="text-sm font-semibold text-gray-800 mb-2">
+                                        Interview Questions
+                                    </h4>
+                                    <ul className="list-none">
+                                        {preparation_assistance.interview_questions.map((question, index) => (
+                                            <li key={index} className="mb-2 text-sm text-gray-600">
+                                                {question}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </>
+                            )}
+                            {preparation_assistance?.preparation_checklist?.length > 0 && (
+                                <>
+                                    <h4 className="text-sm font-semibold text-gray-800 mb-2">
+                                        Preparation Checklist
+                                    </h4>
+                                    <ul className="list-none">
+                                        {preparation_assistance.preparation_checklist.map((item, index) => (
+                                            <li key={index} className="mb-2 text-sm text-gray-600">
+                                                {item}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </>
+                            )}
+                        </div>
+                    ) : null}*/}
+                    {grammar_corrections?.length > 0 && (
+                        <div className="mt-5">
+                            <h3 className="text-lg font-bold text-gray-800 mb-3">Grammar Corrections</h3>
+                            <ul className="list-none">
+                                {grammar_corrections.map((correction, index) => (
+                                    <li key={index} className="mb-2 text-sm text-gray-600">
+                                        ⚠ {correction}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </>
             )}
 
-            {/* Grammar Corrections */}
-            {grammar_corrections?.length > 0 && (
-                <div className="section">
-                    <h3>Grammar Corrections</h3>
-                    <ul>
-                        {grammar_corrections.map((correction, index) => (
-                            <li key={index}>⚠ {correction}</li>
-                        ))}
-                    </ul>
-                </div>
-            )}
-        </>
-    )}
         {showExperienceModal && (
                 <div className="popup-overlay">
                     <div className="popup-content">
@@ -563,65 +646,105 @@ const Analytics = () => {
                 </div>
             </div>
         )}
-                </div>
+        </div>
 
-                <div className="main-content">
-                    <div className="download-cv-button-box">
-                        <h2>Preview CV</h2>
-                        <button className="upload-cv-btn">
-                            <span>Download pdf</span>
-                        </button>
+        <div className="w-[60%] p-5 bg-gray-50">
+            <div className="flex justify-between items-center mb-5">
+                <div>
+                    <h2 className="text-2xl font-extrabold text-indigo-900">Preview CV</h2>
+                    <p className="text-sm text-gray-600" style={{ fontSize: '13px' }}>
+                        This isn’t the resume style. 
+                    </p>
+                    <p className="text-sm text-gray-600" style={{ fontSize: '13px' }}>
+                        Our pdf style is made to pass any ATS system
+                    </p>
+                </div>
+                <button
+                    className="relative h-[30px] flex items-center font-normal bg-indigo-600 px-7 py-2 text-sm text-white rounded-full shadow-[0_0_0_4px_white,0_0_0_6px_rgb(208,208,255)] cursor-pointer"
+                    onClick={handleDownloadPDF}
+                >
+                    <span>Download CV</span>
+                </button>
+            </div>
+            <div className="w-full max-h-[1200px] overflow-y-auto bg-white border-2 border-dashed border-gray-300 rounded-lg">
+                <div className="flex justify-end p-4">
+                    <img
+                        src={editIcon}
+                        alt="Edit Icon"
+                        className="h-6 w-6 cursor-pointer"
+                        onClick={handleEditClick}
+                    />
+                </div>
+                <div id="resumePreview" className="pl-8 pr-8 text-gray-700">
+                    <h2
+                        id="previewName"
+                        className="text-2xl font-bold text-indigo-600 mb-2"
+                    >
+                        {cvData ? `${cvData["first name"]} ${cvData["last name"]}` : ""}
+                    </h2>
+                    <p
+                        id="previewJobTitle"
+                        className="text-lg italic text-gray-500 mb-4"
+                        dangerouslySetInnerHTML={{ __html: jobTitle }}
+                    ></p>
+                    <p
+                        id="previewJobSummary"
+                        className="text-sm pb-4"
+                        dangerouslySetInnerHTML={{
+                            __html: cvData?.job_summary ? cvData.job_summary : "",
+                        }}
+                    ></p>
+                    <div className="mb-6">
+                        <h3 className="text-lg font-bold text-indigo-600 mb-3">Contact Information</h3>
+                        <p className="text-sm mb-2">{email}</p>
+                        <p className="text-sm mb-2">{phone}</p>
+                        <p className="text-sm mb-2">{linkedin}</p>
+                        <p className="text-sm mb-2">{github}</p>
+                        <p className="text-sm">{address}</p>
                     </div>
-                    <div className="content-box">
-                        <div id="resumePreview">
-                            <h2 id="previewName">{cvData? `${cvData["first name"]} ${cvData["last name"]}`: ""}</h2>
-                            <p id="previewJobTitle">{jobTitle}</p>
-                            <p id="previewJobSummary" className="pb-2">{cvData?.job_summary ? cvData.job_summary : ""}</p>
-                            <div className="preview-section">
-                                <h3>Contact Information</h3>
-                                <p id="previewEmail">{email}</p>
-                                <p id="previewPhone">{phone}</p>
-                                <p id="previewLinkedIn">{linkedin}</p>
-                                <p id="previewGitHub">{github}</p>
-                                <p id="previewAddress">{address}</p>
+                    <div className="mb-6">
+                        <h3 className="text-lg font-bold text-indigo-600 mb-3">Experience</h3>
+                        {experiences.map((exp, index) => (
+                            <div key={index} className="mb-4">
+                                <p className="text-sm font-semibold">
+                                    {exp.title} <span className="text-gray-500">{exp.date === "undefined - undefined" || exp.date}</span>
+                                </p>
+                                <p className="text-sm italic text-gray-600">{exp.company}</p>
+                                <p
+                                    className="text-sm"
+                                    dangerouslySetInnerHTML={{ __html: exp.description }}
+                                ></p>
                             </div>
-                            <div className="experiences-original-section">
-                                <h3>Experience</h3>
-                                {experiences.map((exp, index) => (
-                                    <div key={index}>
-                                        <p>
-                                            <strong>{exp.title}</strong> <span>{exp.date === "undefined - undefined" ? "" : exp.date}</span>
-                                        </p>
-                                        <p><em>{exp.company}</em></p>
-                                        <p dangerouslySetInnerHTML={{ __html: exp.description }}></p>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="education-original-section">
-                                <h3>Education</h3>
-                                {education.map((edu, index) => (
-                                    <p key={index}>
-                                        <strong>{edu.degree}</strong> - {edu.institution} {edu.date || ""}
-                                    </p>
-                                ))}
-                            </div>
-                            <div className="preview-section">
-                                <h3>Skills</h3>
-                                <ul className="skills-list">
-                                    {cvData?.skills?.[0]?.list.map((skill, index) => (
-                                        <li key={index}>
-                                            <span className={highlightedSkills.includes(skill) ? "highlight" : ""}>
-                                                {skill}
-                                            </span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
+                        ))}
+                    </div>
+                    <div className="mb-6">
+                        <h3 className="text-lg font-bold text-indigo-600 mb-3">Education</h3>
+                        {education.map((edu, index) => (
+                            <p key={index} className="text-sm mb-2">
+                                <strong>{edu.degree}</strong> - {edu.institution} {edu.date === "undefined - undefined"|| edu.date}
+                            </p>
+                        ))}
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-bold text-indigo-600 mb-3">Skills</h3>
+                        <ul className="flex flex-wrap gap-2">
+                            {cvData?.skills?.[0]?.list.map((skill, index) => (
+                                <li
+                                    key={index}
+                                    className={`px-2 py-1 rounded bg-gray-200 text-sm ${
+                                        highlightedSkills.includes(skill) ? "bg-indigo-100 text-indigo-600 font-bold" : ""
+                                    }`}
+                                >
+                                    {skill}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+
     );
 };
 
