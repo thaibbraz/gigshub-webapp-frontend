@@ -13,54 +13,16 @@ const UserDashboard = ({ formData }) => {
   const [location, setLocation] = useState(formData.location);
   const [cvFormData, setcvFormData] = useState(formData);
   const [loading, setLoading] = useState(false);
-  const [fetchCount, setFetchCount] = useState(
-    localStorage.getItem("fetchCount")
-      ? Number(localStorage.getItem("fetchCount"))
-      : 0
-  );
   const [clicked, setClicked] = useState(false);
   const [error, setError] = useState(null);
 
   // Utility to format compatibility score
   const formatScoreAsPercentage = (score) => score * 1000;
 
-  // fetchCount
-  const increaseFetchCount = () => {
-    setFetchCount((prevCount) => {
-      const newCount = prevCount >= 3 ? 3 : prevCount + 1;
-      localStorage.setItem("fetchCount", newCount);
-      return newCount;
-    });
-  };
-
-  // Fetch cached jobs on initial load
-  // Fetch cached jobs on mount or fetch new if fetchCount > 1
-  useEffect(() => {
-    const timestamp = localStorage.getItem("timestamp");
-
-    // Fetch new jobs if fetchCount > 1
-    if (fetchCount > 1) {
-      fetchJobs();
-      return;
-    }
-
-    // Fetch cached jobs only if valid and fetchCount <= 1
-    if (jobs.length === 0 && timestamp && Date.now() - timestamp < 86400000) {
-      setJobs(JSON.parse(localStorage.getItem("jobs")));
-    }
-  }, [fetchCount, cvFormData, jobTitle, location]);
-
   // Fetch and store jobs
   const fetchJobs = async () => {
     console.log("Fetching jobs...");
     setClicked(true);
-
-    if (fetchCount >= 3) {
-      setError("Upgrade to find more jobs.");
-      return;
-    }
-
-    increaseFetchCount();
 
     const user = JSON.parse(localStorage.getItem("user"));
     const cv = localStorage.getItem("cv");
@@ -106,14 +68,14 @@ const UserDashboard = ({ formData }) => {
       if (
         JSON.parse(cachedJobs)?.length > 0 &&
         jobs.length === 0 &&
-        Date.now() - timestamp < 86400000 &&
-        (fetchCount < 2 || fetchCount > 2)
+        Date.now() - timestamp < 86400000
       ) {
         setJobs(JSON.parse(cachedJobs));
         return;
-      } else if (!JSON.parse(cachedJobs) || fetchCount >= 1) {
+      } else if (!JSON.parse(cachedJobs)) {
         const response = await fetch(
-          "https://fastapi-job-matcher-05-160893319817.europe-southwest1.run.app/api/jobs",
+          // "https://fastapi-job-matcher-05-160893319817.europe-southwest1.run.app/api/jobs"
+          "http://127.0.0.1:8001/api/jobs",
           {
             method: "POST",
             headers: {
@@ -122,6 +84,7 @@ const UserDashboard = ({ formData }) => {
             body: JSON.stringify({
               search_term: jobTitle,
               location: location,
+              resume_data: cvFormData,
             }),
           }
         );
