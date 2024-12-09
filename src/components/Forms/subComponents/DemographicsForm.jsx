@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Dropdown from "../../Dropdown/Dropdown";
 import FormLayout from "./FormLayout";
-import Button from "./Button";
-import ButtonBorder from "./ButtonBorder";
+import ButtonFill from "../../Elements/ButtonFill";
+import ButtonBorder from "../../Elements/ButtonBorder";
 import ButtonContainer from "./ButtonContainer";
 
 const DemographicsForm = ({ onNext, onBack, data, handleSubmit }) => {
@@ -151,7 +151,7 @@ const DemographicsForm = ({ onNext, onBack, data, handleSubmit }) => {
 
         <ButtonContainer>
           <ButtonBorder type="button" action={onBack} text="Back" />
-          <Button type="submit" action={handleSubmit} text="Submit" />
+          <ButtonFill type="submit" action={handleSubmit} text="Submit" />
         </ButtonContainer>
       </form>
     </FormLayout>

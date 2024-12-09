@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import FormLayout from "./FormLayout";
-import Button from "./Button";
+import ButtonFill from "../../Elements/ButtonFill";
 import ButtonContainer from "./ButtonContainer";
 
 const CVUpload = ({ onNext }) => {
@@ -156,13 +156,13 @@ const CVUpload = ({ onNext }) => {
 
         <ButtonContainer>
           {pdfFile != null && resumeText === null ? (
-            <Button
+            <ButtonFill
               disabled={true}
               className="w-auto"
               text="Analysing your CV..."
             />
           ) : (
-            <Button type="submit" action={handleSubmit} text="Continue" />
+            <ButtonFill type="submit" action={handleSubmit} text="Continue" />
           )}
         </ButtonContainer>
       </form>

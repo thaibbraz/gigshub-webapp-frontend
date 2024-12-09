@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Dropdown from "../../Dropdown/Dropdown";
 import FormLayout from "./FormLayout";
-import Button from "./Button";
-import ButtonBorder from "./ButtonBorder";
+import ButtonFill from "../../Elements/ButtonFill";
+import ButtonBorder from "../../Elements/ButtonBorder";
 import ButtonContainer from "./ButtonContainer";
 
 const LocationForm = ({ onNext, onBack, data }) => {
@@ -103,7 +103,7 @@ const LocationForm = ({ onNext, onBack, data }) => {
 
         <ButtonContainer>
           <ButtonBorder type="button" action={onBack} text="Back" />
-          <Button type="submit" action={handleSubmit} text="Continue" />
+          <ButtonFill type="submit" action={handleSubmit} text="Continue" />
         </ButtonContainer>
       </form>
     </FormLayout>

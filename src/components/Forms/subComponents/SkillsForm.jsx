@@ -3,8 +3,8 @@ import searchIcon from "../../../assets/searchIcon.svg";
 import ProgressBar from "./ProgressBar";
 import Languages from "./Languages";
 import ButtonContainer from "./ButtonContainer";
-import Button from "./Button";
-import ButtonBorder from "./ButtonBorder";
+import ButtonFill from "../../Elements/ButtonFill";
+import ButtonBorder from "../../Elements/ButtonBorder";
 import Skill from "./Skill";
 
 const SkillsForm = ({ onNext, onBack, skillsData, languageData }) => {
@@ -123,7 +123,7 @@ const SkillsForm = ({ onNext, onBack, skillsData, languageData }) => {
 
             <ButtonContainer>
               <ButtonBorder type="button" action={onBack} text="Back" />
-              <Button type="button" action={handleSubmit} text="Continue" />
+              <ButtonFill type="button" action={handleSubmit} text="Continue" />
             </ButtonContainer>
           </div>
         </div>

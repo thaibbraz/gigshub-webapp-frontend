@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import starsUnfilled from "../../../assets/starsUnfilled.svg";
-import { addUserData,getUserCVData } from "../../../utils/firebase.js";
+import Input from "../../Elements/Input.jsx";
+import ButtonAutoApply from "../../Elements/ButtonAutoApply.jsx";
+import { addUserData, getUserCVData } from "../../../utils/firebase.js";
 import { useNavigate } from "react-router-dom";
 
 const UserDashboard = ({ formData }) => {
@@ -9,6 +11,7 @@ const UserDashboard = ({ formData }) => {
   const [location, setLocation] = useState(formData.location);
   const [cvFormData, setcvFormData] = useState(formData);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null); // State for error handling
   const navigate = useNavigate();
 
   // Utility to format compatibility score
@@ -17,16 +20,16 @@ const UserDashboard = ({ formData }) => {
   // Fetch and store jobs
   const fetchJobs = async () => {
     console.log("Fetching jobs...");
-    
+
     const user = JSON.parse(localStorage.getItem("user"));
     const cv = localStorage.getItem("cv");
     const userId = user?.uid;
     console.log("user id", userId);
     console.log("cvFormData", cvFormData);
-    
+
     if (!user || !cv) {
       console.log("no user found");
-      
+
       try {
         const newUserData = {
           email: user?.email || "",
@@ -39,33 +42,37 @@ const UserDashboard = ({ formData }) => {
         await addUserData(userId, newUserData);
       } catch (error) {
         console.error("Error submitting form: ", error);
-      } 
+      }
     }
-    if(Object.keys(cvFormData).length === 0) {
+    if (Object.keys(cvFormData).length === 0) {
       console.error("cvFormData is missing");
       const data = await getUserCVData(userId);
       setcvFormData(data);
     }
     if (!jobTitle && cvFormData) {
-        const jobTittle = cvFormData.jobTitle;
-        setJobTitle(jobTittle);
+      const jobTittle = cvFormData.jobTitle;
+      setJobTitle(jobTittle);
     }
     if (!location && cvFormData) {
-        const location = cvFormData.location;
-        setLocation(location);
+      const location = cvFormData.location;
+      setLocation(location);
     }
-    
+
     // Check localStorage for cached jobs
     try {
       const cachedJobs = localStorage.getItem("jobs");
       const timestamp = localStorage.getItem("timestamp");
       const requestBody = { ...cvFormData, jobTitle, location };
 
-      if (JSON.parse(cachedJobs)?.length > 0 && jobs.length === 0 && Date.now() - timestamp < 86400000) {
+      if (
+        JSON.parse(cachedJobs)?.length > 0 &&
+        jobs.length === 0 &&
+        Date.now() - timestamp < 86400000
+      ) {
         setJobs(JSON.parse(cachedJobs));
         console.log("Already had job cached", cachedJobs);
         return;
-      }else if (!JSON.parse(cachedJobs)) {
+      } else if (!JSON.parse(cachedJobs)) {
         const response = await fetch(
           "https://fastapi-job-matcher-05-160893319817.europe-southwest1.run.app/api/jobs",
           {
@@ -74,29 +81,29 @@ const UserDashboard = ({ formData }) => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              "search_term": jobTitle,
-              "location": location
+              search_term: jobTitle,
+              location: location,
             }),
           }
         );
-  
+
         if (!response.ok) {
           throw new Error("Failed to fetch jobs from API");
         }
-  
+
         const data = await response.json();
         const filteredJobs = data.jobs.filter(
           (job) => formatScoreAsPercentage(job.compatibility_score) > 10
         );
-  
+
         // Update localStorage and state
         localStorage.setItem("timestamp", Date.now());
         localStorage.setItem("jobs", JSON.stringify(data));
         console.log("got here", filteredJobs);
-        
+
         setJobs(filteredJobs);
-      } 
-    }catch (error) {
+      }
+    } catch (error) {
       console.error("Error fetching jobs:", error);
     }
   };
@@ -108,82 +115,144 @@ const UserDashboard = ({ formData }) => {
 
   return (
     <div className="ml-2 mr-10">
-      <div className="flex flex-col items-center max-w-7xl ml-0">
-        <div className="flex flex-col lg:flex-row items-center lg:justify-end top-8 xl:ml-60 mlg:ml-20 w-[90%]">
-          <p className="text-light-purple font-thin text-xs whitespace-nowrap"></p>
-        </div>
-      </div>
-
       {/* Top Filter Section */}
       <div className="w-full px-9">
-        <div className="flex flex-col lg:flex-row items-center mb-4 mt-3 max-w-7xl gap-x-6 ml-10 w-[80%]">
-          <h2 className="text-3xl font-bold text-dark-blue text-center mb-4">
-            Daily jobs
-          </h2>
+        <div className="flex flex-col lg:flex-row items-center mb-4 mt-6 max-w-7xl gap-x-6 ml-10 w-[90%]">
+          <div className="flex flex-col lg:flex-row lg:space-x-4">
+            {/* Inputs */}
+            <Input
+              label="Job Title"
+              type="text"
+              placeholder={jobTitle || "Job Title"}
+              handleChange={setJobTitle}
+            />
+            <Input
+              label="Location"
+              type="text"
+              placeholder={location || "Location"}
+              handleChange={setLocation}
+            />
+          </div>
+
+          {/* Auto Apply Button */}
+          <ButtonAutoApply loading={loading} action={fetchJobs} />
+
+          {/* Daily Limit */}
+          <p className="text-light-purple text-xs font-thin mt-6 xl:ml-60 mlg:ml-20"></p>
         </div>
 
         {/* Job List Section */}
-        <div className="flex flex-col justify-center items-center ml-10 bg-white rounded-xl w-full max-w-6xl h-[calc(81vh-70px)] overflow-y-auto p-4">
-          <div className="w-full max-w-6xl">
-            {loading ? (
-              <p className="text-dark-blue text-lg">Loading your daily jobs...</p>
-            )  : (
-              jobs && jobs.map((job, index) => (
-                <div
-                  key={index}
-                  className={`h-[80px] w-full grid grid-cols-4 gap-4 ${
-                    index !== jobs.length - 1
-                      ? "border-b-2 border-pale-purple"
-                      : ""
-                  }`}
-                >
-                  {/* Job Title */}
-                  <div className="col-span-1 flex items-center justify-center">
-                    {job.company_logo && (
+        <div className="flex flex-col items-center ml-10 bg-white rounded-xl w-full max-w-7xl h-[calc(100vh-28px)] overflow-y-auto overflow-x-auto">
+          <div className="w-full px-9">
+            {error && <p className="text-center text-red-500">{error}</p>}
+            {loading && (
+              <p className="text-center text-gray-500">Loading jobs...</p>
+            )}
+            {jobs.length === 0 && !loading && (
+              <div className="flex flex-col items-center justify-center h-[calc(90vh-28px)]">
+                <h1 className="text-4xl font-semibold text-gray-800 mb-8">
+                  Hey there, ready to apply?
+                </h1>
+                <div className="flex space-x-6">
+                  {/* Practice Option */}
+                  <div className="bg-purple-50 p-6 rounded-lg shadow-lg text-center w-64">
+                    <div className="flex justify-center mb-4">
+                      {/* Icon placeholder - replace with your SVG or image */}
                       <img
-                        src={job.company_logo}
-                        alt="Company Logo"
-                        className="h-8 w-8"
+                        src="https://via.placeholder.com/100"
+                        alt="Practice icon"
+                        className="h-20 w-20"
                       />
-                    )}
-                  </div>
-
-                  {/* Job Details */}
-                  <div className="col-span-2 flex flex-col justify-center border-r-2 border-dotted border-pale-purple my-4">
-                    <a
-                      target="_blank"
-                      href={job.job_url}
-                      rel="noopener noreferrer"
-                    >
-                      <p className="text-dark-blue text-sm font-extrabold">
-                        {job.title}
-                      </p>
-                    </a>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      <div className="bg-soft-liliac rounded-lg py-1 px-2 text-xs">
-                        <span className="text-dark-purple">{job.company}</span>
-                      </div>
-                      <div className="bg-soft-liliac rounded-lg py-1 px-3 text-xs">
-                        <span className="text-dark-purple">{job.site}</span>
-                      </div>
                     </div>
+                    <h2 className="text-xl font-medium text-gray-700 mb-4">
+                      I want to practice
+                    </h2>
+                    <button className="bg-white text-purple-600 font-semibold py-2 px-4 rounded-full border border-purple-300 hover:bg-purple-100">
+                      Start a 1 minute demo
+                    </button>
                   </div>
 
-                  {/* Company and Location */}
-                  <div className="col-span-1 flex flex-col justify-center border-r-2 border-dotted border-pale-purple my-4">
-                    <a
-                      target="_blank"
-                      href={job.company_url}
-                      rel="noopener noreferrer"
-                    >
-                      <p className="text-dark-blue text-xs font-extrabold">
-                        {job.location}
-                      </p>
-                    </a>
+                  {/* Explore Option */}
+                  <div className="bg-purple-50 p-6 rounded-lg shadow-lg text-center w-64">
+                    <div className="flex justify-center mb-4">
+                      {/* Icon placeholder - replace with your SVG or image */}
+                      <img
+                        src="https://via.placeholder.com/100"
+                        alt="Explore icon"
+                        className="h-20 w-20"
+                      />
+                    </div>
+                    <h2 className="text-xl font-medium text-gray-700 mb-4">
+                      I’ll explore on my own
+                    </h2>
+                    <button className="bg-white text-purple-600 font-semibold py-2 px-4 rounded-full border border-purple-300 hover:bg-purple-100">
+                      Start applying
+                    </button>
                   </div>
                 </div>
-              ))
+              </div>
             )}
+            {jobs.map((job, index) => (
+              <div
+                key={index}
+                className={`h-[112px] w-full md:w-[900px] lg:w-[1200px] grid grid-cols-4 ${
+                  index !== jobs.length - 1
+                    ? "border-b-2 border-pale-purple"
+                    : ""
+                }`}
+              >
+                {/* Job Title */}
+                <div className="col-span-2 flex flex-col justify-center border-r-2 border-dotted border-pale-purple my-4 ml-10">
+                  <p className="text-dark-blue text-lg font-extrabold sm:hidden">
+                    {job.title.length > 8
+                      ? `${job.title.slice(0, 8)}...`
+                      : job.title}
+                  </p>
+                  <p className="text-dark-blue text-lg font-extrabold hidden sm:block">
+                    {job.title}
+                  </p>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {/* Contract Type Label */}
+                    <div className="bg-soft-liliac rounded-lg py-1 px-3 text-sm h-auto hidden sm:flex">
+                      <span className="text-xs text-dark-purple">
+                        {job.contractType}
+                      </span>
+                    </div>
+                    {/* Salary Label */}
+                    <div className="bg-soft-liliac rounded-lg py-1 px-3 text-sm h-auto hidden sm:flex">
+                      <span className="text-xs text-dark-purple">
+                        {job.salary}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Company and Location */}
+                <div className="col-span-1 flex flex-col justify-center border-r-2 border-dotted border-pale-purple my-4 ml-10">
+                  <p className="text-lg font-extrabold text-dark-blue sm:hidden">
+                    {job.company.length > 8
+                      ? `${job.company.slice(0, 8)}...`
+                      : job.company}
+                  </p>
+                  <p className="text-lg font-extrabold text-dark-blue hidden sm:block">
+                    {job.company}
+                  </p>
+                  <p className="text-lg font-thin text-dark-blue sm:hidden">
+                    {job.location.length > 10
+                      ? `${job.location.slice(0, 10)}...`
+                      : job.location}
+                  </p>
+                  <p className="text-lg font-thin text-dark-blue hidden sm:block">
+                    {job.location}
+                  </p>
+                </div>
+
+                {/* Applied Date */}
+                <div className="col-span-1 flex items-center ml-10 my-4 hidden sm:flex">
+                  <p className="text-dark-blue font-thin">{job.appliedDate}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

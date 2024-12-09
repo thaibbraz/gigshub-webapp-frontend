@@ -1,4 +1,4 @@
-const Button = ({ type, action, text, disabled }) => {
+const ButtonFill = ({ type, action, text, disabled }) => {
   return (
     <button
       className={`flex items-center justify-center h-input mt-4 py-6 px-1 rounded-3xl border-2 border-pale-purple
@@ -14,4 +14,4 @@ const Button = ({ type, action, text, disabled }) => {
   );
 };
 
-export default Button;
+export default ButtonFill;
