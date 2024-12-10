@@ -3,6 +3,7 @@ import Input from "../../Elements/Input.jsx";
 import ButtonAI from "../../Elements/ButtonAI.jsx";
 import { addUserData, getUserCVData } from "../../../utils/firebase.js";
 import { sendJobsRequest } from "../../../utils/api.js";
+import Error from "../../Error/Error.jsx";
 
 const UserDashboard = ({ formData }) => {
   const [jobs, setJobs] = useState(
@@ -27,7 +28,7 @@ const UserDashboard = ({ formData }) => {
   // Fetch and store jobs
   const fetchJobs = async () => {
     setLoading(true);
-
+    setError(null);
     const user = JSON.parse(localStorage.getItem("user"));
     const cv = localStorage.getItem("cv");
     const userId = user?.uid;
@@ -77,7 +78,14 @@ const UserDashboard = ({ formData }) => {
 
       filteredJobs.length && setJobs(filteredJobs);
     } catch (error) {
-      console.error("Error fetching jobs:", error);
+      if (
+        error.message ===
+        "Job matching limited to 3 searches per day. Please upgrade to be matched with more jobs."
+      ) {
+        setError(error.message);
+      } else {
+        setError("An unexpected error occurred. Please try again later.");
+      }
     } finally {
       setLoading(false);
     }
@@ -123,7 +131,11 @@ const UserDashboard = ({ formData }) => {
         {/* Job List Section */}
         <div className="flex flex-col items-center ml-10 bg-white rounded-xl w-full max-w-7xl h-[calc(100vh-28px)] overflow-y-auto overflow-x-auto">
           <div className="w-full px-9">
-            {error && <p className="text-center text-red-500">{error}</p>}
+            {error && (
+              <p className="text-center text-red-500">
+                <Error message={error} />
+              </p>
+            )}
             {loading && (
               <p className="text-center text-gray-500">Loading jobs...</p>
             )}
