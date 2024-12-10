@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Input from "../../Elements/Input.jsx";
 import ButtonAI from "../../Elements/ButtonAI.jsx";
 import { addUserData, getUserCVData } from "../../../utils/firebase.js";
+import { sendJobsRequest } from "../../../utils/api.js";
 
 const UserDashboard = ({ formData }) => {
   const [jobs, setJobs] = useState(
@@ -19,16 +20,17 @@ const UserDashboard = ({ formData }) => {
   // Utility to format compatibility score
   const formatScoreAsPercentage = (score) => score * 1000;
 
+  const handleClick = () => {
+    !clicked ? setClicked(true) : fetchJobs();
+  };
+
   // Fetch and store jobs
   const fetchJobs = async () => {
-    console.log("Fetching jobs...");
-    setClicked(true);
+    setLoading(true);
 
     const user = JSON.parse(localStorage.getItem("user"));
     const cv = localStorage.getItem("cv");
     const userId = user?.uid;
-    console.log("user id", userId);
-    console.log("cvFormData", cvFormData);
 
     if (!user || !cv) {
       try {
@@ -51,62 +53,33 @@ const UserDashboard = ({ formData }) => {
       setcvFormData(data);
     }
     if (!jobTitle && cvFormData) {
-      const jobTittle = cvFormData.jobTitle;
-      setJobTitle(jobTittle);
+      const cvJobTitle = cvFormData.jobTitle;
+      setJobTitle(cvJobTitle);
     }
     if (!location && cvFormData) {
-      const location = cvFormData.location;
-      setLocation(location);
+      const cvLocation = cvFormData.location;
+      setLocation(cvLocation);
     }
 
-    // Check localStorage for cached jobs
     try {
-      const cachedJobs = localStorage.getItem("jobs");
-      const timestamp = localStorage.getItem("timestamp");
-      const requestBody = { ...cvFormData, jobTitle, location };
+      const data = await sendJobsRequest({
+        search_term: jobTitle,
+        location: location,
+        resume_data: cvFormData,
+      });
+      const filteredJobs = data.jobs.filter(
+        (job) => formatScoreAsPercentage(job.compatibility_score) > 10
+      );
 
-      if (
-        JSON.parse(cachedJobs)?.length > 0 &&
-        jobs.length === 0 &&
-        Date.now() - timestamp < 86400000
-      ) {
-        setJobs(JSON.parse(cachedJobs));
-        return;
-      } else if (!JSON.parse(cachedJobs)) {
-        const response = await fetch(
-          // "https://fastapi-job-matcher-05-160893319817.europe-southwest1.run.app/api/jobs"
-          "http://127.0.0.1:8001/api/jobs",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              search_term: jobTitle,
-              location: location,
-              resume_data: cvFormData,
-            }),
-          }
-        );
+      // Update localStorage and state
+      localStorage.setItem("timestamp", Date.now());
+      localStorage.setItem("jobs", JSON.stringify(data));
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch jobs from API");
-        }
-
-        const data = await response.json();
-        const filteredJobs = data.jobs.filter(
-          (job) => formatScoreAsPercentage(job.compatibility_score) > 10
-        );
-
-        // Update localStorage and state
-        localStorage.setItem("timestamp", Date.now());
-        localStorage.setItem("jobs", JSON.stringify(data));
-        console.log("got here", filteredJobs);
-
-        setJobs(filteredJobs);
-      }
+      filteredJobs.length && setJobs(filteredJobs);
     } catch (error) {
       console.error("Error fetching jobs:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -137,7 +110,11 @@ const UserDashboard = ({ formData }) => {
           </div>
 
           {/* Auto Apply Button */}
-          <ButtonAI loading={loading} action={fetchJobs} text="Find me a job" />
+          <ButtonAI
+            loading={loading}
+            action={handleClick}
+            text="Find me a job"
+          />
 
           {/* Daily Limit */}
           <p className="text-light-purple text-xs font-thin mt-6 xl:ml-60 mlg:ml-20"></p>
