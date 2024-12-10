@@ -29,9 +29,7 @@ export async function sendRequest(data, endpoint) {
 }
 
 export async function sendJobsRequest(data) {
-  console.log("api.js payload: ", data);
   try {
-    const token = localStorage.getItem("token");
     let options = {
       headers: {
         "Content-Type": "application/json",
@@ -40,6 +38,12 @@ export async function sendJobsRequest(data) {
     let response = await axios.post(`${JOBS_URL}`, data, options);
     return response.data;
   } catch (error) {
-    throw new Error(error);
+    if (error?.response?.status === 429) {
+      throw new Error(
+        "Job matching limited to 3 searches per day. Please upgrade to be matched with more jobs."
+      );
+    } else {
+      throw new Error(error);
+    }
   }
 }
