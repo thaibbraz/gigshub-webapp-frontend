@@ -7,8 +7,8 @@ This is the frontend of the GigsHub application, built with [Create React App](h
 ## Getting Started
 ### Create a .env with the following keys:
 
-- FIREBASE_API_KEY
-- ID_EXTENSION
+- REACT_APP_EXTENSION_ID
+- REACT_APP_FIREBASE_API_KEY
 
 Make sure you have access to those.
 
