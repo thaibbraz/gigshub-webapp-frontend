@@ -210,21 +210,46 @@ const UserDashboard = ({ formData }) => {
                       ? `${job.title.slice(0, 8)}...`
                       : job.title}
                   </p>
-                  <p className="text-dark-blue text-lg font-extrabold hidden sm:block">
-                    {job.title}
-                  </p>
+                  <div className="flex">
+                    <p className="text-dark-blue text-lg font-extrabold hidden sm:block">
+                      <a
+                        href={
+                          job.job_url_direct ? job.job_url_direct : job.job_url
+                        }
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        {job.title}
+                      </a>
+                    </p>
+                  </div>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {/* Contract Type Label */}
-                    <div className="bg-soft-liliac rounded-lg py-1 px-3 text-sm h-auto hidden sm:flex">
-                      <span className="text-xs text-dark-purple">
-                        {job.contractType}
-                      </span>
+                    <div className="bg-dark-blue rounded-lg py-1 px-3 text-sm h-auto hidden sm:flex">
+                      <a
+                        href={
+                          job.job_url_direct ? job.job_url_direct : job.job_url
+                        }
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        <span className="text-xs text-soft-liliac">Apply</span>
+                      </a>
                     </div>
                     {/* Salary Label */}
-                    <div className="bg-soft-liliac rounded-lg py-1 px-3 text-sm h-auto hidden sm:flex">
-                      <span className="text-xs text-dark-purple">
-                        {job.salary}
-                      </span>
+                    <div className="bg-dark-blue rounded-lg py-1 px-3 text-sm h-auto hidden sm:flex">
+                      <a
+                        href={
+                          job.job_url_direct ? job.job_url_direct : job.job_url
+                        }
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        {" "}
+                        <span className="text-xs text-soft-liliac">
+                          Custom CV for this job
+                        </span>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -237,7 +262,10 @@ const UserDashboard = ({ formData }) => {
                       : job.company}
                   </p>
                   <p className="text-lg font-extrabold text-dark-blue hidden sm:block">
-                    {job.company}
+                    {job.company}{" "}
+                    <span className="text-xs text-dark-purple">
+                      {job.is_remote}
+                    </span>
                   </p>
                   <p className="text-lg font-thin text-dark-blue sm:hidden">
                     {job.location.length > 10
@@ -251,7 +279,7 @@ const UserDashboard = ({ formData }) => {
 
                 {/* Applied Date */}
                 <div className="col-span-1 flex items-center ml-10 my-4 hidden sm:flex">
-                  <p className="text-dark-blue font-thin">{job.appliedDate}</p>
+                  <p className="text-dark-blue font-thin">{job.date_posted}</p>
                 </div>
               </div>
             ))}
