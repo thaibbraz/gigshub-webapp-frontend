@@ -97,7 +97,7 @@ const UserDashboard = ({ formData }) => {
   };
   // Fetch jobs on mount
   useEffect(() => {
-    fetchData();
+    getUserCVData();
   }, []);
 
   return (

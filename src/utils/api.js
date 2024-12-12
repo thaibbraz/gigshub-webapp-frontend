@@ -4,7 +4,8 @@ const BASE_URL =
   "https://fastapi-service-03-160893319817.europe-southwest1.run.app";
 // "http://localhost:8000";
 
-const JOBS_URL = "http://127.0.0.1:8001/jobs";
+const JOBS_URL =
+  "https://fastapi-job-matcher-05-160893319817.europe-southwest1.run.app/jobs";
 
 export async function sendRequest(data, endpoint) {
   try {
