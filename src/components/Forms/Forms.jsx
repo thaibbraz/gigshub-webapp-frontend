@@ -33,7 +33,8 @@ const Forms = ({ formData, onSetFormData }) => {
           updatedFields[field] = formData[field];
         }
       }
-      await sendRequest(updatedFields, "/client-info");
+      localStorage.setItem("formData", JSON.stringify(updatedFields));
+      //await sendRequest(updatedFields, "/client-info");
     } catch (error) {
       console.error(error);
     } finally {

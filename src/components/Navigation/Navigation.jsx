@@ -129,7 +129,7 @@ const Navigation = ({ className }) => {
               </span>
             )}
           </div>
-          <div
+        {/*  <div
             className={`flex ${
               isExpanded ? "justify-start" : "justify-center"
             } items-center space-x-4 cursor-pointer`}
@@ -153,7 +153,7 @@ const Navigation = ({ className }) => {
                 Apply
               </span>
             )}
-          </div>
+          </div>*/}
 
           <div className="flex-grow"></div>
           <div className="w-10/12 border-t border-light-liliac opacity-30 mx-auto"></div>

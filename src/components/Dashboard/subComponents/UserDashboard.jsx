@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Input from "../../Elements/Input.jsx";
 import ButtonAI from "../../Elements/ButtonAI.jsx";
-import { addUserData, getUserCVData } from "../../../utils/firebase.js";
+import { addUserData, checkUserExists, getUserCVData } from "../../../utils/firebase.js";
 
 const UserDashboard = ({ formData }) => {
   const [jobs, setJobs] = useState(
@@ -20,7 +20,7 @@ const UserDashboard = ({ formData }) => {
   const formatScoreAsPercentage = (score) => score * 1000;
 
   // Fetch and store jobs
-  const fetchJobs = async () => {
+  const fetchData = async () => {
     console.log("Fetching jobs...");
     setClicked(true);
 
@@ -30,9 +30,10 @@ const UserDashboard = ({ formData }) => {
     console.log("user id", userId);
     console.log("cvFormData", cvFormData);
 
-    if (!user || !cv) {
+    if (checkUserExists(userId)) {
       try {
         const newUserData = {
+          uid: userId,
           email: user?.email || "",
           displayName: user?.displayName || "",
           photoURL: user?.photoURL || "",
@@ -45,7 +46,7 @@ const UserDashboard = ({ formData }) => {
         console.error("Error submitting form: ", error);
       }
     }
-    if (Object.keys(cvFormData).length === 0) {
+    if (!cvFormData || Object.keys(cvFormData).length === 0) {
       console.error("cvFormData is missing");
       const data = await getUserCVData(userId);
       setcvFormData(data);
@@ -58,12 +59,13 @@ const UserDashboard = ({ formData }) => {
       const location = cvFormData.location;
       setLocation(location);
     }
-
+    
+  };
+  const fetchJobs = async (job) => {
     // Check localStorage for cached jobs
     try {
       const cachedJobs = localStorage.getItem("jobs");
       const timestamp = localStorage.getItem("timestamp");
-      const requestBody = { ...cvFormData, jobTitle, location };
 
       if (
         JSON.parse(cachedJobs)?.length > 0 &&
@@ -97,23 +99,25 @@ const UserDashboard = ({ formData }) => {
         const filteredJobs = data.jobs.filter(
           (job) => formatScoreAsPercentage(job.compatibility_score) > 10
         );
+        const orderJobByDate = filteredJobs.sort(
+          (a, b) => new Date(b.date) - new Date(a.date)
+        );
 
         // Update localStorage and state
         localStorage.setItem("timestamp", Date.now());
         localStorage.setItem("jobs", JSON.stringify(data));
-        console.log("got here", filteredJobs);
+        console.log("got here", orderJobByDate);
 
-        setJobs(filteredJobs);
+        setJobs(orderJobByDate);
       }
     } catch (error) {
       console.error("Error fetching jobs:", error);
     }
-  };
-
+  }
   // Fetch jobs on mount
   useEffect(() => {
-    if (jobs.length === 0) fetchJobs();
-  }, [cvFormData, jobTitle, location]);
+    fetchData();
+  }, []);
 
   return (
     <div className="ml-2 mr-10">

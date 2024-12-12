@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const BASE_URL =
-  // "https://fastapi-service-03-160893319817.europe-southwest1.run.app";
-  "http://localhost:8000";
+ "https://fastapi-service-03-160893319817.europe-southwest1.run.app";
+ // "http://localhost:8000";
 export async function sendRequest(data, endpoint) {
   try {
     const token = localStorage.getItem("token");
