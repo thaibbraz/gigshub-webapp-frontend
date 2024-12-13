@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Input from "../../Elements/Input.jsx";
 import ButtonAI from "../../Elements/ButtonAI.jsx";
-import {
-  addUserData,
-  checkUserExists,
-  getUserCVData,
-} from "../../../utils/firebase.js";
-import { sendJobsRequest } from "../../../utils/api.js";
-import Error from "../../Error/Error.jsx";
+import { addUserData, checkUserExists, getUserCVData } from "../../../utils/firebase.js";
 
 const UserDashboard = ({ formData }) => {
   const [jobs, setJobs] = useState(
@@ -25,17 +19,16 @@ const UserDashboard = ({ formData }) => {
   // Utility to format compatibility score
   const formatScoreAsPercentage = (score) => score * 1000;
 
-  const handleClick = () => {
-    !clicked ? setClicked(true) : fetchJobs();
-  };
-
   // Fetch and store jobs
-  const fetchJobs = async () => {
-    setLoading(true);
-    setError(null);
+  const fetchData = async () => {
+    console.log("Fetching jobs...");
+    setClicked(true);
+
     const user = JSON.parse(localStorage.getItem("user"));
     const cv = localStorage.getItem("cv");
     const userId = user?.uid;
+    console.log("user id", userId);
+    console.log("cvFormData", cvFormData);
 
     if (checkUserExists(userId)) {
       try {
@@ -59,45 +52,71 @@ const UserDashboard = ({ formData }) => {
       setcvFormData(data);
     }
     if (!jobTitle && cvFormData) {
-      const cvJobTitle = cvFormData.jobTitle;
-      setJobTitle(cvJobTitle);
+      const jobTittle = cvFormData.jobTitle;
+      setJobTitle(jobTittle);
     }
     if (!location && cvFormData) {
-      const cvLocation = cvFormData.location;
-      setLocation(cvLocation);
+      const location = cvFormData.location;
+      setLocation(location);
     }
-
-    try {
-      const data = await sendJobsRequest({
-        search_term: jobTitle,
-        location: location,
-        resume_data: cvFormData,
-      });
-      const filteredJobs = data.jobs.filter(
-        (job) => formatScoreAsPercentage(job.compatibility_score) > 10
-      );
-
-      // Update localStorage and state
-      localStorage.setItem("timestamp", Date.now());
-      localStorage.setItem("jobs", JSON.stringify(data));
-
-      filteredJobs.length && setJobs(filteredJobs);
-    } catch (error) {
-      if (
-        error.message ===
-        "Job matching limited to 3 searches per day. Please upgrade to be matched with more jobs."
-      ) {
-        setError(error.message);
-      } else {
-        setError("An unexpected error occurred. Please try again later.");
-      }
-    } finally {
-      setLoading(false);
-    }
+    
   };
+  const fetchJobs = async (job) => {
+    // Check localStorage for cached jobs
+    try {
+      const cachedJobs = localStorage.getItem("jobs");
+      const timestamp = localStorage.getItem("timestamp");
+
+      if (
+        JSON.parse(cachedJobs)?.length > 0 &&
+        jobs.length === 0 &&
+        Date.now() - timestamp < 86400000
+      ) {
+        setJobs(JSON.parse(cachedJobs));
+        return;
+      } else if (!JSON.parse(cachedJobs)) {
+        const response = await fetch(
+           "https://fastapi-job-matcher-05-160893319817.europe-southwest1.run.app/jobs",
+          //"http://127.0.0.1:8001/api/jobs",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              search_term: jobTitle,
+              location: location,
+              resume_data: cvFormData,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch jobs from API");
+        }
+
+        const data = await response.json();
+        const filteredJobs = data.jobs.filter(
+          (job) => formatScoreAsPercentage(job.compatibility_score) > 10
+        );
+        const orderJobByDate = filteredJobs.sort(
+          (a, b) => new Date(b.date) - new Date(a.date)
+        );
+
+        // Update localStorage and state
+        localStorage.setItem("timestamp", Date.now());
+        localStorage.setItem("jobs", JSON.stringify(data));
+        console.log("got here", orderJobByDate);
+
+        setJobs(orderJobByDate);
+      }
+    } catch (error) {
+      console.error("Error fetching jobs:", error);
+    }
+  }
   // Fetch jobs on mount
   useEffect(() => {
-    getUserCVData();
+    fetchData();
   }, []);
 
   return (
@@ -122,11 +141,7 @@ const UserDashboard = ({ formData }) => {
           </div>
 
           {/* Auto Apply Button */}
-          <ButtonAI
-            loading={loading}
-            action={handleClick}
-            text="Find me a job"
-          />
+          <ButtonAI loading={loading} action={fetchJobs} text="Find me a job" />
 
           {/* Daily Limit */}
           <p className="text-light-purple text-xs font-thin mt-6 xl:ml-60 mlg:ml-20"></p>
@@ -135,11 +150,7 @@ const UserDashboard = ({ formData }) => {
         {/* Job List Section */}
         <div className="flex flex-col items-center ml-10 bg-white rounded-xl w-full max-w-7xl h-[calc(100vh-28px)] overflow-y-auto overflow-x-auto">
           <div className="w-full px-9">
-            {error && (
-              <p className="text-center text-red-500">
-                <Error message={error} />
-              </p>
-            )}
+            {error && <p className="text-center text-red-500">{error}</p>}
             {loading && (
               <p className="text-center text-gray-500">Loading jobs...</p>
             )}
