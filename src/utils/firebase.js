@@ -4,7 +4,7 @@ import { getDatabase, ref, set, get, child} from "firebase/database";
 import { getAuth, setPersistence, browserLocalPersistence, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDmAVvW60ypN8PQv7Rgf_LeI05RkOICME8",
+    apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
     authDomain: "gigshub-ff21e.firebaseapp.com",
     projectId: "gigshub-ff21e",
     storageBucket: "gigshub-ff21e.firebasestorage.app",

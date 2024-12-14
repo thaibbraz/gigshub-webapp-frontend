@@ -33,7 +33,7 @@ const Login = () => {
       );
       const token = await user.getIdToken();
       const refreshToken = user.refreshToken;
-      const extensionId = "pijemeafpihngoehahgfhfimmfpdncpa";
+      const extensionId = process.env.REACT_APP_EXTENSION_ID;
       if (user) {
         try {
           await window.chrome.runtime.sendMessage(extensionId, {
