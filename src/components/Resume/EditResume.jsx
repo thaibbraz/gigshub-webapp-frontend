@@ -46,7 +46,7 @@ const EditResume = () => {
     }
     const data = await getUserCVData(userId);
 
-    if(data) {
+    if (data) {
       setCvData(data);
       setShowPopup(true);
     }
@@ -94,13 +94,16 @@ const EditResume = () => {
     console.log("Downloading PDF...");
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}//generate_resume`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ resume_data: cvData }),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/generate_resume`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ resume_data: cvData }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -109,30 +112,23 @@ const EditResume = () => {
       const data = await response.json();
       console.log("PDF generation response:", data);
 
-      const base64Data = data.pdf_base64; // Assuming the base64 data is in the 'pdf_base64' property
-
-      // Decode the base64 string
+      const base64Data = data.pdf_base64;
       const binaryData = atob(base64Data);
 
-      // Convert binary string to ArrayBuffer
       const byteNumbers = new Uint8Array(binaryData.length);
       for (let i = 0; i < binaryData.length; i++) {
         byteNumbers[i] = binaryData.charCodeAt(i);
       }
 
-      // Create a Blob object
       const blob = new Blob([byteNumbers], { type: "application/pdf" });
 
-      // Create a temporary URL for the Blob
       const url = URL.createObjectURL(blob);
 
-      // Create a download link
       const link = document.createElement("a");
       link.href = url;
-      link.download = "my_updated_resume.pdf"; // Replace with desired filename
+      link.download = "my_updated_resume.pdf";
       link.click();
 
-      // Revoke the URL to release memory
       URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error:", error);

@@ -5,8 +5,10 @@ import homepageIcon from "../../assets/homepageIcon.svg";
 import homepageIconLight from "../../assets/homepageIconLight.svg";
 import analyticsIcon from "../../assets/analyticsIcon.svg";
 import analyticsIconDark from "../../assets/analyticsIconDark.svg";
-import jobmatchIcon from "../../assets/jobmatchIcon.svg";
-import jobmatchIconDark from "../../assets/jobmatchIconDark.svg";
+
+import sparklesIcon from "../../assets/sparklesIcon.svg";
+import sparklesIconDark from "../../assets/sparklesIconDark.svg";
+
 import settingsIcon from "../../assets/settingsIcon.svg";
 import settingsIconDark from "../../assets/settingsIconDark.svg";
 import logoutIcon from "../../assets/logoutIcon.svg";
@@ -40,7 +42,7 @@ const Navigation = ({ className }) => {
     try {
       const extensionId = process.env.REACT_APP_EXTENSION_ID;
       // Send both ID token and refresh token to the Chrome extension
-      const response = await window.chrome.runtime.sendMessage(extensionId, {
+      await window.chrome.runtime.sendMessage(extensionId, {
         action: "logout",
       });
     } catch (error) {
@@ -51,15 +53,6 @@ const Navigation = ({ className }) => {
 
   return (
     <div>
-      {/* <div
-        className={`fixed top-2 left-4 bottom-2 flex flex-col ${
-          isExpanded ? "items-start pl-4" : "items-center"
-        } bg-white h-auto py-6 ${
-          isExpanded ? "w-48" : "w-24"
-        } transition-all duration-300 rounded-xl`}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      > */}
       <div
         className={`top-2 left-4 bottom-2 flex flex-col h-full transition-all ${
           isExpanded ? "items-start pl-4" : "items-center"
@@ -79,13 +72,27 @@ const Navigation = ({ className }) => {
           >
             <img src={logoDarkPurple} alt="Logo" className="h-10 w-10" />
           </div>
-          <div className={`flex ${ isExpanded ? "justify-start" : "justify-center" } items-center cursor-pointer`}
+          <div
+            className={`flex ${
+              isExpanded ? "justify-start" : "justify-center"
+            } items-center cursor-pointer`}
             onClick={() => handleClick("dashboard")}
           >
-            <img src={activePage === "dashboard" ? homepageIcon : homepageIconLight} alt="Homepage" className="h-5 w-5" />
-            <span className={`font-small uppercase m-0 font-bold overflow-hidden text-nowrap transition-all
-              ${isExpanded ? 'w-40 pl-3' : 'w-0'}
-              ${activePage === "userdashboard" || activePage === "dashboard" ? "text-dark-blue" : "text-light-liliac"}`}
+            <img
+              src={
+                activePage === "dashboard" ? homepageIcon : homepageIconLight
+              }
+              alt="Homepage"
+              className="h-5 w-5"
+            />
+            <span
+              className={`font-small uppercase m-0 font-bold overflow-hidden text-nowrap transition-all
+              ${isExpanded ? "w-40 pl-3" : "w-0"}
+              ${
+                activePage === "userdashboard" || activePage === "dashboard"
+                  ? "text-dark-blue"
+                  : "text-light-liliac"
+              }`}
             >
               My Dashboard
             </span>
@@ -96,16 +103,49 @@ const Navigation = ({ className }) => {
             } items-center cursor-pointer`}
             onClick={() => handleClick("resume")}
           >
-            <img src={activePage === "resume" ? analyticsIconDark : analyticsIcon} alt="Analytics" className="h-5 w-5" />
+            <img
+              src={activePage === "resume" ? analyticsIconDark : analyticsIcon}
+              alt="Analytics"
+              className="h-5 w-5"
+            />
             <span
               className={`font-small uppercase m-0 font-bold overflow-hidden text-nowrap transition-all ${
-                isExpanded ? 'w-40 pl-3' : 'w-0'}
-                ${activePage === "resume" ? "text-dark-blue" : "text-light-liliac"}`}
-              >
+                isExpanded ? "w-40 pl-3" : "w-0"
+              }
+                ${
+                  activePage === "resume"
+                    ? "text-dark-blue"
+                    : "text-light-liliac"
+                }`}
+            >
               Resume builder
             </span>
           </div>
-        {/*  <div
+          <div
+            className={`flex ${
+              isExpanded ? "justify-start" : "justify-center"
+            } items-center cursor-pointer`}
+            onClick={() => handleClick("custom-cv")}
+          >
+            <img
+              src={activePage === "custom-cv" ? sparklesIconDark : sparklesIcon}
+              alt="sparkles"
+              className="h-5 w-5"
+            />
+            <span
+              className={`font-small uppercase m-0 font-bold overflow-hidden text-nowrap transition-all ${
+                isExpanded ? "w-40 pl-3" : "w-0"
+              }
+                ${
+                  activePage === "custom-cv"
+                    ? "text-dark-blue"
+                    : "text-light-liliac"
+                }`}
+            >
+              Tailor CV
+            </span>
+          </div>
+          {/*  <div
             className={`flex ${
               isExpanded ? "justify-start" : "justify-center"
             } items-center space-x-4 cursor-pointer`}

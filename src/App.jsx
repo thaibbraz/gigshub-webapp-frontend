@@ -14,6 +14,7 @@ import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import { Navigate } from "react-router-dom";
 import EditResume from "./components/Resume/EditResume";
+import CustomResume from "./components/Resume/CustomResume";
 
 function App() {
   const [formData, setFormData] = useState({});
@@ -49,7 +50,7 @@ function App() {
               <Route path="/resume" element={<Resume />} />
               <Route path="/resume/edit" element={<EditResume />} />
               <Route path="/welcome" element={<Explanation />} />
-              <Route path="/ai-job-match" element={<AIJobMatch />} />
+              <Route path="/custom-cv" element={<CustomResume />} />
               <Route path="/settings" element={<Settings />} />
             </Route>
           </Route>
