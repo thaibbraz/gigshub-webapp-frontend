@@ -75,8 +75,7 @@ const UserDashboard = ({ formData }) => {
         setJobs(JSON.parse(cachedJobs));
         return;
       } else if (!JSON.parse(cachedJobs)) {
-        const response = await fetch(
-           "https://fastapi-job-matcher-05-160893319817.europe-southwest1.run.app/jobs",
+        const response = await fetch(process.env.REACT_APP_JOBS_URL,
           //"http://127.0.0.1:8001/api/jobs",
           {
             method: "POST",

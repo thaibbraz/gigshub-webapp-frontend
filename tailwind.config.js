@@ -20,7 +20,7 @@ module.exports = {
       },
       colors: {
         "off-white": "#F3F3FF",
-        purple: "#3C3C8E",
+        purple: "#3F33C0",
         "pale-purple": "#D0D0FF",
         white: "#ffffff",
         "dark-purple": "#1E1E53",

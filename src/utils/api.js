@@ -1,12 +1,5 @@
 import axios from "axios";
 
-const BASE_URL =
-  "https://fastapi-service-03-160893319817.europe-southwest1.run.app";
-// "http://localhost:8000";
-
-const JOBS_URL =
-  "https://fastapi-job-matcher-05-160893319817.europe-southwest1.run.app/jobs";
-
 export async function sendRequest(data, endpoint) {
   try {
     const token = localStorage.getItem("token");
@@ -16,7 +9,7 @@ export async function sendRequest(data, endpoint) {
         Authorization: `Bearer ${token}`,
       },
     };
-    let response = await axios.post(`${BASE_URL}${endpoint}`, data, options);
+    let response = await axios.post(`${process.env.REACT_APP_BASE_URL}${endpoint}`, data, options);
     if (
       (endpoint === "/login" || endpoint === "/signup") &&
       response.status === 200
@@ -36,7 +29,7 @@ export async function sendJobsRequest(data) {
         "Content-Type": "application/json",
       },
     };
-    let response = await axios.post(`${JOBS_URL}`, data, options);
+    let response = await axios.post(`${process.env.REACT_APP_JOBS_URL}`, data, options);
     return response.data;
   } catch (error) {
     if (error?.response?.status === 429) {

@@ -13,6 +13,7 @@ import Settings from "./components/Profile Settings/Settings";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import { Navigate } from "react-router-dom";
+import EditResume from "./components/Resume/EditResume";
 
 function App() {
   const [formData, setFormData] = useState({});
@@ -46,6 +47,7 @@ function App() {
               />
               <Route path="/jobs" element={<Dashboard />} />
               <Route path="/resume" element={<Resume />} />
+              <Route path="/resume/edit" element={<EditResume />} />
               <Route path="/welcome" element={<Explanation />} />
               <Route path="/ai-job-match" element={<AIJobMatch />} />
               <Route path="/settings" element={<Settings />} />

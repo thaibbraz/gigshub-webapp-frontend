@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import logoDarkPurple from "../../assets/logoDarkPurple.svg";
-import homepageIcon from "../../assets/homepageIcon.png";
+import homepageIcon from "../../assets/homepageIcon.svg";
 import homepageIconLight from "../../assets/homepageIconLight.svg";
 import analyticsIcon from "../../assets/analyticsIcon.svg";
 import analyticsIconDark from "../../assets/analyticsIconDark.svg";
@@ -50,7 +50,7 @@ const Navigation = ({ className }) => {
   };
 
   return (
-    <div className={`w-48 ${className}`}>
+    <div>
       {/* <div
         className={`fixed top-2 left-4 bottom-2 flex flex-col ${
           isExpanded ? "items-start pl-4" : "items-center"
@@ -61,12 +61,12 @@ const Navigation = ({ className }) => {
         onMouseLeave={handleMouseLeave}
       > */}
       <div
-        className={`fixed top-2 left-4 bottom-2 flex flex-col ${
+        className={`top-2 left-4 bottom-2 flex flex-col h-full transition-all ${
           isExpanded ? "items-start pl-4" : "items-center"
-        } bg-white ${
+        } bg-off-white ${
           location.pathname === "/dashboard" ? "h-6/6" : "h-auto"
         } py-6 ${
-          isExpanded ? "w-48" : "w-24"
+          isExpanded ? "w-60" : "w-24"
         } transition-all duration-300 rounded-xl`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -79,55 +79,31 @@ const Navigation = ({ className }) => {
           >
             <img src={logoDarkPurple} alt="Logo" className="h-10 w-10" />
           </div>
-          <div
-            className={`flex ${
-              isExpanded ? "justify-start" : "justify-center"
-            } items-center space-x-4 cursor-pointer`}
+          <div className={`flex ${ isExpanded ? "justify-start" : "justify-center" } items-center cursor-pointer`}
             onClick={() => handleClick("dashboard")}
           >
-            <img
-              src={
-                activePage === "dashboard" ? homepageIcon : homepageIconLight
-              }
-              alt="Homepage"
-              className="h-6 w-6"
-            />
-            {isExpanded && (
-              <span
-                className={`font-small font-sans ${
-                  activePage === "userdashboard"
-                    ? "text-dark-blue"
-                    : "text-light-liliac"
-                }`}
-              >
-                Dashboard
-              </span>
-            )}
+            <img src={activePage === "dashboard" ? homepageIcon : homepageIconLight} alt="Homepage" className="h-5 w-5" />
+            <span className={`font-small uppercase m-0 font-bold overflow-hidden text-nowrap transition-all
+              ${isExpanded ? 'w-40 pl-3' : 'w-0'}
+              ${activePage === "userdashboard" || activePage === "dashboard" ? "text-dark-blue" : "text-light-liliac"}`}
+            >
+              My Dashboard
+            </span>
           </div>
           <div
             className={`flex ${
               isExpanded ? "justify-start" : "justify-center"
-            } items-center space-x-4 cursor-pointer`}
+            } items-center cursor-pointer`}
             onClick={() => handleClick("resume")}
           >
-            <img
-              src={
-                activePage === "resume" ? analyticsIconDark : analyticsIcon
-              }
-              alt="Analytics"
-              className="h-6 w-6"
-            />
-            {isExpanded && (
-              <span
-                className={`font-small font-sans ${
-                  activePage === "resume"
-                    ? "text-dark-blue"
-                    : "text-light-liliac"
-                }`}
+            <img src={activePage === "resume" ? analyticsIconDark : analyticsIcon} alt="Analytics" className="h-5 w-5" />
+            <span
+              className={`font-small uppercase m-0 font-bold overflow-hidden text-nowrap transition-all ${
+                isExpanded ? 'w-40 pl-3' : 'w-0'}
+                ${activePage === "resume" ? "text-dark-blue" : "text-light-liliac"}`}
               >
-                Resume builder
-              </span>
-            )}
+              Resume builder
+            </span>
           </div>
         {/*  <div
             className={`flex ${

@@ -19,7 +19,7 @@ const CVUpload = ({ onNext }) => {
     formData.append("pdfFile", file);
     formData.append("fileName", file.name);
     try {
-      const response = await fetch("http://localhost:8000/upload_resume", {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/upload_resume`, {
         method: "POST",
         body: formData,
       });
