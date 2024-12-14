@@ -112,7 +112,6 @@ const Resume = () => {
             cv: cvData, //here's when we'll save the cv for the first time
           };
           localStorage.setItem("user", JSON.stringify(newUserData));
-          localStorage.setItem("cv", JSON.stringify(cvData));
           await addUserData(userId, newUserData);
 
           //navigate("/resume/edit");
