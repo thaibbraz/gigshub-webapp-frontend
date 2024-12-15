@@ -107,7 +107,7 @@ export const ResumePreview = () => {
             id="previewName"
             className="text-2xl font-bold text-indigo-600 mb-2"
           >
-            {resume ? `${resume["first_name"]} ${resume["last_name"]}` : ""}
+            {`${resume?.first_name || ''} ${resume.last_name || ''}`}
           </h2>
           <p
             id="previewJobTitle"
@@ -121,61 +121,69 @@ export const ResumePreview = () => {
               __html: resume?.job_summary ? resume.job_summary : "",
             }}
           ></p>
-          <div className="mb-6">
-            <h3 className="text-lg font-bold text-indigo-600 mb-3">
-              Contact Information
-            </h3>
-            <p className="text-sm mb-2">{email}</p>
-            <p className="text-sm mb-2">{phone}</p>
-            <p className="text-sm mb-2">{linkedin}</p>
-            <p className="text-sm mb-2">{github}</p>
-            <p className="text-sm">{address}</p>
-          </div>
-          <div className="mb-6">
-            <h3 className="text-lg font-bold text-indigo-600 mb-3">
-              Experience
-            </h3>
-            {experiences.map((exp, index) => (
-              <div key={index} className="mb-4">
-                <p className="text-sm font-semibold">
-                  {exp.title}{" "}
-                  <span className="text-gray-500">
-                    {exp.date === "undefined - undefined" || exp.date}
-                  </span>
-                </p>
-                <p className="text-sm italic text-gray-600">{exp.company}</p>
-                <p className="text-sm" dangerouslySetInnerHTML={{ __html: exp.description }}></p>
-              </div>
-            ))}
-          </div>
-          <div className="mb-6">
-            <h3 className="text-lg font-bold text-indigo-600 mb-3">
-              Education
-            </h3>
-            {education.map((edu, index) => (
-              <p key={index} className="text-sm mb-2">
-                <strong>{edu.degree}</strong> - {edu.institution}{" "}
-                {edu.date === "undefined - undefined" || edu.date}
-              </p>
-            ))}
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-indigo-600 mb-3">Skills</h3>
-            <ul className="flex flex-wrap gap-2">
-              {resume?.skills?.[0]?.list.map((skill, index) => (
-                <li
-                  key={index}
-                  className={`px-2 py-1 rounded bg-gray-200 text-sm ${
-                    highlightedSkills.includes(skill)
-                      ? "bg-indigo-100 text-indigo-600 font-bold"
-                      : ""
-                  }`}
-                >
-                  {skill}
-                </li>
+          {(email || phone || linkedin || github) && (
+            <div className="mb-6">
+              <h3 className="text-lg font-bold text-indigo-600 mb-3">
+                Contact Information
+              </h3>
+              <p className="text-sm mb-2">{email}</p>
+              <p className="text-sm mb-2">{phone}</p>
+              <p className="text-sm mb-2">{linkedin}</p>
+              <p className="text-sm mb-2">{github}</p>
+              <p className="text-sm">{address}</p>
+            </div>
+          )}
+          {experiences?.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-lg font-bold text-indigo-600 mb-3">
+                Experience
+              </h3>
+              {experiences.map((exp, index) => (
+                <div key={index} className="mb-4">
+                  <p className="text-sm font-semibold">
+                    {exp.title}{" "}
+                    <span className="text-gray-500">
+                      {exp.date === "undefined - undefined" || exp.date}
+                    </span>
+                  </p>
+                  <p className="text-sm italic text-gray-600">{exp.company}</p>
+                  <p className="text-sm" dangerouslySetInnerHTML={{ __html: exp.description }}></p>
+                </div>
               ))}
-            </ul>
-          </div>
+            </div>
+          )}
+          {education?.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-lg font-bold text-indigo-600 mb-3">
+                Education
+              </h3>
+              {education.map((edu, index) => (
+                <p key={index} className="text-sm mb-2">
+                  <strong>{edu.degree}</strong> - {edu.institution}{" "}
+                  {edu.date === "undefined - undefined" || edu.date}
+                </p>
+              ))}
+            </div>
+          )}
+          {resume?.skills?.length > 0 && (
+            <div>
+              <h3 className="text-lg font-bold text-indigo-600 mb-3">Skills</h3>
+              <ul className="flex flex-wrap gap-2">
+                {resume?.skills?.[0]?.list.map((skill, index) => (
+                  <li
+                    key={index}
+                    className={`px-2 py-1 rounded bg-gray-200 text-sm ${
+                      highlightedSkills.includes(skill)
+                        ? "bg-indigo-100 text-indigo-600 font-bold"
+                        : ""
+                    }`}
+                  >
+                    {skill}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     </>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import useResumeStore from "../../../stores/resume/resumeStore";
 import { useSearchParams } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
 import Select from "react-select";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const ResumeCreatorExperience = () => {
