@@ -1,19 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import useResumeStore from "../../../stores/resume/resumeStore";
+import { useSearchParams } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ResumeCreatorExperience = () => {
-  const [experiences, setExperiences] = useState([
-    {
-      id: 1,
-      role: "",
-      company: "",
-      startDate: "",
-      endDate: "",
-      location: "",
-      description: "",
-    },
-  ]);
+  const resume = useResumeStore((state) => state.resume);
+  const updateResume = useResumeStore((state) => state.updateResume);
 
-  const [activeTab, setActiveTab] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [experiences, setExperiences] = useState([]);
+  const [activeTab, setActiveTab] = useState(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    const experienceId = parseInt(searchParams.get("exp"), 10);
+    if (!isInitialized && resume.cv?.experiences) {
+      setExperiences(resume.cv.experiences);
+      setIsInitialized(true);
+      setActiveTab(experienceId || resume.cv.experiences[0]?.id || 1);
+    }
+  }, [resume.cv?.experiences, isInitialized, searchParams]);
+
+  useEffect(() => {
+    if (activeTab !== null) {
+      setSearchParams((prev) => {
+        const newParams = new URLSearchParams(prev);
+        newParams.set("tab", "experience");
+        newParams.set("exp", activeTab);
+        return newParams;
+      });
+    }
+  }, [activeTab, setSearchParams]);
+
+  const handleSaveInfo = () => {
+    const updatedResume = {
+      ...resume,
+      cv: { ...resume.cv, experiences },
+    };
+    updateResume(updatedResume);
+    toast.success("Experiences saved successfully!");
+  };
 
   const handleInputChange = (e, id) => {
     const { name, value } = e.target;
@@ -24,7 +51,7 @@ const ResumeCreatorExperience = () => {
 
   const handleAddExperience = () => {
     const newExperience = {
-      id: experiences.length + 1,
+      id: experiences.length > 0 ? experiences[experiences.length - 1].id + 1 : 1,
       role: "",
       company: "",
       startDate: "",
@@ -36,23 +63,27 @@ const ResumeCreatorExperience = () => {
     setActiveTab(newExperience.id);
   };
 
+  const handleTabChange = (id) => {
+    setActiveTab(id);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Experiences Submitted:", experiences);
+    handleSaveInfo();
   };
 
   return (
     <div>
+      <ToastContainer position={"top-center"} autoClose={1000} hideProgressBar={true} />
+      
       {/* Tabs */}
       <div className="flex flex-wrap text-nowrap gap-4 mb-6">
         {experiences.map((exp) => (
           <button
             key={exp.id}
-            onClick={() => setActiveTab(exp.id)}
+            onClick={() => handleTabChange(exp.id)}
             className={`text-sm text-purple ${
-              activeTab === exp.id
-                ? "font-bold"
-                : ""
+              activeTab === exp.id ? "font-bold" : ""
             }`}
           >
             Experience {exp.id}
@@ -67,59 +98,71 @@ const ResumeCreatorExperience = () => {
           .map((exp) => (
             <div key={exp.id} className="space-y-4">
               <div>
-                <label htmlFor={`role-${exp.id}`} className="text-sm font-bold text-gray-700">
+                <label
+                  htmlFor={`role-${exp.id}`}
+                  className="text-sm font-bold text-gray-700"
+                >
                   WHAT WAS YOUR ROLE AT THE COMPANY?
                 </label>
                 <input
                   type="text"
                   id={`role-${exp.id}`}
                   name="role"
-                  value={exp.role}
+                  value={exp.role || ""}
                   onChange={(e) => handleInputChange(e, exp.id)}
-                  placeholder="Username"
+                  placeholder="Role"
                   className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
                 />
               </div>
 
               <div>
-                <label htmlFor={`company-${exp.id}`} className="text-sm font-bold text-gray-700">
+                <label
+                  htmlFor={`company-${exp.id}`}
+                  className="text-sm font-bold text-gray-700"
+                >
                   COMPANY NAME
                 </label>
                 <input
                   type="text"
                   id={`company-${exp.id}`}
                   name="company"
-                  value={exp.company}
+                  value={exp.company || ""}
                   onChange={(e) => handleInputChange(e, exp.id)}
-                  placeholder="Username"
+                  placeholder="Company Name"
                   className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
                 />
               </div>
 
               <div className="flex gap-4">
                 <div>
-                  <label htmlFor={`startDate-${exp.id}`} className="text-sm font-bold text-gray-700">
+                  <label
+                    htmlFor={`startDate-${exp.id}`}
+                    className="text-sm font-bold text-gray-700"
+                  >
                     STARTED
                   </label>
                   <input
                     type="date"
                     id={`startDate-${exp.id}`}
                     name="startDate"
-                    value={exp.startDate}
+                    value={exp.startDate || ""}
                     onChange={(e) => handleInputChange(e, exp.id)}
                     className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor={`endDate-${exp.id}`} className="text-sm font-bold text-gray-700">
+                  <label
+                    htmlFor={`endDate-${exp.id}`}
+                    className="text-sm font-bold text-gray-700"
+                  >
                     FINISHED
                   </label>
                   <input
                     type="date"
                     id={`endDate-${exp.id}`}
                     name="endDate"
-                    value={exp.endDate}
+                    value={exp.endDate || ""}
                     onChange={(e) => handleInputChange(e, exp.id)}
                     className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
                   />
@@ -127,28 +170,34 @@ const ResumeCreatorExperience = () => {
               </div>
 
               <div>
-                <label htmlFor={`location-${exp.id}`} className="text-sm font-bold text-gray-700">
+                <label
+                  htmlFor={`location-${exp.id}`}
+                  className="text-sm font-bold text-gray-700"
+                >
                   WHERE WAS THE COMPANY LOCATED?
                 </label>
                 <input
                   type="text"
                   id={`location-${exp.id}`}
                   name="location"
-                  value={exp.location}
+                  value={exp.location || ""}
                   onChange={(e) => handleInputChange(e, exp.id)}
-                  placeholder="Country"
+                  placeholder="Location"
                   className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
                 />
               </div>
 
               <div>
-                <label htmlFor={`description-${exp.id}`} className="text-sm font-bold text-gray-700">
+                <label
+                  htmlFor={`description-${exp.id}`}
+                  className="text-sm font-bold text-gray-700"
+                >
                   WHAT DID YOU DO AT THE COMPANY?
                 </label>
                 <textarea
                   id={`description-${exp.id}`}
                   name="description"
-                  value={exp.description}
+                  value={exp.description || ""}
                   onChange={(e) => handleInputChange(e, exp.id)}
                   placeholder="• Describe your tasks and achievements"
                   className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
@@ -159,8 +208,11 @@ const ResumeCreatorExperience = () => {
           ))}
 
         <div className="flex items-center justify-between mt-6">
-          <button type="button" onClick={handleAddExperience} className="flex items-center px-3 -mx-3 gap-2 py-2 text-purple">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 16C10.1217 16 12.1566 15.1571 13.6569 13.6569C15.1571 12.1566 16 10.1217 16 8C16 5.87827 15.1571 3.84344 13.6569 2.34315C12.1566 0.842855 10.1217 0 8 0C5.87827 0 3.84344 0.842855 2.34315 2.34315C0.842855 3.84344 0 5.87827 0 8C0 10.1217 0.842855 12.1566 2.34315 13.6569C3.84344 15.1571 5.87827 16 8 16ZM9 5C9 4.73478 8.89464 4.48043 8.70711 4.29289C8.51957 4.10536 8.26522 4 8 4C7.73478 4 7.48043 4.10536 7.29289 4.29289C7.10536 4.48043 7 4.73478 7 5V7H5C4.73478 7 4.48043 7.10536 4.29289 7.29289C4.10536 7.48043 4 7.73478 4 8C4 8.26522 4.10536 8.51957 4.29289 8.70711C4.48043 8.89464 4.73478 9 5 9H7V11C7 11.2652 7.10536 11.5196 7.29289 11.7071C7.48043 11.8946 7.73478 12 8 12C8.26522 12 8.51957 11.8946 8.70711 11.7071C8.89464 11.5196 9 11.2652 9 11V9H11C11.2652 9 11.5196 8.89464 11.7071 8.70711C11.8946 8.51957 12 8.26522 12 8C12 7.73478 11.8946 7.48043 11.7071 7.29289C11.5196 7.10536 11.2652 7 11 7H9V5Z" fill="currentColor"/></svg>
+          <button
+            type="button"
+            onClick={handleAddExperience}
+            className="flex items-center px-3 -mx-3 gap-2 py-2 text-purple"
+          >
             Add new
           </button>
           <button type="submit" className="px-6 py-3 bg-purple text-white rounded-md shadow-md focus:ring">

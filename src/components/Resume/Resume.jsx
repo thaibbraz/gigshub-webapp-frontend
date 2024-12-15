@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./styles.css";
 import { getUserCVData, addUserData } from "../../utils/firebase.js";
+import { uploadResume } from "./uploadResume.jsx";
 
 const Resume = () => {
   const navigate = useNavigate();
-  const [cvData, setcvData] = useState();
+
   const options = [
     {
       title: "From Scratch",
@@ -41,95 +42,15 @@ const Resume = () => {
   };
 
   const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
+    const userData = await uploadResume(e.target.files[0])
+    await addUserData(userData.uid, userData);
+  }
 
-    if (file) {
-      try {
-        const formData = new FormData();
-        formData.append("pdfFile", file);
-        formData.append("fileName", file.name);
+  fetchCV();
 
-        const response = await fetch(
-          `${process.env.REACT_APP_BASE_URL}/upload_resume`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          setcvData({
-            "first name": data.resume_data["first name"],
-            "last name": data.resume_data["last name"],
-            email: data.resume_data.email,
-            phone: data.resume_data.phone,
-            linkedin: data.resume_data.linkedin || "",
-            github: data.resume_data.github || "",
-            website: data.resume_data.website || "",
-            ethnicity: data.resume_data.ethnicity || "",
-            gender: data.resume_data.gender || "",
-            lgbtq: data.resume_data.lgbtq || "",
-            authorization: data.resume_data.authorization || "",
-            sponsorship: data.resume_data.sponsorship || "",
-            address: data.resume_data.address || "",
-            city: data.resume_data.city || "",
-            state: data.resume_data.state || "",
-            zip: data.resume_data.zip || "",
-            experiences: data.resume_data.experiences.map((exp) => ({
-              title: exp.title || "",
-              date: exp.date || "",
-              company: exp.company || "",
-              location: exp.location || "",
-              description: exp.description || "",
-            })),
-            education: data.resume_data.education.map((edu) => ({
-              degree: edu.degree || "",
-              date: edu.date || "",
-              institution: edu.institution || "",
-            })),
-            skills: [
-              {
-                list: data.resume_data.skills.flatMap((skill) => skill.list),
-              },
-            ],
-            languages:
-              data.resume_data.languages.length > 0
-                ? data.resume_data.languages.map((lang) => ({
-                    language: lang.language || "",
-                    level: lang.level || "",
-                  }))
-                : [{ language: "", level: "" }],
-            projects: data.resume_data.projects || [],
-          });
-          const user = JSON.parse(localStorage.getItem("user"));
-          const userId = user?.uid;
-          const newUserData = {
-            uid: userId,
-            email: user?.email || "",
-            displayName: user?.displayName || "",
-            photoURL: user?.photoURL || "",
-            cv: cvData, //here's when we'll save the cv for the first time
-          };
-          localStorage.setItem("user", JSON.stringify(newUserData));
-          await addUserData(userId, newUserData);
-
-          //navigate("/resume/edit");
-        } else {
-          console.error("Failed to upload resume");
-        }
-      } catch (error) {
-        console.error("Error uploading file:", error);
-      }
-    }
-  };
-
-  useEffect(() => {
-    fetchCV();
-  }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center h-full w-full max-w-[1496px] bg-white rounded-lg overflow-hidden">
+    <div className="flex flex-col items-center justify-center h-full w-full bg-white rounded-lg overflow-hidden">
       <div className="max-w-md">
         <h1 className="text-3xl font-semibold mb-6">
           How would you like to create your resume?

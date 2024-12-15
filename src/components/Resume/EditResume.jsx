@@ -136,7 +136,7 @@ const EditResume = () => {
   };
 
   return (
-    <div className="flex w-full h-full max-w-[1496px] bg-white rounded-lg shadow-md overflow-hidden">
+    <div className="flex w-full h-full bg-white rounded-lg shadow-md overflow-hidden">
       <div className="w-[40%]">
         <ResumeCreator cvData={cvData} />
       </div>

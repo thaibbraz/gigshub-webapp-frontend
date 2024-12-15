@@ -1,17 +1,71 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import useResumeStore from '../../../stores/resume/resumeStore';
+import Select from 'react-select';
 
 const ResumeCreatorContact = () => {
+  const resume = useResumeStore((state) => state.resume);
+  const updateResume = useResumeStore((state) => state.updateResume);
+  const initializeResume = useResumeStore((state) => state.initializeResume);
+
   const [formData, setFormData] = useState({
     fullName: "",
     phoneNumber: "",
     email: "",
     linkedin: "",
-    country: "",
+    country: null,
   });
+
+  const [countries, setCountries] = useState([]);
+
+  useEffect(() => {
+    initializeResume();
+  }, [initializeResume]);
+
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, ...resume }));
+  }, [resume]);
+
+  const mockCountries = [
+    { value: "US", label: "United States" },
+    { value: "CA", label: "Canada" },
+    { value: "UK", label: "United Kingdom" },
+    { value: "IN", label: "India" },
+  ];
+  
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await fetch("https://restcountries.com/v3.1/all");
+        if (!response.ok) throw new Error("API fetch failed");
+        const data = await response.json();
+        const countryOptions = data.map((country) => ({
+          value: country.cca2,
+          label: country.name.common,
+        }));
+        setCountries(countryOptions);
+      } catch (error) {
+        console.error("Error fetching countries:", error);
+        setCountries(mockCountries); // Fallback to mock data
+      }
+    };
+  
+    fetchCountries();
+  }, []);
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const updatedData = { ...formData, [name]: value };
+
+    setFormData(updatedData);
+    updateResume(updatedData);
+  };
+
+  const handleCountryChange = (selectedOption) => {
+    const updatedData = { ...formData, country: selectedOption?.value || "" };
+
+    setFormData(updatedData);
+    updateResume(updatedData);
   };
 
   const handleSubmit = (e) => {
@@ -29,7 +83,7 @@ const ResumeCreatorContact = () => {
           type="text"
           id="fullName"
           name="fullName"
-          value={formData.fullName}
+          value={formData.fullName || ''}
           onChange={handleInputChange}
           placeholder="Username"
           className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
@@ -44,9 +98,9 @@ const ResumeCreatorContact = () => {
           type="text"
           id="phoneNumber"
           name="phoneNumber"
-          value={formData.phoneNumber}
+          value={formData.phone || ''}
           onChange={handleInputChange}
-          placeholder="Username"
+          placeholder="Phone Number"
           className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
         />
       </div>
@@ -59,9 +113,9 @@ const ResumeCreatorContact = () => {
           type="email"
           id="email"
           name="email"
-          value={formData.email}
+          value={formData.email || ''}
           onChange={handleInputChange}
-          placeholder="Username"
+          placeholder="Email"
           className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
         />
       </div>
@@ -74,9 +128,9 @@ const ResumeCreatorContact = () => {
           type="text"
           id="linkedin"
           name="linkedin"
-          value={formData.linkedin}
+          value={formData.linkedin || ''}
           onChange={handleInputChange}
-          placeholder="Username"
+          placeholder="LinkedIn"
           className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
         />
       </div>
@@ -85,21 +139,14 @@ const ResumeCreatorContact = () => {
         <label htmlFor="country" className="text-sm font-bold text-gray-700">
           COUNTRY
         </label>
-        <select
+        <Select
           id="country"
-          name="country"
-          value={formData.country}
-          onChange={handleInputChange}
-          className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
-        >
-          <option value="" disabled>
-            Select a country
-          </option>
-          <option value="us">United States</option>
-          <option value="ca">Canada</option>
-          <option value="uk">United Kingdom</option>
-          <option value="in">India</option>
-        </select>
+          options={countries || []}
+          value={countries.find((option) => option.value === formData.country) || null}
+          onChange={handleCountryChange}
+          placeholder="Select a country"
+          className="mt-1"
+        />
       </div>
 
       <div className="flex flex-col items-end justify-between gap-3 mt-6">

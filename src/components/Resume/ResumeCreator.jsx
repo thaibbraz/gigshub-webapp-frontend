@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import ResumeCreatorContact from "./ResumeCreator/ResumeCreatorContact";
 import ResumeCreatorExperience from "./ResumeCreator/ResumeCreatorExperience";
 
 const ResumeCreator = () => {
-  const [activeTab, setActiveTab] = useState("contact");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "contact");
 
   const tabs = [
     { id: "contact", label: "CONTACT" },
@@ -15,8 +17,19 @@ const ResumeCreator = () => {
   ];
 
   const handleTabClick = (tabId) => {
+    if(tabId !== "experience") {
+      const params = new URLSearchParams(searchParams);
+      params.delete("exp");
+      setSearchParams(params);
+    }
     setActiveTab(tabId);
   };
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    params.set("tab", activeTab);
+    setSearchParams(params);
+  }, [activeTab, setSearchParams, searchParams]);
 
   return (
     <div className="h-full p-6">
@@ -38,11 +51,8 @@ const ResumeCreator = () => {
         ))}
       </div>
 
-      {/* Form */}
-      {
-        activeTab === "contact" && ( <ResumeCreatorContact /> ) ||
-        activeTab === "experience" && ( <ResumeCreatorExperience /> )
-      }
+      {activeTab === "contact" && <ResumeCreatorContact />}
+      {activeTab === "experience" && <ResumeCreatorExperience />}
     </div>
   );
 };

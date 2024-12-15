@@ -376,7 +376,7 @@ const CustomResume = () => {
   };
 
   return (
-    <div className="flex w-full max-w-[1496px] bg-white rounded-lg shadow-md overflow-hidden">
+    <div className="flex w-full bg-white rounded-lg shadow-md overflow-hidden">
       <div className="w-[45%] bg-gray-100 p-7 border-r-2 border-gray-300 overflow-y-auto sticky top-0">
         <div className="flex justify-end">
           <button

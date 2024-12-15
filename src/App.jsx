@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import Login from "./components/Login/Login";
@@ -15,10 +15,16 @@ import { AuthProvider } from "./context/AuthContext";
 import { Navigate } from "react-router-dom";
 import EditResume from "./components/Resume/EditResume";
 import CustomResume from "./components/Resume/CustomResume";
+import useResumeStore from "./stores/resume/resumeStore";
 
 function App() {
   const [formData, setFormData] = useState({});
+  const initializeResume = useResumeStore((state) => state.initializeResume);
 
+  useEffect(() => {
+    initializeResume();
+  }, [initializeResume]);
+  
   const handleFormDataChange = (data) => {
     setFormData(data);
   };
