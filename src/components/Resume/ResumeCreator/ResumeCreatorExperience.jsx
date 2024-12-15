@@ -12,7 +12,7 @@ const ResumeCreatorExperience = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [experiences, setExperiences] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
-  const [unsavedExp, setunsavedExp] = useState(null); // Tracks unsaved changes
+  const [unsavedExp, setunsavedExp] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
   const currentYear = new Date().getFullYear();
@@ -36,7 +36,6 @@ const ResumeCreatorExperience = () => {
       return newParams;
     });
 
-    // Reset to the saved experience when switching tabs
     if (experiences[activeTab]) {
       setunsavedExp({ ...experiences[activeTab] });
     }
@@ -78,7 +77,7 @@ const ResumeCreatorExperience = () => {
       date: "",
       location: "",
       description: "",
-      saved: "Not saved yet", // Default saved status
+      saved: "Not saved yet",
     };
     setExperiences((prev) => [...prev, newExperience]);
     setunsavedExp(newExperience);
@@ -100,7 +99,7 @@ const ResumeCreatorExperience = () => {
 
       {/* Tabs */}
       <div className="flex flex-wrap text-nowrap gap-4 mb-6">
-        {experiences.map((_, i) => (
+        {experiences.map((exp, i) => (
           <button
             key={i}
             onClick={() => handleTabChange(i)}
@@ -108,7 +107,7 @@ const ResumeCreatorExperience = () => {
               activeTab === i ? "font-bold" : ""
             }`}
           >
-            Experience {i + 1}
+            {exp.title}
           </button>
         ))}
       </div>

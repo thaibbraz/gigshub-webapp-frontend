@@ -63,8 +63,7 @@ const addUserData = async (userId, data) => {
     if (snapshot.exists()) {
       return;
     }
-    await set(userRef, sanitizedData);
-    console.log("User data successfully added.");
+    return await set(userRef, sanitizedData);
   } catch (error) {
     console.error("Error adding or updating user data:", error);
   }

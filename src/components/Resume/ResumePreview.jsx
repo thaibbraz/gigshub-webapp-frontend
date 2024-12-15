@@ -1,17 +1,13 @@
-import { sendRequest } from "../../utils/api.js";
 import editIcon from "../../assets/editIcon.svg";
 import useResumeStore from "../../stores/resume/resumeStore.js";
 import { useState } from "react";
+import { addUserData } from "../../utils/firebase.js";
 
 export const ResumePreview = () => {
   const resume = useResumeStore((state) => state.resume);
-  const [analysisData, setAnalysisData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [highlightedSkills, setHighlightedSkills] = useState([]);
 
-  const {
-    matching_score = 0
-  } = analysisData || {};
 
   const {
     jobTitle,
@@ -21,6 +17,7 @@ export const ResumePreview = () => {
     github,
     address,
     experiences = [],
+    projects = [],
     education = [],
   } = resume || {};
 
@@ -33,7 +30,14 @@ export const ResumePreview = () => {
     }
   };
 
-  const handleDownloadPDF = async () => {
+  const handleSubmit = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    console.log('sending...')
+    await addUserData(user?.uid, user);
+    console.log('done!')
+  }
+
+  /*const handleDownloadPDF = async () => {
     console.log("Downloading PDF...");
     try {
       const response = await fetch(
@@ -71,7 +75,7 @@ export const ResumePreview = () => {
     } catch (error) {
       console.error("Error:", error);
     }
-  };
+  };*/
   return (
     <>
       <div className="flex justify-between items-center mb-5">
@@ -88,9 +92,9 @@ export const ResumePreview = () => {
         </div>
         <button
           className="relative h-[30px] flex items-center font-normal bg-indigo-600 px-7 py-2 text-sm text-white rounded-full shadow-[0_0_0_4px_white,0_0_0_6px_rgb(208,208,255)] cursor-pointer"
-          onClick={handleDownloadPDF}
+          onClick={() => handleSubmit()}
         >
-          <span>Download CV</span>
+          <span>Complete and Save</span>
         </button>
       </div>
       <div className="w-full max-h-[1200px] overflow-y-auto bg-white border-2 border-dashed border-gray-300 rounded-lg">
@@ -122,7 +126,7 @@ export const ResumePreview = () => {
             }}
           ></p>
           {(email || phone || linkedin || github) && (
-            <div className="mb-6">
+            <div className="border-b-[1px] border-gray-300 mb-4 pb-4">
               <h3 className="text-lg font-bold text-indigo-600 mb-3">
                 Contact Information
               </h3>
@@ -134,7 +138,7 @@ export const ResumePreview = () => {
             </div>
           )}
           {experiences?.length > 0 && (
-            <div className="mb-6">
+            <div className="border-b-[1px] border-gray-300 mb-4">
               <h3 className="text-lg font-bold text-indigo-600 mb-3">
                 Experience
               </h3>
@@ -148,6 +152,24 @@ export const ResumePreview = () => {
                   </p>
                   <p className="text-sm italic text-gray-600">{exp.company}</p>
                   <p className="text-sm" dangerouslySetInnerHTML={{ __html: exp.description }}></p>
+                </div>
+              ))}
+            </div>
+          )}
+          {projects?.length > 0 && (
+            <div className="border-b-[1px] border-gray-300 mb-4">
+              <h3 className="text-lg font-bold text-indigo-600 mb-3">
+                Projects
+              </h3>
+              {projects.map((proj, index) => (
+                <div key={index} className="mb-4">
+                  <div className="text-sm font-semibold">
+                    {proj.title}{" "}
+                  </div>
+                  <a href={proj.url} target="_blank" className="underline text-xs text-purple">
+                    {proj.url}
+                  </a>
+                  <p className="text-sm mt-3" dangerouslySetInnerHTML={{ __html: proj.description }}></p>
                 </div>
               ))}
             </div>

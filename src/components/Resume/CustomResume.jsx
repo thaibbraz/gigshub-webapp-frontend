@@ -7,6 +7,7 @@ import starsUnfilled from "../../assets/starsUnfilled.svg";
 import editIcon from "../../assets/editIcon.svg";
 import Select from "react-select";
 import { useLocation } from "react-router-dom";
+import { ResumePreview } from "./ResumePreview.jsx";
 
 const CustomResume = () => {
   const navigate = useNavigate();
@@ -736,113 +737,7 @@ const CustomResume = () => {
       </div>
 
       <div className="w-[60%] p-5 bg-gray-50">
-        <div className="flex justify-between items-center mb-5">
-          <div>
-            <h2 className="text-2xl font-extrabold text-indigo-900">
-              Preview CV
-            </h2>
-            <p className="text-sm text-gray-600" style={{ fontSize: "13px" }}>
-              This isn’t the resume style.
-            </p>
-            <p className="text-sm text-gray-600" style={{ fontSize: "13px" }}>
-              Our pdf style is made to pass any ATS system
-            </p>
-          </div>
-          <button
-            className="relative h-[30px] flex items-center font-normal bg-indigo-600 px-7 py-2 text-sm text-white rounded-full shadow-[0_0_0_4px_white,0_0_0_6px_rgb(208,208,255)] cursor-pointer"
-            onClick={handleDownloadPDF}
-          >
-            <span>Download CV</span>
-          </button>
-        </div>
-        <div className="w-full max-h-[1200px] overflow-y-auto bg-white border-2 border-dashed border-gray-300 rounded-lg">
-          <div className="flex justify-end p-4">
-            <img
-              src={editIcon}
-              alt="Edit Icon"
-              className="h-6 w-6 cursor-pointer"
-              onClick={handleEditClick}
-            />
-          </div>
-          <div id="resumePreview" className="pl-8 pr-8 text-gray-700">
-            <h2
-              id="previewName"
-              className="text-2xl font-bold text-indigo-600 mb-2"
-            >
-              {cvData ? `${cvData["first name"]} ${cvData["last name"]}` : ""}
-            </h2>
-            <p
-              id="previewJobTitle"
-              className="text-lg italic text-gray-500 mb-4"
-              dangerouslySetInnerHTML={{ __html: jobTitle }}
-            ></p>
-            <p
-              id="previewJobSummary"
-              className="text-sm pb-4"
-              dangerouslySetInnerHTML={{
-                __html: cvData?.job_summary ? cvData.job_summary : "",
-              }}
-            ></p>
-            <div className="mb-6">
-              <h3 className="text-lg font-bold text-indigo-600 mb-3">
-                Contact Information
-              </h3>
-              <p className="text-sm mb-2">{email}</p>
-              <p className="text-sm mb-2">{phone}</p>
-              <p className="text-sm mb-2">{linkedin}</p>
-              <p className="text-sm mb-2">{github}</p>
-              <p className="text-sm">{address}</p>
-            </div>
-            <div className="mb-6">
-              <h3 className="text-lg font-bold text-indigo-600 mb-3">
-                Experience
-              </h3>
-              {experiences.map((exp, index) => (
-                <div key={index} className="mb-4">
-                  <p className="text-sm font-semibold">
-                    {exp.title}{" "}
-                    <span className="text-gray-500">
-                      {exp.date === "undefined - undefined" || exp.date}
-                    </span>
-                  </p>
-                  <p className="text-sm italic text-gray-600">{exp.company}</p>
-                  <p
-                    className="text-sm"
-                    dangerouslySetInnerHTML={{ __html: exp.description }}
-                  ></p>
-                </div>
-              ))}
-            </div>
-            <div className="mb-6">
-              <h3 className="text-lg font-bold text-indigo-600 mb-3">
-                Education
-              </h3>
-              {education.map((edu, index) => (
-                <p key={index} className="text-sm mb-2">
-                  <strong>{edu.degree}</strong> - {edu.institution}{" "}
-                  {edu.date === "undefined - undefined" || edu.date}
-                </p>
-              ))}
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-indigo-600 mb-3">Skills</h3>
-              <ul className="flex flex-wrap gap-2">
-                {cvData?.skills?.[0]?.list.map((skill, index) => (
-                  <li
-                    key={index}
-                    className={`px-2 py-1 rounded bg-gray-200 text-sm ${
-                      highlightedSkills.includes(skill)
-                        ? "bg-indigo-100 text-indigo-600 font-bold"
-                        : ""
-                    }`}
-                  >
-                    {skill}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
+        <ResumePreview />
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import ResumeCreatorContact from "./ResumeCreator/ResumeCreatorContact";
 import ResumeCreatorExperience from "./ResumeCreator/ResumeCreatorExperience";
+import ResumeCreatorProjects from "./ResumeCreator/ResumeCreatorProjects.jsx";
 
 const ResumeCreator = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -53,6 +54,7 @@ const ResumeCreator = () => {
 
       {activeTab === "contact" && <ResumeCreatorContact />}
       {activeTab === "experience" && <ResumeCreatorExperience />}
+      {activeTab === "projects" && <ResumeCreatorProjects />}
     </div>
   );
 };
