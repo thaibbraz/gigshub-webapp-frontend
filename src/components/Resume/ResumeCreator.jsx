@@ -3,6 +3,8 @@ import { useSearchParams } from "react-router-dom";
 import ResumeCreatorContact from "./ResumeCreator/ResumeCreatorContact";
 import ResumeCreatorExperience from "./ResumeCreator/ResumeCreatorExperience";
 import ResumeCreatorProjects from "./ResumeCreator/ResumeCreatorProjects.jsx";
+import ResumeCreatorEducation from "./ResumeCreator/ResumeCreatorEducation.jsx";
+import ResumeCreatorSkills from "./ResumeCreator/ResumeCreatorSkills.jsx";
 
 const ResumeCreator = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -18,11 +20,11 @@ const ResumeCreator = () => {
   ];
 
   const handleTabClick = (tabId) => {
-    if(tabId !== "experience") {
-      const params = new URLSearchParams(searchParams);
-      params.delete("exp");
-      setSearchParams(params);
-    }
+    const params = new URLSearchParams(searchParams);
+    if(tabId !== "experience") params.delete("exp");
+    if(tabId !== "projects") params.delete("project");
+    if(tabId !== "education") params.delete("edu");
+    setSearchParams(params);
     setActiveTab(tabId);
   };
 
@@ -55,6 +57,9 @@ const ResumeCreator = () => {
       {activeTab === "contact" && <ResumeCreatorContact />}
       {activeTab === "experience" && <ResumeCreatorExperience />}
       {activeTab === "projects" && <ResumeCreatorProjects />}
+      {activeTab === "education" && <ResumeCreatorEducation />}
+      {activeTab === "skills" && <ResumeCreatorSkills />}
+
     </div>
   );
 };

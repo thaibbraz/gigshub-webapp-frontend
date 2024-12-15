@@ -23,6 +23,8 @@ const Navigation = ({ className }) => {
   const location = useLocation();
   const { logout } = useAuth();
 
+  const navClass = `top-2 left-4 bottom-2 flex flex-col h-full transition-all ${isExpanded ? "items-start pl-4" : "items-center"} bg-off-white ${location.pathname === "/dashboard" ? "h-6/6" : "h-auto"} ${isExpanded ? "w-60" : "w-24"} transition-all duration-300 rounded-xl`
+
   const handleMouseEnter = () => {
     setIsExpanded(true);
   };
@@ -54,17 +56,11 @@ const Navigation = ({ className }) => {
   return (
     <div>
       <div
-        className={`top-2 left-4 bottom-2 flex flex-col h-full transition-all ${
-          isExpanded ? "items-start pl-4" : "items-center"
-        } bg-off-white ${
-          location.pathname === "/dashboard" ? "h-6/6" : "h-auto"
-        } py-6 ${
-          isExpanded ? "w-60" : "w-24"
-        } transition-all duration-300 rounded-xl`}
+        className={navClass}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <div className="flex flex-col space-y-8 h-full w-full">
+        <div className="flex flex-col fixed space-y-8 h-full py-6">
           <div
             className={`flex ${
               isExpanded ? "justify-start" : "justify-center"

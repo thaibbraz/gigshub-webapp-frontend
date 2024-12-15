@@ -2,12 +2,13 @@ import editIcon from "../../assets/editIcon.svg";
 import useResumeStore from "../../stores/resume/resumeStore.js";
 import { useState } from "react";
 import { addUserData } from "../../utils/firebase.js";
+import { useNavigate } from "react-router-dom";
 
-export const ResumePreview = () => {
+export const ResumePreview = ({ readOnly = false }) => {
   const resume = useResumeStore((state) => state.resume);
-  const [isEditing, setIsEditing] = useState(false);
+  const navigate = useNavigate();
   const [highlightedSkills, setHighlightedSkills] = useState([]);
-
+  const [loading, setLoading] = useState(false);
 
   const {
     jobTitle,
@@ -21,20 +22,12 @@ export const ResumePreview = () => {
     education = [],
   } = resume || {};
 
-  const handleEditClick = () => {
-    setIsEditing((prev) => !prev);
-    const element = document.getElementById("resumePreview");
-    if(element) {
-      element.contentEditable = !isEditing;
-      element.focus();
-    }
-  };
-
   const handleSubmit = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
-    console.log('sending...')
+    setLoading(true);
     await addUserData(user?.uid, user);
-    console.log('done!')
+    setLoading(false);
+    navigate("/dashboard");
   }
 
   /*const handleDownloadPDF = async () => {
@@ -90,23 +83,18 @@ export const ResumePreview = () => {
             Our pdf style is made to pass any ATS system
           </p>
         </div>
-        <button
-          className="relative h-[30px] flex items-center font-normal bg-indigo-600 px-7 py-2 text-sm text-white rounded-full shadow-[0_0_0_4px_white,0_0_0_6px_rgb(208,208,255)] cursor-pointer"
-          onClick={() => handleSubmit()}
-        >
-          <span>Complete and Save</span>
-        </button>
+        {!readOnly && (
+          <button
+            className="disabled:opacity-75 h-[30px] flex items-center font-normal bg-indigo-600 px-7 py-2 text-sm text-white rounded-full shadow-[0_0_0_4px_white,0_0_0_6px_rgb(208,208,255)] cursor-pointer"
+            disabled={loading}
+            onClick={() => handleSubmit()}
+          >
+            {loading ? "Saving..." : "Complete and Save"}
+          </button>
+        )}
       </div>
       <div className="w-full max-h-[1200px] overflow-y-auto bg-white border-2 border-dashed border-gray-300 rounded-lg">
-        <div className="flex justify-end p-4">
-          <img
-            src={editIcon}
-            alt="Edit Icon"
-            className="h-6 w-6 cursor-pointer"
-            onClick={handleEditClick}
-          />
-        </div>
-        <div id="resumePreview" className="pl-8 pr-8 text-gray-700">
+        <div id="resumePreview" className="pl-8 pr-8 text-gray-700 pt-6 py-8">
           <h2
             id="previewName"
             className="text-2xl font-bold text-indigo-600 mb-2"

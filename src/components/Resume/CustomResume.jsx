@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { getUserCVData } from "../../utils/firebase.js";
 import "./styles.css";
-import { useNavigate } from "react-router-dom";
 import { sendRequest } from "../../utils/api.js";
 import starsUnfilled from "../../assets/starsUnfilled.svg";
-import editIcon from "../../assets/editIcon.svg";
 import Select from "react-select";
 import { useLocation } from "react-router-dom";
 import { ResumePreview } from "./ResumePreview.jsx";
+import useResumeStore from "../../stores/resume/resumeStore.js";
 
 const CustomResume = () => {
-  const navigate = useNavigate();
+  const resume = useResumeStore((state) => state.resume);
+  const updateResume = useResumeStore((state) => state.updateResume);
+  const initializeResume = useResumeStore((state) => state.initializeResume);
+
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [cvData, setCvData] = useState(null);
   const [showPopup, setShowPopup] = useState(true);
   const [jobDescription, setJobDescription] = useState("");
   const [analysisData, setAnalysisData] = useState(null);
@@ -31,13 +31,13 @@ const CustomResume = () => {
   };
 
   useEffect(() => {
-    fetchCV();
-  }, []);
+    initializeResume();
+  }, [initializeResume]);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const description = queryParams.get("description");
-    if (description) {
+    if(description) {
       setJobDescription(description);
       console.log("Description from extension:", description);
     } else {
@@ -46,45 +46,24 @@ const CustomResume = () => {
   }, [location.search]);
 
   useEffect(() => {
-    if (localStorage.getItem("boardJobDescription")) {
+    if(localStorage.getItem("boardJobDescription")) {
       setJobDescription(localStorage.getItem("boardJobDescription"));
-
-      console.log("Chegou aqui", localStorage.getItem("boardJobDescription"));
+      console.log("Loaded description from localStorage:", localStorage.getItem("boardJobDescription"));
     } else {
-      console.log("No description found in URL.");
+      console.log("No description found in localStorage.");
     }
   }, []);
 
-  const fetchCV = async () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const userId = user?.uid;
-    const data = await getUserCVData(userId);
-    if (!userId || !data) {
-      navigate("/resume");
-      console.error("User ID is missing");
-      return;
-    }
-    setCvData(data);
-  };
-
   const calculateMatchingScore = () => {
-    if (!analysisData || !analysisData.summary_of_issues) return 0;
-    const {
-      optimization_suggestions_count,
-      missing_skills_count,
-      total_issues_count,
-    } = analysisData.summary_of_issues;
+    if(!analysisData || !analysisData.summary_of_issues) return 0;
+    const { optimization_suggestions_count, missing_skills_count, total_issues_count } = analysisData.summary_of_issues;
 
-    if (total_issues_count === 0) {
+    if(total_issues_count === 0) {
       return 100;
     }
-    // Ensure no negative values
-    const safeMissingSkillsCount = Math.max(0, missing_skills_count);
 
-    const safeOptimizationSuggestionsCount = Math.max(
-      0,
-      optimization_suggestions_count
-    );
+    const safeMissingSkillsCount = Math.max(0, missing_skills_count);
+    const safeOptimizationSuggestionsCount = Math.max(0, optimization_suggestions_count);
 
     const newScore =
       100 -
@@ -98,15 +77,15 @@ const CustomResume = () => {
     setAnalysisData(null);
     setLoading(true);
     togglePopup();
-    fetchCV();
-    if (!jobDescription.trim()) {
+
+    if(!jobDescription.trim()) {
       alert("Please enter a job description.");
       setLoading(false);
       return;
     }
 
     const payload = {
-      resume_data: cvData,
+      resume_data: resume,
       job_description: jobDescription,
     };
 
@@ -121,27 +100,18 @@ const CustomResume = () => {
       setLoading(false);
     }
   };
-
+  
   const handleSkillClick = (skill) => {
-    if (!analysisData || !cvData?.skills?.[0]?.list) return;
+    if(!analysisData || !resume?.skills?.[0]?.list) return;
 
-    const updatedMissingSkills = analysisData.missing_skills.hard_skills.filter(
-      (item) => item !== skill
-    );
+    const updatedMissingSkills = analysisData.missing_skills.hard_skills.filter((item) => item !== skill);
 
-    const updatedSkills = [...cvData.skills[0].list, skill];
+    const updatedSkills = [...resume.skills[0].list, skill];
 
     setHighlightedSkills((prev) => [...prev, skill]);
 
-    // Ensure counts never go below zero
-    const newMissingSkillsCount = Math.max(
-      0,
-      analysisData.summary_of_issues.missing_skills_count - 1
-    );
-    const newTotalIssuesCount = Math.max(
-      0,
-      analysisData.summary_of_issues.total_issues_count - 1
-    );
+    const newMissingSkillsCount = Math.max(0, analysisData.summary_of_issues.missing_skills_count - 1);
+    const newTotalIssuesCount = Math.max(0, analysisData.summary_of_issues.total_issues_count - 1);
 
     setAnalysisData((prev) => ({
       ...prev,
@@ -157,22 +127,21 @@ const CustomResume = () => {
       matching_score: calculateMatchingScore(),
     }));
 
-    setCvData((prev) => ({
-      ...prev,
-      skills: [{ ...prev.skills[0], list: updatedSkills }],
-    }));
+    const updatedResume = {
+      ...resume,
+      skills: [{ ...resume.skills[0], list: updatedSkills }],
+    };
+    updateResume(updatedResume);
   };
 
   const handleExperienceAdd = async () => {
-    if (selectedCompanies.length === 0) {
+    if(selectedCompanies.length === 0) {
       alert("Please select at least one company and provide a description.");
       return;
     }
 
     const experienceWorked = selectedCompanies.map((company) => ({
-      ...cvData.experiences.find(
-        (exp) => exp.company === company.value.company
-      ),
+      ...resume.experiences.find((exp) => exp.company === company.value.company),
     }));
 
     const payload = {
@@ -184,21 +153,20 @@ const CustomResume = () => {
       const response = await sendRequest(payload, "/add-experience");
       const updatedDescription = response.resume_data.experience_updated;
 
-      setCvData((prevState) => ({
-        ...prevState,
-        experiences: prevState.experiences.map((exp) =>
+      const updatedResume = {
+        ...resume,
+        experiences: resume.experiences.map((exp) =>
           exp.company === selectedCompanies[0].value.company &&
           selectedCompanies[0].value.title === exp.title
             ? {
                 ...exp,
-                description: highlightAddedText(
-                  exp.description,
-                  updatedDescription
-                ),
+                description: highlightAddedText(exp.description, updatedDescription),
               }
             : exp
         ),
-      }));
+      };
+
+      updateResume(updatedResume);
 
       setAnalysisData((prev) => ({
         ...prev,
@@ -207,8 +175,7 @@ const CustomResume = () => {
         ),
         summary_of_issues: {
           ...prev.summary_of_issues,
-          experience_gaps_count:
-            prev.summary_of_issues.optimization_suggestions_count - 1,
+          experience_gaps_count: prev.summary_of_issues.optimization_suggestions_count - 1,
           total_issues_count: prev.summary_of_issues.total_issues_count - 1,
         },
         matching_score: calculateMatchingScore(),
@@ -220,13 +187,10 @@ const CustomResume = () => {
       console.error("Error adding experiences:", error);
       alert("We had a problem adding your experience. Please try again.");
     }
-    setJobDescription("");
-    setOptimizationSuggestion("");
-    setSelectedCompanies([]);
   };
 
   const highlightAddedText = (originalText, updatedText) => {
-    if (!originalText || !updatedText) return updatedText;
+    if(!originalText || !updatedText) return updatedText;
 
     const newText = updatedText.replace(originalText, "");
 
@@ -237,14 +201,13 @@ const CustomResume = () => {
   };
 
   const handleRecruitersTips = (value, key) => {
-    setCvData((prevCvData) => ({
-      ...prevCvData,
-      job_summary: highlightAddedText(
-        "original text",
-        analysisData.user_summary
-      ),
-    }));
-
+    const updatedResume = {
+      ...resume,
+      job_summary: highlightAddedText("original text", analysisData.user_summary),
+    };
+  
+    updateResume(updatedResume);
+  
     setAnalysisData((prev) => ({
       ...prev,
       recruiters_tips: {
@@ -252,29 +215,25 @@ const CustomResume = () => {
         [key]: true,
       },
     }));
-  };
+  };  
 
   const handleJobTitle = (job_title_match) => {
-    if (job_title_match?.length > 0) {
-      setCvData((prevCvData) => ({
-        ...prevCvData,
-        jobTitle: highlightAddedText(
-          "original text",
-          analysisData.job_title_match
-        ),
-      }));
+    if(job_title_match?.length > 0) {
+      const updatedResume = {
+        ...resume,
+        jobTitle: highlightAddedText("original text", job_title_match),
+      };
+      updateResume(updatedResume);
     }
-
+  
     setTimeout(() => {
       setAnalysisData((prev) => ({
         ...prev,
-        job_title_match: {
-          ...prev.job_title_match,
-          job_title_match: "",
-        },
+        job_title_match: "",
       }));
     }, 1000);
   };
+  
 
   const togglePopup = () => setShowPopup(!showPopup);
   const toggleExperienceModal = (role) => {
@@ -300,18 +259,6 @@ const CustomResume = () => {
     summary_of_issues,
   } = analysisData || {};
 
-  const {
-    jobTitle,
-    email,
-    phone,
-    linkedin,
-    github,
-    address,
-    experiences = [],
-    education = [],
-    skills = [],
-  } = cvData || {};
-
   const strokeColor =
     matching_score < 30
       ? "#E74C3C"
@@ -321,7 +268,7 @@ const CustomResume = () => {
   const handleEditClick = () => {
     setIsEditing((prev) => !prev);
     const element = document.getElementById("resumePreview");
-    if (element) {
+    if(element) {
       element.contentEditable = !isEditing;
       element.focus();
     }
@@ -336,10 +283,10 @@ const CustomResume = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ resume_data: cvData }),
+        body: JSON.stringify({ resume_data: resume }),
       });
 
-      if (!response.ok) {
+      if(!response.ok) {
         throw new Error("Network response was not ok");
       }
 
@@ -398,41 +345,10 @@ const CustomResume = () => {
             {matching_score !== undefined && (
               <div className="mt-5 text-center">
                 <h2 className="text-lg text-indigo-600 mb-2">Matching Score</h2>
-                <svg
-                  width="80"
-                  height="80"
-                  viewBox="0 0 36 36"
-                  className="inline-block"
-                >
-                  <circle
-                    cx="18"
-                    cy="18"
-                    r="16"
-                    stroke="#E0E0E0"
-                    strokeWidth="4"
-                    fill="none"
-                  ></circle>
-                  <circle
-                    cx="18"
-                    cy="18"
-                    r="16"
-                    strokeDasharray="100"
-                    strokeDashoffset={100 - matching_score}
-                    stroke={strokeColor}
-                    strokeWidth="4"
-                    fill="none"
-                    strokeLinecap="round"
-                  ></circle>
-                  <text
-                    x="50%"
-                    y="50%"
-                    textAnchor="middle"
-                    fill={strokeColor}
-                    fontSize="8px"
-                    dy=".3em"
-                  >
+                <svg width="80"height="80"viewBox="0 0 36 36"className="inline-block"><circle cx="18" cy="18" r="16" stroke="#E0E0E0" strokeWidth="4" fill="none"></circle><circle cx="18" cy="18" r="16" strokeDasharray="100" strokeDashoffset={100 - matching_score} stroke={strokeColor} strokeWidth="4" fill="none" strokeLinecap="round"></circle>
+                  <text x="50%" y="50%" textAnchor="middle" fill={strokeColor} fontSize="8px" dy=".3em">
                     {matching_score}
-                  </text>
+                    </text>
                 </svg>
                 <p>{summary_of_issues?.total_issues_count || 0} issues found</p>
               </div>
@@ -449,11 +365,7 @@ const CustomResume = () => {
                     onClick={() => handleJobTitle(job_title_match)}
                   >
                     Add
-                    <img
-                      src={starsUnfilled}
-                      alt="Stars Icon"
-                      className="w-[8px] h-[8px] ml-1"
-                    />
+                    <img src={starsUnfilled} alt="Stars Icon" className="w-[8px] h-[8px] ml-1" />
                   </button>
                 </div>
               </div>
@@ -588,7 +500,7 @@ const CustomResume = () => {
                           {"💡"} {key.replace(/_/g, " ")}
                         </li>
                         {key === "personal_summary" &&
-                        cvData?.job_summary ? null : (
+                        resume?.job_summary ? null : (
                           <button
                             className="ml-2 bg-indigo-600 text-white px-3 py-0 rounded-full text-xs flex items-center"
                             onClick={() => handleRecruitersTips(value, key)}
@@ -669,8 +581,8 @@ const CustomResume = () => {
                 <Select
                   id="companySelect"
                   options={
-                    experiences &&
-                    experiences.map((exp) => ({
+                    resume.experiences &&
+                    resume.experiences.map((exp) => ({
                       value: exp,
                       label: exp.title + " at " + exp.company,
                     }))
@@ -737,7 +649,7 @@ const CustomResume = () => {
       </div>
 
       <div className="w-[60%] p-5 bg-gray-50">
-        <ResumePreview />
+        <ResumePreview readOnly={true} />
       </div>
     </div>
   );

@@ -4,98 +4,102 @@ import { useSearchParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const ResumeCreatorProjects = () => {
+const ResumeCreatorEducation = () => {
   const resume = useResumeStore((state) => state.resume);
   const updateResume = useResumeStore((state) => state.updateResume);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const [projects, setProjects] = useState([]);
+  const [education, setEducation] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
-  const [unsavedProject, setUnsavedProject] = useState(null);
+  const [unsavedEdu, setUnsavedEdu] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [projectToDelete, setProjectToDelete] = useState(null);
+  const [educationToDelete, setEducationToDelete] = useState(null);
 
   useEffect(() => {
-    if (!isInitialized && resume?.projects) {
-      setProjects(resume.projects);
-      setUnsavedProject(resume.projects[0]);
+    if (!isInitialized && resume?.education) {
+      const validEducation = resume.education.filter(
+        (edu) => typeof edu === "object" && edu !== null
+      );
+      setEducation(validEducation);
+      setUnsavedEdu(validEducation[0]);
       setIsInitialized(true);
-      setActiveTab(parseInt(searchParams.get("project"), 10) || 0);
+      setActiveTab(parseInt(searchParams.get("edu"), 10) || 0);
     }
-  }, [resume.projects, isInitialized, searchParams]);
+  }, [resume.education, isInitialized, searchParams]);
 
   useEffect(() => {
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev);
-      newParams.set("tab", "project");
-      newParams.set("project", activeTab);
+      newParams.set("tab", "education");
+      newParams.set("edu", activeTab);
       return newParams;
     });
 
-    if (projects[activeTab]) {
-      setUnsavedProject({ ...projects[activeTab] });
+    if (education[activeTab]) {
+      setUnsavedEdu({ ...education[activeTab] });
     }
   }, [activeTab, setSearchParams]);
 
   const handleSaveInfo = () => {
-    const updatedProjects = projects.map((proj, idx) =>
+    const updatedEducation = education.map((edu, idx) =>
       idx === activeTab
-        ? { ...unsavedProject, saved: `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}` }
-        : proj
+        ? { ...unsavedEdu, saved: `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}` }
+        : edu
     );
-    setProjects(updatedProjects);
+    setEducation(updatedEducation);
 
     const updatedResume = {
       ...resume,
-      projects: updatedProjects,
+      education: updatedEducation,
     };
     updateResume(updatedResume);
-    toast.success("Project saved successfully!");
+    toast.success("Education saved successfully!");
   };
 
-  const handleInputChange = (input) => {
-    const { name, value } = input.target || input;
-    setUnsavedProject((prev) => ({ ...prev, [name]: value }));
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUnsavedEdu((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAddProject = () => {
-    const newProject = {
-      title: "",
-      url: "",
-      description: "",
+  const handleAddEducation = () => {
+    const newEducation = {
+      degree: "",
+      institution: "",
+      major: "",
+      date: "",
       saved: "Not saved yet",
     };
-    setProjects((prev) => [...prev, newProject]);
-    setUnsavedProject(newProject);
-    setActiveTab(projects.length);
+    setEducation((prev) => [...prev, newEducation]);
+    setUnsavedEdu(newEducation);
+    setActiveTab(education.length);
   };
 
-  const handleTabChange = (index) => {
-    setActiveTab(index);
-  };
-
-  const handleDeleteProject = () => {
-    const updatedProjects = projects.filter((_, idx) => idx !== projectToDelete);
-    setProjects(updatedProjects);
+  const handleDeleteEducation = () => {
+    const updatedEducation = education.filter((_, idx) => idx !== educationToDelete);
+    setEducation(updatedEducation);
     setShowDeleteModal(false);
 
     // Adjust active tab if the deleted tab was the active one
-    if (activeTab >= updatedProjects.length) {
-      setActiveTab(updatedProjects.length - 1);
+    if (activeTab >= updatedEducation.length) {
+      setActiveTab(updatedEducation.length - 1);
     }
 
     const updatedResume = {
       ...resume,
-      projects: updatedProjects,
+      education: updatedEducation,
     };
     updateResume(updatedResume);
-    toast.success("Project deleted successfully!");
+    toast.success("Education entry deleted successfully!");
   };
 
   const handleOpenDeleteModal = (index) => {
-    setProjectToDelete(index);
+    setEducationToDelete(index);
     setShowDeleteModal(true);
+  };
+
+  const handleTabChange = (index) => {
+    setActiveTab(index);
   };
 
   const handleSubmit = (e) => {
@@ -109,13 +113,13 @@ const ResumeCreatorProjects = () => {
 
       {/* Tabs */}
       <div className="flex flex-wrap text-nowrap gap-4 mb-6">
-        {projects.map((p, i) => (
+        {education.map((edu, i) => (
           <div key={i} className="flex items-center gap-2 rounded-md border-[1px] border-gray-200 px-2 py-1">
             <button
               onClick={() => handleTabChange(i)}
               className={`text-sm text-purple ${activeTab === i ? "font-bold" : ""}`}
             >
-              {p.title || `Project ${i + 1}`}
+              {edu.degree || `Education ${i + 1}`}
             </button>
             <button
               type="button"
@@ -130,59 +134,65 @@ const ResumeCreatorProjects = () => {
 
       {/* Form */}
       <form onSubmit={handleSubmit}>
-        {unsavedProject && (
+        {unsavedEdu && (
           <div key={activeTab} className="space-y-4">
             <div>
-              <label
-                htmlFor={`title-${activeTab}`}
-                className="text-sm font-bold text-gray-700"
-              >
-                PROJECT TITLE
+              <label htmlFor={`degree-${activeTab}`} className="text-sm font-bold text-gray-700">
+                DEGREE
               </label>
               <input
                 type="text"
-                id={`title-${activeTab}`}
-                name="title"
-                value={unsavedProject.title || ""}
+                id={`degree-${activeTab}`}
+                name="degree"
+                value={unsavedEdu.degree || ""}
                 onChange={handleInputChange}
-                placeholder="Title"
+                placeholder="Degree"
                 className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
               />
             </div>
 
             <div>
-              <label
-                htmlFor={`url-${activeTab}`}
-                className="text-sm font-bold text-gray-700"
-              >
-                PROJECT URL
+              <label htmlFor={`institution-${activeTab}`} className="text-sm font-bold text-gray-700">
+                INSTITUTION NAME
               </label>
               <input
                 type="text"
-                id={`url-${activeTab}`}
-                name="url"
-                value={unsavedProject.url || ""}
+                id={`institution-${activeTab}`}
+                name="institution"
+                value={unsavedEdu.institution || ""}
                 onChange={handleInputChange}
-                placeholder="URL"
+                placeholder="Institution Name"
                 className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
               />
             </div>
 
             <div>
-              <label
-                htmlFor={`description-${activeTab}`}
-                className="text-sm font-bold text-gray-700"
-              >
-                PROJECT DESCRIPTION
+              <label htmlFor={`major-${activeTab}`} className="text-sm font-bold text-gray-700">
+                FIELD OF STUDY
               </label>
-              <textarea
-                id={`description-${activeTab}`}
-                name="description"
-                value={unsavedProject.description || ""}
+              <input
+                type="text"
+                id={`major-${activeTab}`}
+                name="major"
+                value={unsavedEdu.major || ""}
                 onChange={handleInputChange}
-                placeholder="Describe your project"
+                placeholder="Field of Study"
                 className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
-                rows={4}
+              />
+            </div>
+
+            <div>
+              <label htmlFor={`date-${activeTab}`} className="text-sm font-bold text-gray-700">
+                GRADUATION YEAR
+              </label>
+              <input
+                type="text"
+                id={`date-${activeTab}`}
+                name="date"
+                value={unsavedEdu.date || ""}
+                onChange={handleInputChange}
+                placeholder="Month YYYY"
+                className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
               />
             </div>
           </div>
@@ -191,7 +201,7 @@ const ResumeCreatorProjects = () => {
         <div className="flex items-center justify-between mt-6">
           <button
             type="button"
-            onClick={handleAddProject}
+            onClick={handleAddEducation}
             className="flex items-center px-3 -mx-3 gap-2 py-2 text-purple"
           >
             <svg
@@ -218,7 +228,7 @@ const ResumeCreatorProjects = () => {
           </button>
         </div>
         <p className="text-xs text-gray-400 text-right mt-3">
-          Saved: {projects[activeTab]?.saved || "Not saved yet"}
+          Saved: {education[activeTab]?.saved || "Not saved yet"}
         </p>
       </form>
 
@@ -226,9 +236,9 @@ const ResumeCreatorProjects = () => {
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-96">
-            <h3 className="text-lg font-bold mb-4">Delete Project</h3>
+            <h3 className="text-lg font-bold mb-4">Delete Education</h3>
             <p className="text-sm text-gray-600 mb-6">
-              Are you sure you want to delete this project? This action cannot be undone.
+              Are you sure you want to delete this education entry? This action cannot be undone.
             </p>
             <div className="flex justify-end gap-4">
               <button
@@ -238,7 +248,7 @@ const ResumeCreatorProjects = () => {
                 Cancel
               </button>
               <button
-                onClick={handleDeleteProject}
+                onClick={handleDeleteEducation}
                 className="px-4 py-2 bg-red-500 text-white rounded-md"
               >
                 Delete
@@ -251,4 +261,4 @@ const ResumeCreatorProjects = () => {
   );
 };
 
-export default ResumeCreatorProjects;
+export default ResumeCreatorEducation;
