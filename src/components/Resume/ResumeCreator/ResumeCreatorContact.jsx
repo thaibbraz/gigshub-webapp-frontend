@@ -8,8 +8,9 @@ const ResumeCreatorContact = () => {
   const initializeResume = useResumeStore((state) => state.initializeResume);
 
   const [formData, setFormData] = useState({
-    fullName: "",
-    phoneNumber: "",
+    first_name: "",
+    last_name: "",
+    phone: "",
     email: "",
     linkedin: "",
     country: null,
@@ -76,28 +77,42 @@ const ResumeCreatorContact = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="fullName" className="text-sm font-bold text-gray-700">
-          FULL NAME
+        <label htmlFor="first_name" className="text-sm font-bold text-gray-700">
+          FIRST NAME
         </label>
         <input
           type="text"
-          id="fullName"
-          name="fullName"
-          value={formData.fullName || ''}
+          id="first_name"
+          name="first_name"
+          value={formData.first_name || ''}
           onChange={handleInputChange}
-          placeholder="Username"
+          placeholder="First Name"
+          className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
+        />
+      </div>
+      <div>
+        <label htmlFor="last_name" className="text-sm font-bold text-gray-700">
+          LAST NAME
+        </label>
+        <input
+          type="text"
+          id="last_name"
+          name="last_name"
+          value={formData.last_name || ''}
+          onChange={handleInputChange}
+          placeholder="Last Name"
           className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
         />
       </div>
 
       <div>
-        <label htmlFor="phoneNumber" className="text-sm font-bold text-gray-700">
+        <label htmlFor="phone" className="text-sm font-bold text-gray-700">
           PHONE NUMBER
         </label>
         <input
           type="text"
-          id="phoneNumber"
-          name="phoneNumber"
+          id="phone"
+          name="phone"
           value={formData.phone || ''}
           onChange={handleInputChange}
           placeholder="Phone Number"

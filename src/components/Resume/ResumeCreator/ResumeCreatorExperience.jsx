@@ -10,61 +10,70 @@ const ResumeCreatorExperience = () => {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [experiences, setExperiences] = useState([]);
-  const [activeTab, setActiveTab] = useState(null);
+  const [activeTab, setActiveTab] = useState(0);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
-    const experienceId = parseInt(searchParams.get("exp"), 10);
-    if (!isInitialized && resume.cv?.experiences) {
-      setExperiences(resume.cv.experiences);
-      setIsInitialized(true);
-      setActiveTab(experienceId || resume.cv.experiences[0]?.id || 1);
-    }
-  }, [resume.cv?.experiences, isInitialized, searchParams]);
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: currentYear - 1900 + 1 }, (_, i) => 1900 + i);
 
   useEffect(() => {
-    if (activeTab !== null) {
-      setSearchParams((prev) => {
-        const newParams = new URLSearchParams(prev);
-        newParams.set("tab", "experience");
-        newParams.set("exp", activeTab);
-        return newParams;
-      });
+    if(!isInitialized && resume?.experiences) {
+      setExperiences(resume.experiences);
+      setIsInitialized(true);
+      setActiveTab(parseInt(searchParams.get("exp"), 10) || 0);
     }
+  }, [resume.experiences, isInitialized, searchParams]);
+
+  useEffect(() => {
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set("tab", "experience");
+      newParams.set("exp", activeTab);
+      return newParams;
+    });
   }, [activeTab, setSearchParams]);
 
   const handleSaveInfo = () => {
     const updatedResume = {
       ...resume,
-      cv: { ...resume.cv, experiences },
+      experiences,
     };
     updateResume(updatedResume);
     toast.success("Experiences saved successfully!");
   };
 
-  const handleInputChange = (e, id) => {
+  const handleInputChange = (e, index) => {
     const { name, value } = e.target;
     setExperiences((prev) =>
-      prev.map((exp) => (exp.id === id ? { ...exp, [name]: value } : exp))
+      prev.map((exp, idx) => {
+        if(idx === index) {
+          if(name === "startYear" || name === "endYear") {
+            const [startYear, endYear] = exp.date.split("-").map((y) => y.trim());
+            const updatedDate = name === "startYear" ? `${value}-${endYear || ""}`.trim() : `${startYear || ""}-${value}`.trim();
+            return { ...exp, date: updatedDate };
+          }
+          return { ...exp, [name]: value };
+        }
+        return exp;
+      })
     );
+    console.log(experiences);
   };
 
   const handleAddExperience = () => {
     const newExperience = {
-      id: experiences.length > 0 ? experiences[experiences.length - 1].id + 1 : 1,
-      role: "",
+      title: "",
       company: "",
-      startDate: "",
-      endDate: "",
+      date: "",
       location: "",
       description: "",
     };
     setExperiences((prev) => [...prev, newExperience]);
-    setActiveTab(newExperience.id);
+    setActiveTab(experiences.length);
   };
 
-  const handleTabChange = (id) => {
-    setActiveTab(id);
+  const handleTabChange = (index) => {
+    setActiveTab(index);
   };
 
   const handleSubmit = (e) => {
@@ -75,18 +84,18 @@ const ResumeCreatorExperience = () => {
   return (
     <div>
       <ToastContainer position={"top-center"} autoClose={1000} hideProgressBar={true} />
-      
+
       {/* Tabs */}
       <div className="flex flex-wrap text-nowrap gap-4 mb-6">
-        {experiences.map((exp) => (
+        {experiences.map((_, i) => (
           <button
-            key={exp.id}
-            onClick={() => handleTabChange(exp.id)}
+            key={i}
+            onClick={() => handleTabChange(i)}
             className={`text-sm text-purple ${
-              activeTab === exp.id ? "font-bold" : ""
+              activeTab === i ? "font-bold" : ""
             }`}
           >
-            Experience {exp.id}
+            Experience {i + 1}
           </button>
         ))}
       </div>
@@ -94,22 +103,22 @@ const ResumeCreatorExperience = () => {
       {/* Form */}
       <form onSubmit={handleSubmit}>
         {experiences
-          .filter((exp) => exp.id === activeTab)
-          .map((exp) => (
-            <div key={exp.id} className="space-y-4">
+          .filter((_, i) => i === activeTab)
+          .map((exp, i) => (
+            <div key={i} className="space-y-4">
               <div>
                 <label
-                  htmlFor={`role-${exp.id}`}
+                  htmlFor={`title-${i}`}
                   className="text-sm font-bold text-gray-700"
                 >
                   WHAT WAS YOUR ROLE AT THE COMPANY?
                 </label>
                 <input
                   type="text"
-                  id={`role-${exp.id}`}
-                  name="role"
-                  value={exp.role || ""}
-                  onChange={(e) => handleInputChange(e, exp.id)}
+                  id={`title-${i}`}
+                  name="title"
+                  value={exp.title || ""}
+                  onChange={(e) => handleInputChange(e, i)}
                   placeholder="Role"
                   className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
                 />
@@ -117,17 +126,17 @@ const ResumeCreatorExperience = () => {
 
               <div>
                 <label
-                  htmlFor={`company-${exp.id}`}
+                  htmlFor={`company-${i}`}
                   className="text-sm font-bold text-gray-700"
                 >
                   COMPANY NAME
                 </label>
                 <input
                   type="text"
-                  id={`company-${exp.id}`}
+                  id={`company-${i}`}
                   name="company"
                   value={exp.company || ""}
-                  onChange={(e) => handleInputChange(e, exp.id)}
+                  onChange={(e) => handleInputChange(e, i)}
                   placeholder="Company Name"
                   className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
                 />
@@ -136,52 +145,64 @@ const ResumeCreatorExperience = () => {
               <div className="flex gap-4">
                 <div>
                   <label
-                    htmlFor={`startDate-${exp.id}`}
+                    htmlFor={`startYear-${i}`}
                     className="text-sm font-bold text-gray-700"
                   >
-                    STARTED
+                    START YEAR
                   </label>
-                  <input
-                    type="date"
-                    id={`startDate-${exp.id}`}
-                    name="startDate"
-                    value={exp.startDate || ""}
-                    onChange={(e) => handleInputChange(e, exp.id)}
+                  <select
+                    id={`startYear-${i}`}
+                    name="startYear"
+                    value={exp.date.split("-")[0] || ""}
+                    onChange={(e) => handleInputChange(e, i)}
                     className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
-                  />
+                  >
+                    <option value="">Select Year</option>
+                    {years.map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
                   <label
-                    htmlFor={`endDate-${exp.id}`}
+                    htmlFor={`endYear-${i}`}
                     className="text-sm font-bold text-gray-700"
                   >
-                    FINISHED
+                    END YEAR
                   </label>
-                  <input
-                    type="date"
-                    id={`endDate-${exp.id}`}
-                    name="endDate"
-                    value={exp.endDate || ""}
-                    onChange={(e) => handleInputChange(e, exp.id)}
+                  <select
+                    id={`endYear-${i}`}
+                    name="endYear"
+                    value={exp.date.split("-")[1] || ""}
+                    onChange={(e) => handleInputChange(e, i)}
                     className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
-                  />
+                  >
+                    <option value="">Select Year</option>
+                    {years.map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
               <div>
                 <label
-                  htmlFor={`location-${exp.id}`}
+                  htmlFor={`location-${i}`}
                   className="text-sm font-bold text-gray-700"
                 >
                   WHERE WAS THE COMPANY LOCATED?
                 </label>
                 <input
                   type="text"
-                  id={`location-${exp.id}`}
+                  id={`location-${i}`}
                   name="location"
                   value={exp.location || ""}
-                  onChange={(e) => handleInputChange(e, exp.id)}
+                  onChange={(e) => handleInputChange(e, i)}
                   placeholder="Location"
                   className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
                 />
@@ -189,16 +210,16 @@ const ResumeCreatorExperience = () => {
 
               <div>
                 <label
-                  htmlFor={`description-${exp.id}`}
+                  htmlFor={`description-${i}`}
                   className="text-sm font-bold text-gray-700"
                 >
                   WHAT DID YOU DO AT THE COMPANY?
                 </label>
                 <textarea
-                  id={`description-${exp.id}`}
+                  id={`description-${i}`}
                   name="description"
                   value={exp.description || ""}
-                  onChange={(e) => handleInputChange(e, exp.id)}
+                  onChange={(e) => handleInputChange(e, i)}
                   placeholder="• Describe your tasks and achievements"
                   className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
                   rows={4}
