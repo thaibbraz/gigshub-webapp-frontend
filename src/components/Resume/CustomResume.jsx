@@ -6,8 +6,13 @@ import Select from "react-select";
 import { useLocation } from "react-router-dom";
 import { ResumePreview } from "./ResumePreview.jsx";
 import useResumeStore from "../../stores/resume/resumeStore.js";
+import { useNavigate } from "react-router-dom";
+import {
+  checkUserExists
+} from "../../utils/firebase.js";
 
 const CustomResume = () => {
+  const navigate = useNavigate();
   const resume = useResumeStore((state) => state.resume);
   const updateResume = useResumeStore((state) => state.updateResume);
   const initializeResume = useResumeStore((state) => state.initializeResume);
@@ -22,13 +27,20 @@ const CustomResume = () => {
   const [optimizationSuggestion, setOptimizationSuggestion] = useState("");
   const [highlightedSkills, setHighlightedSkills] = useState([]);
   const location = useLocation();
-
   const weights = {
     missing_keywords: 2,
     missing_skills: 3,
     experience_gaps: 5,
     grammar_issues: 1,
   };
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const userId = user?.uid;
+    if (!checkUserExists(userId)) {
+      navigate("/resume/edit");
+    }
+  }, []);
 
   useEffect(() => {
     initializeResume();
