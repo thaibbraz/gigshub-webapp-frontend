@@ -47,7 +47,7 @@ const Login = () => {
       }
       login();
       if ((await checkUserExists(user.uid)) === false) {
-        navigate("/welcome");
+        navigate("/resume");
       } else {
         navigate("/dashboard");
       }

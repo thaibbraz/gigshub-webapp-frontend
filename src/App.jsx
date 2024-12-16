@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import Login from "./components/Login/Login";
@@ -13,10 +13,18 @@ import Settings from "./components/Profile Settings/Settings";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import { Navigate } from "react-router-dom";
+import EditResume from "./components/Resume/EditResume";
+import CustomResume from "./components/Resume/CustomResume";
+import useResumeStore from "./stores/resume/resumeStore";
 
 function App() {
   const [formData, setFormData] = useState({});
+  const initializeResume = useResumeStore((state) => state.initializeResume);
 
+  useEffect(() => {
+    initializeResume();
+  }, [initializeResume]);
+  
   const handleFormDataChange = (data) => {
     setFormData(data);
   };
@@ -42,12 +50,13 @@ function App() {
               />
               <Route
                 path="/dashboard"
-                element={<UserDashboard formData={formData} />}
+                element={<UserDashboard />}
               />
               <Route path="/jobs" element={<Dashboard />} />
               <Route path="/resume" element={<Resume />} />
+              <Route path="/resume/edit" element={<EditResume />} />
               <Route path="/welcome" element={<Explanation />} />
-              <Route path="/ai-job-match" element={<AIJobMatch />} />
+              <Route path="/custom-cv" element={<CustomResume />} />
               <Route path="/settings" element={<Settings />} />
             </Route>
           </Route>

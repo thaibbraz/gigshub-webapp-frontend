@@ -11,7 +11,7 @@ export default function Layout() {
   return (
     <div
       className={`flex min-h-screen ${
-        isAuthPage ? "bg-bright-purple" : "bg-off-white"
+        isAuthPage ? "bg-bright-purple" : "bg-white"
       }`}
     >
       {/* Sidebar */}
@@ -19,8 +19,8 @@ export default function Layout() {
 
       {/* Page content */}
       <div
-        className={`flex-grow pb-2 w-[90%] ${
-          isAuthPage ? "w-full" : isDashboardPage ? "mt-6" : "p-8 mt-8"
+        className={`flex-grow ${
+          isAuthPage ? "w-full" : isDashboardPage ? "mt-6" : ""
         }`}
       >
         <Outlet />
