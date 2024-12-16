@@ -39,6 +39,7 @@ const Navigation = ({ className }) => {
   };
 
   const handleLogout = async () => {
+    
     localStorage.removeItem("user");
     logout();
     try {

@@ -34,62 +34,91 @@ const UserDashboard = () => {
 
   const fetchData = async () => {
     setClicked(true);
-
+    
+    const hasFetchedJobs = localStorage.getItem("hasFetchedJobs");
     const user = JSON.parse(localStorage.getItem("user"));
     const userId = user?.uid;
     if (!checkUserExists(userId)) {
       navigate("/resume/edit");
     }
+
+    if (!hasFetchedJobs) {
+      fetchJobs().then(() => {
+        localStorage.setItem("hasFetchedJobs", "true");
+      });
+    }
   };
-
-  const fetchJobs = async () => {
-    try {
-      const cachedJobs = localStorage.getItem("jobs");
-      const timestamp = localStorage.getItem("timestamp");
-      if (
-        JSON.parse(cachedJobs)?.length > 0 &&
-        jobs.length === 0 &&
-        Date.now() - timestamp < 86400000
-      ) {
-        setJobs(JSON.parse(cachedJobs));
-        return;
-      } else if (!JSON.parse(cachedJobs)) {
-        setLoading(true)
-
-        if (!jobTitle || !location) {
-          toast.warn("You need to fill in your job title and location.");
-          return;
-        }
+  const fetchJobsFromSources = async (sources, searchTerm, location, resumeData) => {
+    const allJobs = [];
+    const failedSources = [];
+  
+    for (const site of sources) {
+      try {
         const response = await fetch(`${process.env.REACT_APP_JOBS_URL}/jobs`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            search_term: jobTitle,
+            search_term: searchTerm,
             location: location,
-            resume_data: resume,
+            resume_data: resumeData,
+            site_name: site
           }),
         });
-        console.log("jobs retrieved", response);
-        
+  
         if (!response.ok) {
-          throw new Error("Failed to fetch jobs from API");
+          throw new Error(`Failed to fetch jobs from ${site}`);
         }
-
+  
         const data = await response.json();
-        const filteredJobs = data.jobs.filter(
+        allJobs.push(...data.jobs); 
+      } catch (error) {
+        console.error(`Error fetching jobs from ${site}:`, error);
+        failedSources.push(site);
+      }
+    }
+  
+    return { allJobs, failedSources };
+  };
+  
+  const fetchJobs = async () => {
+    try {
+      const cachedJobs = localStorage.getItem("jobs");
+      const timestamp = localStorage.getItem("timestamp");
+      if (
+        JSON.parse(cachedJobs)?.length > 0 &&
+        jobs?.length === 0 &&
+        Date.now() - timestamp < 86400000
+      ) {
+        setJobs(JSON.parse(cachedJobs));
+        return;
+      } else if (!JSON.parse(cachedJobs)) {
+        setLoading(true)
+        if (!jobTitle || !location) {
+          toast.warn("You need to fill in your job title and location.");
+          return;
+        }
+        const jobSources = ["indeed", "linkedin", "zip_recruiter", "glassdoor", "google"];
+        const { allJobs, failedSources } = await fetchJobsFromSources(
+          jobSources,
+          jobTitle,
+          location,
+          resume
+        );
+        const filteredJobs = allJobs.filter(
           (job) => formatScoreAsPercentage(job.compatibility_score) > 10
         );
-        const orderJobByDate = filteredJobs.sort(
+        const orderedJobs = filteredJobs.sort(
           (a, b) => new Date(b.date) - new Date(a.date)
         );
 
+        console.log("Filtered and ordered jobs:", orderedJobs);
+        console.log("Failed sources:", failedSources);
         // Update localStorage and state
         localStorage.setItem("timestamp", Date.now());
-        localStorage.setItem("jobs", JSON.stringify(data));
-
-        setJobs(orderJobByDate);
+        // JSON.stringify(orderedJobs));
+        setJobs(orderedJobs);
         setLoading(false)
       }
     } catch (error) {
@@ -107,7 +136,7 @@ const UserDashboard = () => {
   }, []);
 
   const messages = [
-    "We're analysing your CV data. This process might take some time",
+    "We're analysing your CV data. This process might take some time...",
     "We're checking the best opportunities on LinkedIn",
     "We're checking the best opportunities on Glassdoor",
     "We're checking the best opportunities on Indeed",
@@ -132,12 +161,12 @@ const UserDashboard = () => {
           setStatus((prev) => ({ ...prev, glassdoor: true }));
         } else if (nextIndex === 4) {
           setStatus((prev) => ({ ...prev, indeed: true }));
-          clearInterval(timer); // Stop the interval after the last message
+          clearInterval(timer); 
         }
 
         return nextIndex;
       });
-    }, 5000); // 2 seconds interval between each step
+    }, 6000); // 5000ms = 5 seconds
 
     return () => clearInterval(timer); // Cleanup on unmount
   }, [loading]);
@@ -194,7 +223,7 @@ const UserDashboard = () => {
                 {/* LinkedIn */}
                 <div className="flex flex-col items-center">
                   <img
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoJ9_vWWlqK9M-lPZGNIl6UQTJhAMR78eZpQ&s"
+                    src="https://cdn.worldvectorlogo.com/logos/linkedin-icon.svg"
                     alt="LinkedIn Logo"
                     className="h-12 w-12 object-contain"
                   />
@@ -246,7 +275,7 @@ const UserDashboard = () => {
           </div>
         )}
         {/* Job List */}
-        {!loading && jobs.length > 0 && (
+        {!loading && jobs?.length > 0 && (
           <div className="flex flex-col items-center ml-10 bg-white rounded-xl w-full max-w-6xl overflow-y-auto">
             <div className="overflow-x-auto">
               <table className="min-w-full bg-white rounded-lg">
@@ -272,7 +301,6 @@ const UserDashboard = () => {
                 </thead>
                 <tbody>
                   {jobs.map((job, index) => {
-                    // Determine logo based on job source
                     let logo;
                     if (job.site === "indeed") {
                       logo =
