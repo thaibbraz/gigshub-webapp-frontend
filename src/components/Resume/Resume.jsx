@@ -35,6 +35,7 @@ const Resume = () => {
   const handleFileUpload = async (e) => {
     try {
       setIsUploading(true);
+
       const userData = await uploadResume(e.target.files[0]);
       await addUserData(userData.uid, userData);
       setIsUploading(false);

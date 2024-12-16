@@ -14,7 +14,24 @@ export const uploadResume = async file => {
       );
 
       if(response.ok) {
+        //upload at extension
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
         const data = await response.json();
+        reader.onload = () => {
+          const base64Data = reader.result; 
+
+          const extensionId = process.env.REACT_APP_EXTENSION_ID;
+          window.chrome.runtime.sendMessage(extensionId, {
+            action: "resume_upload",
+            data: {
+              resume_data: data.resume_data,
+              pdfFile: base64Data,
+              fileName: file.name,
+            },
+          });
+        };
+        
         const user = JSON.parse(localStorage.getItem("user"));
         const userId = user?.uid;
         const newUserData = {
@@ -67,8 +84,6 @@ export const uploadResume = async file => {
         localStorage.setItem("user", JSON.stringify(newUserData));
 
         return newUserData;
-
-        //navigate("/resume/edit");
       } else {
         console.error("Failed to upload resume");
       }

@@ -50,7 +50,7 @@ function App() {
               />
               <Route
                 path="/dashboard"
-                element={<UserDashboard formData={formData} />}
+                element={<UserDashboard />}
               />
               <Route path="/jobs" element={<Dashboard />} />
               <Route path="/resume" element={<Resume />} />

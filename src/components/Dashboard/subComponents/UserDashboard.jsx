@@ -2,84 +2,50 @@ import React, { useState, useEffect } from "react";
 import Input from "../../Elements/Input.jsx";
 import ButtonAI from "../../Elements/ButtonAI.jsx";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 import {
-  addUserData,
   checkUserExists,
   getUserCVData,
 } from "../../../utils/firebase.js";
+import useResumeStore from "../../../stores/resume/resumeStore.js";
 
-const UserDashboard = ({ formData }) => {
+const UserDashboard = () => {
   const navigate = useNavigate();
-  const [jobs, setJobs] = useState(
-    localStorage.getItem("jobs")
-      ? JSON.parse(localStorage.getItem("jobs")).jobs
-      : []
-  );
-  const [jobTitle, setJobTitle] = useState(formData.jobTitle);
-  const [location, setLocation] = useState(formData.location);
-  const [cvFormData, setcvFormData] = useState(formData);
+  const resume = useResumeStore((state) => state.resume);
+  // TODO: Fix the job title and location
+  const [jobTitle, setJobTitle] = useState("Software Engineer");
+  const [location, setLocation] = useState("San Francisco");
+  const [cvFormData, setcvFormData] = useState(resume);
   const [loading, setLoading] = useState(false);
   const [clicked, setClicked] = useState(false);
   const [error, setError] = useState(null);
-  const [messageIndex, setMessageIndex] = useState(0); // Tracks the current message index
+  const [messageIndex, setMessageIndex] = useState(0);
   const [status, setStatus] = useState({
     linkedin: false,
     glassdoor: false,
     indeed: false,
   });
-  // Utility to format compatibility score
+  const [jobs, setJobs] = useState(
+    localStorage.getItem("jobs")
+      ? JSON.parse(localStorage.getItem("jobs")).jobs
+      : []
+  );
   const formatScoreAsPercentage = (score) => Math.round(score * 100);
 
-  // Fetch and store jobs
   const fetchData = async () => {
     setClicked(true);
 
     const user = JSON.parse(localStorage.getItem("user"));
     const userId = user?.uid;
-
-    if (checkUserExists(userId)) {
-      try {
-        const cvData = getUserCVData(userId);
-        if (cvData) {
-          setcvFormData(cvData);
-        } else {
-          navigate("/resume/edit");
-        }
-      } catch (error) {
-        console.error("Error submitting form: ", error);
-      }
+    if (!checkUserExists(userId)) {
+      navigate("/resume/edit");
     }
   };
-  /* 
-    const newUserData = {
-          uid: userId,
-          email: user?.email || "",
-          displayName: user?.displayName || "",
-          photoURL: user?.photoURL || "",
-          cv: cvFormData, //here's when we'll save the cv for the first time
-        };
-        localStorage.setItem("user", JSON.stringify(newUserData));
-        localStorage.setItem("cv", JSON.stringify(cvFormData));
-        await addUserData(userId, newUserData);
-   if (!cvFormData || Object.keys(cvFormData).length === 0) {
-      console.error("cvFormData is missing");
-      const data = await getUserCVData(userId);
-      setcvFormData(data);
-    }
-    if (!jobTitle && cvFormData) {
-      const jobTittle = cvFormData.jobTitle;
-      setJobTitle(jobTittle);
-    }
-    if (!location && cvFormData) {
-      const location = cvFormData.location;
-      setLocation(location);
-    }
-  };*/
-  const fetchJobs = async (job) => {
+
+  const fetchJobs = async () => {
     try {
       const cachedJobs = localStorage.getItem("jobs");
       const timestamp = localStorage.getItem("timestamp");
-
       if (
         JSON.parse(cachedJobs)?.length > 0 &&
         jobs.length === 0 &&
@@ -88,6 +54,12 @@ const UserDashboard = ({ formData }) => {
         setJobs(JSON.parse(cachedJobs));
         return;
       } else if (!JSON.parse(cachedJobs)) {
+        setLoading(true)
+
+        if (!jobTitle || !location) {
+          toast.warn("You need to fill in your job title and location.");
+          return;
+        }
         const response = await fetch(`${process.env.REACT_APP_JOBS_URL}/jobs`, {
           method: "POST",
           headers: {
@@ -96,10 +68,11 @@ const UserDashboard = ({ formData }) => {
           body: JSON.stringify({
             search_term: jobTitle,
             location: location,
-            resume_data: cvFormData,
+            resume_data: resume,
           }),
         });
-
+        console.log("jobs retrieved", response);
+        
         if (!response.ok) {
           throw new Error("Failed to fetch jobs from API");
         }
@@ -117,6 +90,7 @@ const UserDashboard = ({ formData }) => {
         localStorage.setItem("jobs", JSON.stringify(data));
 
         setJobs(orderJobByDate);
+        setLoading(false)
       }
     } catch (error) {
       console.error("Error fetching jobs:", error);
@@ -170,6 +144,19 @@ const UserDashboard = ({ formData }) => {
 
   return (
     <div className="ml-2 mr-10">
+      <ToastContainer
+        position="top-center"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        />
+        
       {/* Top Filter Section */}
       <div className="w-full px-9">
         <div className="flex lg:flex-row mb-4 mt-6 max-w-7xl gap-x-6 ml-10 w-[90%]">
@@ -259,7 +246,7 @@ const UserDashboard = ({ formData }) => {
           </div>
         )}
         {/* Job List */}
-        {!loading && (
+        {!loading && jobs.length > 0 && (
           <div className="flex flex-col items-center ml-10 bg-white rounded-xl w-full max-w-6xl overflow-y-auto">
             <div className="overflow-x-auto">
               <table className="min-w-full bg-white rounded-lg">
