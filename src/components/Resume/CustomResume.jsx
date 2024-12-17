@@ -7,9 +7,6 @@ import { useLocation } from "react-router-dom";
 import { ResumePreview } from "./ResumePreview.jsx";
 import useResumeStore from "../../stores/resume/resumeStore.js";
 import { useNavigate } from "react-router-dom";
-import {
-  checkUserExists, getUserCVData,
-} from "../../utils/firebase.js";
 
 const CustomResume = () => {
   const navigate = useNavigate();
@@ -36,8 +33,6 @@ const CustomResume = () => {
 
   useEffect(() => {
     if (JSON.stringify(resume) === '{}') {
-      console.log("got inside");
-      
       navigate("/resume");
     }
   }, []);
