@@ -15,14 +15,15 @@ const CustomResume = () => {
   const initializeResume = useResumeStore((state) => state.initializeResume);
 
   const [loading, setLoading] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [showPopup, setShowPopup] = useState(true);
+  const [analysing, setAnalysing] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
   const [jobDescription, setJobDescription] = useState("");
   const [analysisData, setAnalysisData] = useState(null);
   const [showExperienceModal, setShowExperienceModal] = useState(false);
   const [selectedCompanies, setSelectedCompanies] = useState("");
   const [optimizationSuggestion, setOptimizationSuggestion] = useState("");
   const [highlightedSkills, setHighlightedSkills] = useState([]);
+  const [showAnalysisPanel, setShowAnalysisPanel] = useState(false);
   const location = useLocation();
   const weights = {
     missing_keywords: 2,
@@ -61,6 +62,11 @@ const CustomResume = () => {
     }
   }, []);
 
+
+  const togglePanel = () => {
+    setShowAnalysisPanel((prev) => !prev);
+  };
+  
   const calculateMatchingScore = () => {
     if(!analysisData || !analysisData.summary_of_issues) return 0;
     const { optimization_suggestions_count, missing_skills_count, total_issues_count } = analysisData.summary_of_issues;
@@ -82,12 +88,11 @@ const CustomResume = () => {
 
   const handleJobAnalyse = async () => {
     setAnalysisData(null);
-    setLoading(true);
-    togglePopup();
+    setAnalysing(true);
 
     if(!jobDescription.trim()) {
       alert("Please enter a job description.");
-      setLoading(false);
+      setAnalysing(false);
       return;
     }
 
@@ -100,11 +105,14 @@ const CustomResume = () => {
       const response = await sendRequest(payload, "/optimize-cv-for-job");
       console.log("Response from backend:", response);
       setAnalysisData(response.resume_data);
-      setLoading(false);
+      setAnalysing(false);
+      togglePanel();
+      togglePopup();
     } catch (error) {
       console.error("Error sending data:", error);
       alert("Failed to send data.");
-      setLoading(false);
+      setAnalysing(false);
+      togglePopup();
     }
   };
   
@@ -242,7 +250,9 @@ const CustomResume = () => {
   };
   
 
-  const togglePopup = () => setShowPopup(!showPopup);
+  const togglePopup = () => {
+    setShowPopup(!showPopup);
+  }
   const toggleExperienceModal = (role) => {
     setOptimizationSuggestion(role);
     setJobDescription("");
@@ -272,14 +282,6 @@ const CustomResume = () => {
       : matching_score > 65
       ? "#27AE60"
       : "#F2994A";
-  const handleEditClick = () => {
-    setIsEditing((prev) => !prev);
-    const element = document.getElementById("resumePreview");
-    if(element) {
-      element.contentEditable = !isEditing;
-      element.focus();
-    }
-  };
 
   const handleDownloadPDF = async () => {
     console.log("Downloading PDF...");
@@ -331,186 +333,152 @@ const CustomResume = () => {
   };
 
   return (
-    <div className="flex w-full bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="w-[45%] bg-gray-100 p-7 border-r-2 border-gray-300 overflow-y-auto sticky top-0">
-        <div className="flex justify-end">
-          <button
-            onClick={togglePopup}
-            className="relative h-[30px] flex items-center font-normal bg-white px-4 py-2 text-sm text-indigo-600 border-2 border-indigo-600 rounded-full shadow-[0_0_0_4px_white,0_0_0_6px_rgb(208,208,255)] cursor-pointer"
-          >
-            <span>Tailor CV to a Job</span>
-          </button>
-        </div>
-        {loading && (
-          <div className="flex flex-col justify-center items-center h-screen">
-            <div className="w-12 h-12 border-4 border-gray-300 border-t-4 border-t-indigo-600 rounded-full animate-spin mb-2"></div>
-            <p className="text-indigo-600 font-bold">Loading...</p>
-          </div>
-        )}
-        {analysisData && (
-          <>
-            {matching_score !== undefined && (
-              <div className="mt-5 text-center">
-                <h2 className="text-lg text-indigo-600 mb-2">Matching Score</h2>
-                <svg width="80"height="80"viewBox="0 0 36 36"className="inline-block"><circle cx="18" cy="18" r="16" stroke="#E0E0E0" strokeWidth="4" fill="none"></circle><circle cx="18" cy="18" r="16" strokeDasharray="100" strokeDashoffset={100 - matching_score} stroke={strokeColor} strokeWidth="4" fill="none" strokeLinecap="round"></circle>
-                  <text x="50%" y="50%" textAnchor="middle" fill={strokeColor} fontSize="8px" dy=".3em">
-                    {matching_score}
-                    </text>
-                </svg>
-                <p>{summary_of_issues?.total_issues_count || 0} issues found</p>
-              </div>
-            )}
-            {job_title_match?.length > 0 && (
-              <div className="mt-5">
-                <h3 className="text-lg font-bold text-gray-800 mb-3">
-                  Job Title Match
-                </h3>
-                <div className="flex">
-                  <p>{job_title_match}</p>
-                  <button
-                    className="ml-2 mt-1 bg-indigo-600 text-white px-2 py-0 rounded-full text-xs flex items-center"
-                    onClick={() => handleJobTitle(job_title_match)}
-                  >
-                    Add
-                    <img src={starsUnfilled} alt="Stars Icon" className="w-[8px] h-[8px] ml-1" />
-                  </button>
-                </div>
-              </div>
-            )}
-            {searchability && Object.keys(searchability).length > 0 && (
-              <div className="mt-5">
-                <h3 className="text-lg font-bold text-gray-800 mb-3">
-                  Searchability
-                </h3>
-                <ul className="list-none">
-                  {Object.entries(searchability).map(([key, value], index) => (
-                    <li
-                      key={index}
-                      className="flex items-center justify-between mb-2"
-                    >
-                      <span>{key.replace(/_/g, " ")}</span>
-                      <span
-                        className={`ml-2 ${
-                          value ? "text-green-600" : "text-red-600"
-                        }`}
-                      >
-                        {value ? "Included" : "Missing"}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {missing_skills?.hard_skills?.length > 0 && (
-              <div className="mt-5">
-                <h3 className="text-lg font-bold text-gray-800 mb-3">
-                  Missing Skills
-                </h3>
-                <ul className="list-none">
-                  {missing_skills.hard_skills.map((skill, index) => (
-                    <li
-                      key={`${skill}-${index}`}
-                      className="flex items-center mb-2 cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        id={`skill-${skill}`}
-                        className="hidden"
-                        onChange={() => handleSkillClick(skill)}
-                      />
-                      <label
-                        htmlFor={`skill-${skill}`}
-                        className="relative pl-8 text-sm cursor-pointer"
-                      >
-                        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-white border-2 border-indigo-900 transition"></span>
-                        {skill}
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {/* Experience Gaps 
-            {experience_gaps?.unrepresented_roles?.length > 0 && (
-                <div className="section">
-                    <h3>Experience Gaps</h3>
-                    <ul>
-                        {
-                        experience_gaps.unrepresented_roles.map((role, index) => (
-                            <div className="flex">
-                                <li className="mr-2" key={index}> {role}</li>
-                                <button className="experence-btn" onClick={() => toggleExperienceModal(role)}>Add
-                                <img
-                                src={starsUnfilled}
-                                alt="Stars Icon"
-                                className="w-2 h-2"
-                                /></button>
-                            </div>
-                        ))} 
-                    </ul>
-                </div>
-            )}
-        */}
-            {/* Education Requirements */}
-            {education_requirements?.missing_degrees_or_certifications?.length >
-              0 && (
-              <div className="mt-5">
-                <h3 className="text-lg font-bold text-gray-800 mb-3">
-                  Missing Degrees or Certifications
-                </h3>
-                <ul className="list-none">
-                  {education_requirements.missing_degrees_or_certifications.map(
-                    (degree, index) => (
-                      <li key={index} className="mb-2 text-sm text-gray-600">
-                        {degree}
-                      </li>
-                    )
-                  )}
-                </ul>
-              </div>
-            )}
-            {optimization_suggestions?.length > 0 && (
-              <div className="mt-5">
-                <h3 className="text-lg font-bold text-gray-800 mb-3">
-                  Optimization Suggestions
-                </h3>
-                <ul className="list-none">
-                  {optimization_suggestions.map((suggestion, index) => (
-                    <div className="flex items-center mb-2" key={index}>
-                      <li className="text-sm text-gray-600">{suggestion}</li>
+    <div className="flex flex-col items-center">
+      <div className="flex sticky justify-end py-3 w-full px-6 gap-3 shadow bg-white top-0">
+        <button onClick={togglePopup} className="relative flex items-center font-normal bg-white px-4 py-2 text-sm text-indigo-600 border-2 border-indigo-600 rounded-full">
+          Tailor CV to a Job
+        </button>
+        <button onClick={() => {}} className="relative flex items-center font-normal bg-purple px-4 py-2 text-sm text-white rounded-full">
+          Download Extension
+        </button>
+      </div>
+      <div className="flex w-full bg-white rounded-lg shadow-md overflow-hidden">
+        <div className={`transition-all duration-500 ease-in-out ${ showAnalysisPanel ? "w-[40%] opacity-100" : "w-0 opacity-0 overflow-hidden" } bg-gray-100 border-r-2 border-gray-300 sticky top-0`}>
+          <div className="p-7">
+            {analysisData && (
+              <>
+                {matching_score !== undefined && (
+                  <div className="mt-5 text-center">
+                    <h2 className="text-lg text-indigo-600 mb-2">Matching Score</h2>
+                    <svg width="80"height="80"viewBox="0 0 36 36"className="inline-block"><circle cx="18" cy="18" r="16" stroke="#E0E0E0" strokeWidth="4" fill="none"></circle><circle cx="18" cy="18" r="16" strokeDasharray="100" strokeDashoffset={100 - matching_score} stroke={strokeColor} strokeWidth="4" fill="none" strokeLinecap="round"></circle>
+                      <text x="50%" y="50%" textAnchor="middle" fill={strokeColor} fontSize="8px" dy=".3em">
+                        {matching_score}
+                        </text>
+                    </svg>
+                    <p>{summary_of_issues?.total_issues_count || 0} issues found</p>
+                  </div>
+                )}
+                {job_title_match?.length > 0 && (
+                  <div className="mt-5">
+                    <h3 className="text-lg font-bold text-gray-800 mb-3">
+                      Job Title Match
+                    </h3>
+                    <div className="flex">
+                      <p>{job_title_match}</p>
                       <button
-                        className="ml-2 bg-indigo-600 text-white px-3 py-0 rounded-full text-xs flex items-center"
-                        onClick={() => toggleExperienceModal(suggestion)}
+                        className="ml-2 mt-1 bg-indigo-600 text-white px-2 py-0 rounded-full text-xs flex items-center"
+                        onClick={() => handleJobTitle(job_title_match)}
                       >
                         Add
-                        <img
-                          src={starsUnfilled}
-                          alt="Stars Icon"
-                          className="w-[8px] h-[8px] ml-1"
-                        />
+                        <img src={starsUnfilled} alt="Stars Icon" className="w-[8px] h-[8px] ml-1" />
                       </button>
                     </div>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {recruiters_tips && Object.keys(recruiters_tips).length > 0 && (
-              <div className="mt-5">
-                <h3 className="text-lg font-bold text-gray-800 mb-3">
-                  Recruiters' Tips
-                </h3>
-                <ul className="list-none">
-                  {Object.entries(recruiters_tips).map(
-                    ([key, value], index) => (
-                      <div className="flex items-center mb-2" key={index}>
-                        <li className="text-sm text-gray-600">
-                          {"💡"} {key.replace(/_/g, " ")}
+                  </div>
+                )}
+                {searchability && Object.keys(searchability).length > 0 && (
+                  <div className="mt-5">
+                    <h3 className="text-lg font-bold text-gray-800 mb-3">
+                      Searchability
+                    </h3>
+                    <ul className="list-none">
+                      {Object.entries(searchability).map(([key, value], index) => (
+                        <li
+                          key={index}
+                          className="flex items-center justify-between mb-2"
+                        >
+                          <span>{key.replace(/_/g, " ")}</span>
+                          <span
+                            className={`ml-2 ${
+                              value ? "text-green-600" : "text-red-600"
+                            }`}
+                          >
+                            {value ? "Included" : "Missing"}
+                          </span>
                         </li>
-                        {key === "personal_summary" &&
-                        resume?.job_summary ? null : (
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {missing_skills?.hard_skills?.length > 0 && (
+                  <div className="mt-5">
+                    <h3 className="text-lg font-bold text-gray-800 mb-3">
+                      Missing Skills
+                    </h3>
+                    <ul className="list-none">
+                      {missing_skills.hard_skills.map((skill, index) => (
+                        <li
+                          key={`${skill}-${index}`}
+                          className="flex items-center mb-2 cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            id={`skill-${skill}`}
+                            className="hidden"
+                            onChange={() => handleSkillClick(skill)}
+                          />
+                          <label
+                            htmlFor={`skill-${skill}`}
+                            className="relative pl-8 text-sm cursor-pointer"
+                          >
+                            <span className="absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-white border-2 border-indigo-900 transition"></span>
+                            {skill}
+                          </label>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {/* Experience Gaps 
+                {experience_gaps?.unrepresented_roles?.length > 0 && (
+                    <div className="section">
+                        <h3>Experience Gaps</h3>
+                        <ul>
+                            {
+                            experience_gaps.unrepresented_roles.map((role, index) => (
+                                <div className="flex">
+                                    <li className="mr-2" key={index}> {role}</li>
+                                    <button className="experence-btn" onClick={() => toggleExperienceModal(role)}>Add
+                                    <img
+                                    src={starsUnfilled}
+                                    alt="Stars Icon"
+                                    className="w-2 h-2"
+                                    /></button>
+                                </div>
+                            ))} 
+                        </ul>
+                    </div>
+                )}
+            */}
+                {/* Education Requirements */}
+                {education_requirements?.missing_degrees_or_certifications?.length >
+                  0 && (
+                  <div className="mt-5">
+                    <h3 className="text-lg font-bold text-gray-800 mb-3">
+                      Missing Degrees or Certifications
+                    </h3>
+                    <ul className="list-none">
+                      {education_requirements.missing_degrees_or_certifications.map(
+                        (degree, index) => (
+                          <li key={index} className="mb-2 text-sm text-gray-600">
+                            {degree}
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  </div>
+                )}
+                {optimization_suggestions?.length > 0 && (
+                  <div className="mt-5">
+                    <h3 className="text-lg font-bold text-gray-800 mb-3">
+                      Optimization Suggestions
+                    </h3>
+                    <ul className="list-none">
+                      {optimization_suggestions.map((suggestion, index) => (
+                        <div className="flex items-center mb-2" key={index}>
+                          <li className="text-sm text-gray-600">{suggestion}</li>
                           <button
                             className="ml-2 bg-indigo-600 text-white px-3 py-0 rounded-full text-xs flex items-center"
-                            onClick={() => handleRecruitersTips(value, key)}
+                            onClick={() => toggleExperienceModal(suggestion)}
                           >
                             Add
                             <img
@@ -519,145 +487,181 @@ const CustomResume = () => {
                               className="w-[8px] h-[8px] ml-1"
                             />
                           </button>
-                        )}
-                      </div>
-                    )
-                  )}
-                </ul>
-              </div>
-            )}
-            {/* {preparation_assistance?.interview_questions?.length > 0 || preparation_assistance?.preparation_checklist?.length > 0 ? (
-                        <div className="mt-5">
-                            <h3 className="text-lg font-bold text-gray-800 mb-3">
-                                Preparation Assistance
-                            </h3>
-                            {preparation_assistance?.interview_questions?.length > 0 && (
-                                <>
-                                    <h4 className="text-sm font-semibold text-gray-800 mb-2">
-                                        Interview Questions
-                                    </h4>
-                                    <ul className="list-none">
-                                        {preparation_assistance.interview_questions.map((question, index) => (
-                                            <li key={index} className="mb-2 text-sm text-gray-600">
-                                                {question}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </>
-                            )}
-                            {preparation_assistance?.preparation_checklist?.length > 0 && (
-                                <>
-                                    <h4 className="text-sm font-semibold text-gray-800 mb-2">
-                                        Preparation Checklist
-                                    </h4>
-                                    <ul className="list-none">
-                                        {preparation_assistance.preparation_checklist.map((item, index) => (
-                                            <li key={index} className="mb-2 text-sm text-gray-600">
-                                                {item}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </>
-                            )}
                         </div>
-                    ) : null}*/}
-            {grammar_corrections?.length > 0 && (
-              <div className="mt-5">
-                <h3 className="text-lg font-bold text-gray-800 mb-3">
-                  Grammar Corrections
-                </h3>
-                <ul className="list-none">
-                  {grammar_corrections.map((correction, index) => (
-                    <li key={index} className="mb-2 text-sm text-gray-600">
-                      ⚠ {correction}
-                    </li>
-                  ))}
-                </ul>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {recruiters_tips && Object.keys(recruiters_tips).length > 0 && (
+                  <div className="mt-5">
+                    <h3 className="text-lg font-bold text-gray-800 mb-3">
+                      Recruiters' Tips
+                    </h3>
+                    <ul className="list-none">
+                      {Object.entries(recruiters_tips).map(
+                        ([key, value], index) => (
+                          <div className="flex items-center mb-2" key={index}>
+                            <li className="text-sm text-gray-600">
+                              {"💡"} {key.replace(/_/g, " ")}
+                            </li>
+                            {key === "personal_summary" &&
+                            resume?.job_summary ? null : (
+                              <button
+                                className="ml-2 bg-indigo-600 text-white px-3 py-0 rounded-full text-xs flex items-center"
+                                onClick={() => handleRecruitersTips(value, key)}
+                              >
+                                Add
+                                <img
+                                  src={starsUnfilled}
+                                  alt="Stars Icon"
+                                  className="w-[8px] h-[8px] ml-1"
+                                />
+                              </button>
+                            )}
+                          </div>
+                        )
+                      )}
+                    </ul>
+                  </div>
+                )}
+                {/* {preparation_assistance?.interview_questions?.length > 0 || preparation_assistance?.preparation_checklist?.length > 0 ? (
+                            <div className="mt-5">
+                                <h3 className="text-lg font-bold text-gray-800 mb-3">
+                                    Preparation Assistance
+                                </h3>
+                                {preparation_assistance?.interview_questions?.length > 0 && (
+                                    <>
+                                        <h4 className="text-sm font-semibold text-gray-800 mb-2">
+                                            Interview Questions
+                                        </h4>
+                                        <ul className="list-none">
+                                            {preparation_assistance.interview_questions.map((question, index) => (
+                                                <li key={index} className="mb-2 text-sm text-gray-600">
+                                                    {question}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </>
+                                )}
+                                {preparation_assistance?.preparation_checklist?.length > 0 && (
+                                    <>
+                                        <h4 className="text-sm font-semibold text-gray-800 mb-2">
+                                            Preparation Checklist
+                                        </h4>
+                                        <ul className="list-none">
+                                            {preparation_assistance.preparation_checklist.map((item, index) => (
+                                                <li key={index} className="mb-2 text-sm text-gray-600">
+                                                    {item}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </>
+                                )}
+                            </div>
+                        ) : null}*/}
+                {grammar_corrections?.length > 0 && (
+                  <div className="mt-5">
+                    <h3 className="text-lg font-bold text-gray-800 mb-3">
+                      Grammar Corrections
+                    </h3>
+                    <ul className="list-none">
+                      {grammar_corrections.map((correction, index) => (
+                        <li key={index} className="mb-2 text-sm text-gray-600">
+                          ⚠ {correction}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </>
+            )}
+            {showExperienceModal && (
+              <div className="popup-overlay">
+                <div className="popup-content">
+                  <h3 className="mb-4 p-4 text-center text-2xl font-bold">
+                    Where did you use this skill?
+                  </h3>
+                  <div className="mb-8 text-center">
+                    <Select
+                      id="companySelect"
+                      options={
+                        resume.experiences &&
+                        resume.experiences.map((exp) => ({
+                          value: exp,
+                          label: exp.title + " at " + exp.company,
+                        }))
+                      }
+                      isMulti // Enables multi-select
+                      value={selectedCompanies}
+                      onChange={(selected) => setSelectedCompanies(selected || [])}
+                      placeholder="Select companies..."
+                    />
+                    {/*<select
+                                    id="companySelect"
+                                    value={selectedCompanies}
+                                    onChange={(e) => setSelectedCompanies(e.target.value)}
+                                >
+                                    <option value="">-- Select a Company --</option>
+                                    {experiences && experiences.map((exp, index) => (
+                                        <option key={index} value={exp.company}>
+                                            {exp.company}
+                                        </option>
+                                    ))}
+                                </select>*/}
+                  </div>
+                  <div className="popup-buttons">
+                    <button className="upload-cv-btn" onClick={handleExperienceAdd}>
+                      Add experience with AI{" "}
+                      <img
+                        src={starsUnfilled}
+                        alt="Stars Icon"
+                        className="ml-2 w-4 h-4"
+                      />
+                    </button>
+                    <button
+                      className="upload-cv-btn-cancel"
+                      onClick={toggleExperienceModal}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
-          </>
-        )}
-
-        {showExperienceModal && (
-          <div className="popup-overlay">
-            <div className="popup-content">
-              <h3 className="mb-4 p-4 text-center text-2xl font-bold">
-                Where did you use this skill?
-              </h3>
-              <div className="mb-8 text-center">
-                <Select
-                  id="companySelect"
-                  options={
-                    resume.experiences &&
-                    resume.experiences.map((exp) => ({
-                      value: exp,
-                      label: exp.title + " at " + exp.company,
-                    }))
-                  }
-                  isMulti // Enables multi-select
-                  value={selectedCompanies}
-                  onChange={(selected) => setSelectedCompanies(selected || [])}
-                  placeholder="Select companies..."
-                />
-                {/*<select
-                                id="companySelect"
-                                value={selectedCompanies}
-                                onChange={(e) => setSelectedCompanies(e.target.value)}
-                            >
-                                <option value="">-- Select a Company --</option>
-                                {experiences && experiences.map((exp, index) => (
-                                    <option key={index} value={exp.company}>
-                                        {exp.company}
-                                    </option>
-                                ))}
-                            </select>*/}
-              </div>
-              <div className="popup-buttons">
-                <button className="upload-cv-btn" onClick={handleExperienceAdd}>
-                  Add experience with AI{" "}
-                  <img
-                    src={starsUnfilled}
-                    alt="Stars Icon"
-                    className="ml-2 w-4 h-4"
-                  />
-                </button>
-                <button
-                  className="upload-cv-btn-cancel"
-                  onClick={toggleExperienceModal}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
           </div>
-        )}
-        {showPopup && (
-          <div className="popup-overlay">
-            <div className="popup-content">
-              <h3>Enter Job Description</h3>
-              <textarea
-                value={jobDescription}
-                onChange={(e) => setJobDescription(e.target.value)}
-                placeholder="Paste the job description here..."
-                rows="10"
-                cols="50"
-              />
-              <div className="popup-buttons">
-                <button className="upload-cv-btn" onClick={handleJobAnalyse}>
-                  Analyse job
-                </button>
+        </div>
+        <div className={`transition-all duration-500 ease-in-out flex justify-center ${ showAnalysisPanel ? "w-[60%]" : "w-[100%]" } p-5 bg-gray-50`}>
+          <div className="max-w-3xl">
+            <ResumePreview readOnly={true} />
+          </div>
+        </div>
+      </div>
+      {showPopup && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <h3>Enter Job Description</h3>
+            <textarea
+              className="resize-none p-3 focus-visible:outline-none border-[1px] border-gray-300 my-3 rounded-md"
+              disabled={analysing}
+              value={jobDescription}
+              onChange={(e) => setJobDescription(e.target.value)}
+              placeholder="Paste the job description here..."
+              rows="10"
+              cols="50"
+            />
+            <div className="popup-buttons">
+              <button disabled={analysing} className="upload-cv-btn disabled:opacity-50" onClick={handleJobAnalyse}>
+                {analysing ? 'Analizing...' : 'Analyse job'}
+              </button>
+              {!analysing &&
                 <button className="upload-cv-btn-cancel" onClick={togglePopup}>
                   Cancel
                 </button>
-              </div>
+              }
             </div>
           </div>
-        )}
-      </div>
-
-      <div className="w-[60%] p-5 bg-gray-50">
-        <ResumePreview readOnly={true} />
-      </div>
+        </div>
+      )}
     </div>
   );
 };

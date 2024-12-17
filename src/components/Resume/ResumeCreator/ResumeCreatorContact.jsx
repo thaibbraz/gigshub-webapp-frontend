@@ -83,6 +83,7 @@ const ResumeCreatorContact = () => {
             FIRST NAME
           </label>
           <input
+            required
             type="text"
             id="first_name"
             name="first_name"
@@ -97,6 +98,7 @@ const ResumeCreatorContact = () => {
             LAST NAME
           </label>
           <input
+            required
             type="text"
             id="last_name"
             name="last_name"
@@ -157,6 +159,7 @@ const ResumeCreatorContact = () => {
             COUNTRY
           </label>
           <Select
+            required
             id="country"
             options={countries || []}
             value={countries.find((option) => option.value === formData.country) || null}
