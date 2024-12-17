@@ -11,7 +11,7 @@ export default function Layout() {
   return (
     <div
       className={`flex min-h-screen ${
-        isAuthPage ? "bg-bright-purple" : "bg-white"
+        isAuthPage ? "bg-[#3F33C0]" : "bg-white"
       }`}
     >
       {/* Sidebar */}
