@@ -12,7 +12,7 @@ const UserDashboard = () => {
   const resume = useResumeStore((state) => state.resume);
   // TODO: Fix the job title and location
   const [jobTitle, setJobTitle] = useState(resume?.title);
-  const [location, setLocation] = useState("San Francisco");
+  const [location, setLocation] = useState(resume?.country);
   const [cvFormData, setcvFormData] = useState(resume);
   const [loading, setLoading] = useState(false);
   const [clicked, setClicked] = useState(false);
@@ -193,7 +193,6 @@ const UserDashboard = () => {
         pauseOnHover
         theme="light"
       />
-
       {/* Top Filter Section */}
       <div className="w-full px-9">
         <div className="flex lg:flex-row mb-4 mt-6 max-w-7xl gap-x-6 ml-10 w-[90%]">

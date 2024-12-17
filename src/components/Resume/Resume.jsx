@@ -47,7 +47,7 @@ const Resume = () => {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center h-full w-full bg-white rounded-lg overflow-hidden">
+    <div className="flex flex-col items-center justify-center h-full w-full bg-white rounded-lg overflow-hidden">
       {/* Full-screen Overlay */}
       {isUploading && (
         <div className="absolute inset-0 bg-white bg-opacity-80 flex flex-col items-center justify-center z-50">
