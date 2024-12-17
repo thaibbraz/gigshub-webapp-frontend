@@ -78,37 +78,53 @@ const ResumeCreatorContact = () => {
     <>
       <ToastContainer position={"top-center"} autoClose={1000} hideProgressBar={true} />
       <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex gap-3">
+          <div class="grow">
+            <label htmlFor="first_name" className="text-sm font-bold text-gray-700">
+              FIRST NAME
+            </label>
+            <input
+              required
+              type="text"
+              id="first_name"
+              name="first_name"
+              value={formData.first_name || ''}
+              onChange={handleInputChange}
+              placeholder="First Name"
+              className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
+            />
+          </div>
+          <div class="grow">
+            <label htmlFor="last_name" className="text-sm font-bold text-gray-700">
+              LAST NAME
+            </label>
+            <input
+              required
+              type="text"
+              id="last_name"
+              name="last_name"
+              value={formData.last_name || ''}
+              onChange={handleInputChange}
+              placeholder="Last Name"
+              className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
+            />
+          </div>
+        </div>
         <div>
-          <label htmlFor="first_name" className="text-sm font-bold text-gray-700">
-            FIRST NAME
+          <label htmlFor="title" className="text-sm font-bold text-gray-700">
+            TITLE
           </label>
           <input
             required
             type="text"
-            id="first_name"
-            name="first_name"
-            value={formData.first_name || ''}
+            id="title"
+            name="title"
+            value={formData.title || ''}
             onChange={handleInputChange}
             placeholder="First Name"
             className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
           />
         </div>
-        <div>
-          <label htmlFor="last_name" className="text-sm font-bold text-gray-700">
-            LAST NAME
-          </label>
-          <input
-            required
-            type="text"
-            id="last_name"
-            name="last_name"
-            value={formData.last_name || ''}
-            onChange={handleInputChange}
-            placeholder="Last Name"
-            className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
-          />
-        </div>
-
         <div>
           <label htmlFor="phone" className="text-sm font-bold text-gray-700">
             PHONE NUMBER
