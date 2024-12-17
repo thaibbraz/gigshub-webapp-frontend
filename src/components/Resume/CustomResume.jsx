@@ -8,7 +8,7 @@ import { ResumePreview } from "./ResumePreview.jsx";
 import useResumeStore from "../../stores/resume/resumeStore.js";
 import { useNavigate } from "react-router-dom";
 import {
-  checkUserExists
+  checkUserExists, getUserCVData,
 } from "../../utils/firebase.js";
 
 const CustomResume = () => {
@@ -36,10 +36,10 @@ const CustomResume = () => {
   };
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const userId = user?.uid;
-    if (!checkUserExists(userId)) {
-      navigate("/resume/edit");
+    if (JSON.stringify(resume) === '{}') {
+      console.log("got inside");
+      
+      navigate("/resume");
     }
   }, []);
 
