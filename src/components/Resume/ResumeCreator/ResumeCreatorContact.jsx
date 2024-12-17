@@ -3,6 +3,7 @@ import useResumeStore from '../../../stores/resume/resumeStore';
 import Select from 'react-select';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import countryList from "../../../static/countryList.js";
 
 const ResumeCreatorContact = () => {
   const resume = useResumeStore((state) => state.resume);
@@ -39,12 +40,10 @@ const ResumeCreatorContact = () => {
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const response = await fetch("https://restcountries.com/v3.1/all");
-        if (!response.ok) throw new Error("API fetch failed");
-        const data = await response.json();
+        const data = countryList
         const countryOptions = data.map((country) => ({
-          value: country.cca2,
-          label: country.name.common,
+          value: country.value,
+          label: country.name,
         }));
         setCountries(countryOptions);
       } catch (error) {
@@ -79,7 +78,7 @@ const ResumeCreatorContact = () => {
       <ToastContainer position={"top-center"} autoClose={1000} hideProgressBar={true} />
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex gap-3">
-          <div class="grow">
+          <div className="grow">
             <label htmlFor="first_name" className="text-sm font-bold text-gray-700">
               FIRST NAME
             </label>
@@ -94,7 +93,7 @@ const ResumeCreatorContact = () => {
               className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
             />
           </div>
-          <div class="grow">
+          <div className="grow">
             <label htmlFor="last_name" className="text-sm font-bold text-gray-700">
               LAST NAME
             </label>
