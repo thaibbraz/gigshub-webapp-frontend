@@ -140,6 +140,7 @@ const ResumeCreatorProjects = () => {
                 PROJECT TITLE
               </label>
               <input
+                required
                 type="text"
                 id={`title-${activeTab}`}
                 name="title"

@@ -149,6 +149,7 @@ const ResumeCreatorExperience = () => {
                 WHAT WAS YOUR ROLE AT THE COMPANY?
               </label>
               <input
+                required
                 type="text"
                 id={`title-${activeTab}`}
                 name="title"

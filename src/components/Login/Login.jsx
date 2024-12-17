@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container } from "../Container/Container";
 import logoTextGigshub from "../../assets/logo-text-gigshub.png";
@@ -17,47 +17,57 @@ const Login = () => {
   const { login } = useAuth();
   const [error, setError] = useState(null);
 
+  useEffect(() => {
+    if (!auth.currentUser) {
+      localStorage.removeItem("user");
+    }
+  }, []);
+
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
-      const user = result.user;
+      const user = result?.user;
+
+      if (!user) {
+        console.error("No user returned from signInWithPopup");
+        setError("Login failed. Please try again.");
+        return;
+      }
 
       localStorage.setItem(
         "user",
         JSON.stringify({
-          uid: user.uid,
-          displayName: user.displayName,
-          email: user.email,
-          photoURL: user.photoURL,
+          uid: user.uid || "",
+          displayName: user.displayName || "Anonymous",
+          email: user.email || "No email provided",
+          photoURL: user.photoURL || "",
         })
       );
+
       const token = await user.getIdToken();
       const refreshToken = user.refreshToken;
       const extensionId = process.env.REACT_APP_EXTENSION_ID;
-      if (user) {
-        try {
-          await window.chrome.runtime.sendMessage(extensionId, {
-            action: "login",
-            token: token,
-            refreshToken: refreshToken,
-          });
-        } catch (error) {
-          console.error("Error sending message to extension:", error);
-        }
-      }
-      login();
-      if ((await checkUserExists(user.uid)) === false) {
-        navigate("/resume");
+
+      if (window.chrome?.runtime?.sendMessage) {
+        await window.chrome.runtime.sendMessage(extensionId, {
+          action: "login",
+          token,
+          refreshToken,
+        });
       } else {
-        navigate("/dashboard");
+        console.warn("Chrome extension not available");
       }
+
+      login(); // Update your context/auth state
+      const userExists = await checkUserExists(user.uid);
+      navigate(userExists ? "/dashboard" : "/resume");
     } catch (error) {
-      console.error("Error during login:", error);
+      setError("An error occurred during login. Please try again.");
     }
   };
 
   return (
-    <Container className="bg-bright-purple">
+    <Container className="bg-[#3F33C0]">
       <div className="flex flex-col items-center justify-center min-h-screen">
         <img
           src={logoLightPurple}
@@ -75,7 +85,7 @@ const Login = () => {
             <img
               src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png"
               alt="Google logo"
-              style={googleLogoStyle}
+              style={{ width: "20px", height: "20px", marginRight: "10px" }}
             />
             <span>Sign in with Google</span>
           </button>
@@ -83,12 +93,6 @@ const Login = () => {
       </div>
     </Container>
   );
-};
-
-const googleLogoStyle = {
-  width: "20px",
-  height: "20px",
-  marginRight: "10px",
 };
 
 export default Login;

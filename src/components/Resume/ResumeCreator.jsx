@@ -15,7 +15,6 @@ const ResumeCreator = () => {
     { id: "experience", label: "EXPERIENCE" },
     { id: "projects", label: "PROJECTS" },
     { id: "education", label: "EDUCATION" },
-    { id: "certifications", label: "CERTIFICATIONS" },
     { id: "skills", label: "SKILLS" },
   ];
 
