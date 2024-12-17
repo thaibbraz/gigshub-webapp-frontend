@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Input from "../../Elements/Input.jsx";
 import ButtonAI from "../../Elements/ButtonAI.jsx";
 import CountryDropdown from "../../Dropdown/CountryDropdown.jsx";
 import countryList from "../../../static/countryList.js";
@@ -12,8 +11,8 @@ const UserDashboard = () => {
   const navigate = useNavigate();
   const resume = useResumeStore((state) => state.resume);
   // TODO: Fix the job title and location
-  const [jobTitle, setJobTitle] = useState("Software Engineer");
-  const [location, setLocation] = useState("Spain");
+  const [jobTitle, setJobTitle] = useState(resume?.title);
+  const [location, setLocation] = useState("San Francisco");
   const [cvFormData, setcvFormData] = useState(resume);
   const [loading, setLoading] = useState(false);
   const [clicked, setClicked] = useState(false);
@@ -200,11 +199,13 @@ const UserDashboard = () => {
         <div className="flex lg:flex-row mb-4 mt-6 max-w-7xl gap-x-6 ml-10 w-[90%]">
           <div className="flex flex-col lg:flex-row lg:space-x-4">
             {/* Inputs */}
-            <Input
+            <input
+              className="border border-gray-300 rounded-1xl h-input px-4"
               label="Job Title"
               type="text"
-              placeholder={jobTitle || "Job Title"}
-              handleChange={setJobTitle}
+              placeholder={"Software Engineer"}
+              value={jobTitle}
+              onChange={evt => setJobTitle(evt.target.value)}
             />
             <CountryDropdown
               options={countryList}
