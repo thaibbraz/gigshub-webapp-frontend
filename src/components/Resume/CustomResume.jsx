@@ -102,6 +102,8 @@ const CustomResume = () => {
     };
 
     try {
+      console.log('payload', payload);
+      return;
       const response = await sendRequest(payload, "/optimize-cv-for-job");
       console.log("Response from backend:", response);
       setAnalysisData(response.resume_data);

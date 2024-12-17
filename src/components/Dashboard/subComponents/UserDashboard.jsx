@@ -183,7 +183,7 @@ const UserDashboard = () => {
         draggable
         pauseOnHover
         theme="light"
-        />
+      />
         
       {/* Top Filter Section */}
       <div className="w-full px-9">
