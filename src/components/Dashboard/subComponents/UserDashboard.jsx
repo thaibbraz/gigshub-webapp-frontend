@@ -18,6 +18,7 @@ const UserDashboard = () => {
   const [jobTitle, setJobTitle] = useState(resume?.title);
   const [locationState, setLocationState] = useState(resume?.country);
   const [loading, setLoading] = useState(false);
+  const [clicked, setClicked] = useState(false);
   const [loadingJobs, setLoadingJobs] = useState([]);
   const [error, setError] = useState(null);
   const [messageIndex, setMessageIndex] = useState(0);
