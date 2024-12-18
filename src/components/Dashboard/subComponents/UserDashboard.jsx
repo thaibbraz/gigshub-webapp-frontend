@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Input from "../../Elements/Input.jsx";
 import ButtonAI from "../../Elements/ButtonAI.jsx";
+import CountryDropdown from "../../Dropdown/CountryDropdown.jsx";
+import countryList from "../../../static/countryList.js";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import {
-  checkUserExists,
-  getUserCVData,
-} from "../../../utils/firebase.js";
+import { checkUserExists, getUserCVData } from "../../../utils/firebase.js";
 import useResumeStore from "../../../stores/resume/resumeStore.js";
 
 const UserDashboard = () => {
@@ -14,7 +13,7 @@ const UserDashboard = () => {
   const resume = useResumeStore((state) => state.resume);
   // TODO: Fix the job title and location
   const [jobTitle, setJobTitle] = useState("Software Engineer");
-  const [location, setLocation] = useState("San Francisco");
+  const [location, setLocation] = useState("Spain");
   const [cvFormData, setcvFormData] = useState(resume);
   const [loading, setLoading] = useState(false);
   const [clicked, setClicked] = useState(false);
@@ -34,7 +33,7 @@ const UserDashboard = () => {
 
   const fetchData = async () => {
     setClicked(true);
-    
+
     const hasFetchedJobs = localStorage.getItem("hasFetchedJobs");
     const user = JSON.parse(localStorage.getItem("user"));
     const userId = user?.uid;
@@ -48,10 +47,15 @@ const UserDashboard = () => {
       });
     }
   };
-  const fetchJobsFromSources = async (sources, searchTerm, location, resumeData) => {
+  const fetchJobsFromSources = async (
+    sources,
+    searchTerm,
+    location,
+    resumeData
+  ) => {
     const allJobs = [];
     const failedSources = [];
-  
+
     for (const site of sources) {
       try {
         const response = await fetch(`${process.env.REACT_APP_JOBS_URL}/jobs`, {
@@ -63,43 +67,48 @@ const UserDashboard = () => {
             search_term: searchTerm,
             location: location,
             resume_data: resumeData,
-            site_name: site
+            site_name: site,
           }),
         });
-  
+
         if (!response.ok) {
           throw new Error(`Failed to fetch jobs from ${site}`);
         }
-  
+
         const data = await response.json();
-        allJobs.push(...data.jobs); 
+        allJobs.push(...data.jobs);
       } catch (error) {
         console.error(`Error fetching jobs from ${site}:`, error);
         failedSources.push(site);
       }
     }
-  
+
     return { allJobs, failedSources };
   };
-  
+
   const fetchJobs = async () => {
     try {
       const cachedJobs = localStorage.getItem("jobs");
       const timestamp = localStorage.getItem("timestamp");
       if (
         JSON.parse(cachedJobs)?.length > 0 &&
-        jobs?.length === 0 &&
         Date.now() - timestamp < 86400000
       ) {
         setJobs(JSON.parse(cachedJobs));
         return;
       } else if (!JSON.parse(cachedJobs)) {
-        setLoading(true)
+        setLoading(true);
         if (!jobTitle || !location) {
           toast.warn("You need to fill in your job title and location.");
           return;
         }
-        const jobSources = ["indeed", "linkedin", "zip_recruiter", "glassdoor", "google"];
+        const jobSources = [
+          "indeed",
+          "linkedin",
+          "zip_recruiter",
+          "glassdoor",
+          "google",
+        ];
         const { allJobs, failedSources } = await fetchJobsFromSources(
           jobSources,
           jobTitle,
@@ -119,7 +128,7 @@ const UserDashboard = () => {
         localStorage.setItem("timestamp", Date.now());
         // JSON.stringify(orderedJobs));
         setJobs(orderedJobs);
-        setLoading(false)
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error fetching jobs:", error);
@@ -161,7 +170,7 @@ const UserDashboard = () => {
           setStatus((prev) => ({ ...prev, glassdoor: true }));
         } else if (nextIndex === 4) {
           setStatus((prev) => ({ ...prev, indeed: true }));
-          clearInterval(timer); 
+          clearInterval(timer);
         }
 
         return nextIndex;
@@ -184,8 +193,8 @@ const UserDashboard = () => {
         draggable
         pauseOnHover
         theme="light"
-        />
-        
+      />
+
       {/* Top Filter Section */}
       <div className="w-full px-9">
         <div className="flex lg:flex-row mb-4 mt-6 max-w-7xl gap-x-6 ml-10 w-[90%]">
@@ -197,10 +206,10 @@ const UserDashboard = () => {
               placeholder={jobTitle || "Job Title"}
               handleChange={setJobTitle}
             />
-            <Input
-              label="Location"
-              type="text"
-              placeholder={location || "Location"}
+            <CountryDropdown
+              options={countryList}
+              fieldName="location"
+              defaultValue={location || "Location"}
               handleChange={setLocation}
             />
           </div>
