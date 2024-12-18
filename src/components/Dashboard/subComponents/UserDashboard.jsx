@@ -92,7 +92,6 @@ const UserDashboard = () => {
       const timestamp = localStorage.getItem("timestamp");
       if (
         JSON.parse(cachedJobs)?.length > 0 &&
-        jobs?.length === 0 &&
         Date.now() - timestamp < 86400000
       ) {
         setJobs(JSON.parse(cachedJobs));
