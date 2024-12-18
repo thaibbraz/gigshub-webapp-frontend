@@ -7,18 +7,19 @@ import useResumeStore from "../../../stores/resume/resumeStore.js";
 import Select from 'react-select';
 import useJobsStore from "../../../stores/resume/jobsStore.js";
 import { useLocation } from "react-router-dom";
+import { useRef } from "react";
 
 const UserDashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const resume = useResumeStore((state) => state.resume);
   const jobs = useJobsStore((state) => state.jobs);
+  const hasFetchedJobs = useRef(false);
 
   const [countries, setCountries] = useState([]);
   const [jobTitle, setJobTitle] = useState(resume?.title);
   const [locationState, setLocationState] = useState(resume?.country);
   const [loading, setLoading] = useState(false);
-  const [clicked, setClicked] = useState(false);
   const [loadingJobs, setLoadingJobs] = useState([]);
   const [error, setError] = useState(null);
   const [messageIndex, setMessageIndex] = useState(0);
@@ -47,15 +48,14 @@ const UserDashboard = () => {
   }, []);
 
   useEffect(() => {
-    if(location.state?.fetchJobsOnLoad) {
+    if (location.state?.fetchJobsOnLoad && !hasFetchedJobs.current) {
       fetchJobs();
+      hasFetchedJobs.current = true;
     }
   }, [location.state]);
 
   const fetchJobsFromSources = async (sources, searchTerm, location, resumeData) => {
     const jobLists = [];
-    setLoadingJobs(sources);
-
     await Promise.all(
       sources.map(async (site) => {
         try {
@@ -93,13 +93,8 @@ const UserDashboard = () => {
       if (!jobTitle || !locationState) {
         return console.warn("You need to fill in your job title and location.");
       }
-      const jobSources = [
-        "indeed",
-        "linkedin",
-        "zip_recruiter",
-        "glassdoor",
-        "google",
-      ];
+      const jobSources = ["indeed", "linkedin", "zip_recruiter", "glassdoor", "google"];
+      setLoadingJobs(jobSources);
       const jobLists = await fetchJobsFromSources(jobSources, jobTitle, locationState, resume);
       const jobsData = {
         location: locationState,
