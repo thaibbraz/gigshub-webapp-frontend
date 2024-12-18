@@ -220,7 +220,7 @@ const Analytics = () => {
 
     return updatedText.replace(
       newText,
-      `<span class="highlight">${newText}</span>`
+      `<span className="highlight">${newText}</span>`
     );
   };
 
