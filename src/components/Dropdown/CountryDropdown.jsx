@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 
-const Dropdown = ({ options, fieldName, handleChange, defaultValue }) => {
+const CountryDropdown = ({
+  options,
+  fieldName,
+  handleChange,
+  defaultValue,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
 
@@ -8,9 +13,9 @@ const Dropdown = ({ options, fieldName, handleChange, defaultValue }) => {
     setIsOpen(!isOpen);
   };
 
-  const handleOptionClick = (value) => {
-    setSelectedOption(value);
-    handleChange({ target: { name: fieldName, value } });
+  const handleOptionClick = (country) => {
+    setSelectedOption(country);
+    handleChange(country.name);
     setIsOpen(false);
   };
 
@@ -25,7 +30,10 @@ const Dropdown = ({ options, fieldName, handleChange, defaultValue }) => {
         aria-haspopup="true"
       >
         <span className="text-gray-400">
-          {selectedOption || defaultValue || "Options"}
+          {(selectedOption &&
+            `${selectedOption.flag} ${selectedOption.name}`) ||
+            defaultValue ||
+            "Options"}
         </span>
         <svg
           className="h-5 w-5 text-gray-400"
@@ -59,7 +67,7 @@ const Dropdown = ({ options, fieldName, handleChange, defaultValue }) => {
                 tabIndex="-1"
                 onClick={() => handleOptionClick(option)}
               >
-                {option}
+                {option.flag} {option.name}
               </p>
             ))}
           </div>
@@ -69,4 +77,4 @@ const Dropdown = ({ options, fieldName, handleChange, defaultValue }) => {
   );
 };
 
-export default Dropdown;
+export default CountryDropdown;
