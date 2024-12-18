@@ -23,7 +23,7 @@ const Navigation = ({ className }) => {
   const location = useLocation();
   const { logout } = useAuth();
 
-  const navClass = `top-2 left-4 bottom-2 flex flex-col h-full transition-all items-center bg-off-white ${location.pathname === "/dashboard" ? "h-6/6" : "h-auto"} w-24 transition-all duration-300 rounded-xl`
+  const navClass = `relative flex flex-col h-full transition-all items-center bg-off-white z-20 ${location.pathname === "/dashboard" ? "h-6/6" : "h-auto"} w-24 transition-all duration-300`
 
   const handleMouseEnter = () => {
     setIsExpanded(true);

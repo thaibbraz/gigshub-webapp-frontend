@@ -101,16 +101,15 @@ const UserDashboard = () => {
         search_term: jobTitle,
         jobLists,
       };
-
       setJobs(jobsData);
     } catch (error) {
       console.error("Error fetching jobs:", error);
     }
   };
 
-  const handleCustomCVClick = (jobDescription) => {
-    localStorage.setItem("boardJobDescription", jobDescription);
-    navigate("/custom-cv");
+  const handleCustomCVClick = description => {
+    console.log('description', description)
+    navigate("/custom-cv", { state: { tailorResumeOnload:' description' } });
   };
 
   const messages = [
@@ -284,7 +283,7 @@ const UserDashboard = () => {
                       logo = "https://play-lh.googleusercontent.com/Z2MTVQ1XP6rIgBusW8ebjDWASv40-H4TxUEl5FaCN78gt_goEZwrlDjo25tGDc8Oe9s";
                     }
                     return group?.list.length > 0 && group?.list.map((job, index) => {
-                      return (
+                      return (    
                         <tr key={index} className="border-b hover:bg-gray-50 transition duration-150">
                           <td className="py-2 px-3">
                             <div className="flex items-center gap-3">
@@ -305,7 +304,7 @@ const UserDashboard = () => {
                             <p className="text-sm text-gray-500">
                               {job.location}
                             </p>
-                          </td>{" "}
+                          </td>
                           <td className="py-8 px-4 text-nowrap">
                             <p className="text-sm text-gray-500">
                               {job.date_posted}
@@ -342,9 +341,11 @@ const UserDashboard = () => {
                               <a href={job.job_url} target="_blank" rel="noreferrer" className="bg-purple text-white text-xs font-medium me-2 py-2 w-full flex text-nowrap px-3 justify-center rounded">
                                 Apply
                               </a>
-                              <button className="border-[1px] border-purple text-purple text-xs font-medium py-2 w-full flex text-nowrap px-3 justify-center rounded" onClick={() => handleCustomCVClick(job.description)}>
-                                Increase compatibility
-                              </button>
+                              {job.description && (
+                                <button className="border-[1px] border-purple text-purple text-xs font-medium py-2 w-full flex text-nowrap px-3 justify-center rounded" onClick={() => handleCustomCVClick(job.jobDescription)}>
+                                  Increase compatibility
+                                </button>
+                              )}
                             </div>
                           </td>
                         </tr>
