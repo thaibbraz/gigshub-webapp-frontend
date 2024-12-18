@@ -236,7 +236,7 @@ const CustomResume = () => {
     if(job_title_match?.length > 0) {
       const updatedResume = {
         ...resume,
-        jobTitle: highlightAddedText("original text", job_title_match),
+        title: highlightAddedText("original text", job_title_match),
       };
       updateResume(updatedResume);
     }

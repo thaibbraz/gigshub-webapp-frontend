@@ -3,6 +3,7 @@ import useResumeStore from '../../../stores/resume/resumeStore';
 import Select from 'react-select';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import countryList from "../../../static/countryList.js";
 
 const ResumeCreatorContact = () => {
   const resume = useResumeStore((state) => state.resume);
@@ -39,12 +40,10 @@ const ResumeCreatorContact = () => {
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const response = await fetch("https://restcountries.com/v3.1/all");
-        if (!response.ok) throw new Error("API fetch failed");
-        const data = await response.json();
+        const data = countryList
         const countryOptions = data.map((country) => ({
-          value: country.cca2,
-          label: country.name.common,
+          value: country.value,
+          label: country.name,
         }));
         setCountries(countryOptions);
       } catch (error) {

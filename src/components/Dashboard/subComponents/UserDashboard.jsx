@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ButtonAI from "../../Elements/ButtonAI.jsx";
+import Select from 'react-select';
 import CountryDropdown from "../../Dropdown/CountryDropdown.jsx";
 import countryList from "../../../static/countryList.js";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +11,8 @@ import useResumeStore from "../../../stores/resume/resumeStore.js";
 const UserDashboard = () => {
   const navigate = useNavigate();
   const resume = useResumeStore((state) => state.resume);
-  // TODO: Fix the job title and location
+  
+  const [countries, setCountries] = useState([]);
   const [jobTitle, setJobTitle] = useState(resume?.title);
   const [location, setLocation] = useState(resume?.country);
   const [cvFormData, setcvFormData] = useState(resume);
@@ -30,6 +32,23 @@ const UserDashboard = () => {
   );
   const formatScoreAsPercentage = (score) => Math.round(score * 100);
 
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const data = countryList
+        const countryOptions = data.map((country) => ({
+          value: country.value,
+          label: country.name,
+        }));
+        setCountries(countryOptions);
+      } catch (error) {
+        console.error("Error fetching countries:", error);
+      }
+    };
+
+    fetchCountries();
+  }, []);
   const fetchData = async () => {
     setClicked(true);
 
@@ -206,11 +225,13 @@ const UserDashboard = () => {
               value={jobTitle}
               onChange={evt => setJobTitle(evt.target.value)}
             />
-            <CountryDropdown
-              options={countryList}
-              fieldName="location"
-              defaultValue={location || "Location"}
-              handleChange={setLocation}
+            <Select
+            id="country"
+            options={countries || []}
+            value={location || countries.find((option) => option.value === resume.country) || null}
+            onChange={setLocation}
+            placeholder={location}
+            className="mt-1"
             />
           </div>
 
@@ -320,6 +341,12 @@ const UserDashboard = () => {
                     } else if (job.site === "linkedin") {
                       logo =
                         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoJ9_vWWlqK9M-lPZGNIl6UQTJhAMR78eZpQ&s";
+                    }else if (job.site === "google") {
+                      logo =
+                        "https://img.icons8.com/?size=512&id=17949&format=png";
+                    }else if (job.site === "zip_recruiter") {
+                      logo =
+                        "https://play-lh.googleusercontent.com/Z2MTVQ1XP6rIgBusW8ebjDWASv40-H4TxUEl5FaCN78gt_goEZwrlDjo25tGDc8Oe9s";
                     }
 
                     return (
