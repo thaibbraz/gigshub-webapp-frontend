@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import ButtonAI from "../../Elements/ButtonAI.jsx";
-import Select from 'react-select';
 import countryList from "../../../static/countryList.js";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
