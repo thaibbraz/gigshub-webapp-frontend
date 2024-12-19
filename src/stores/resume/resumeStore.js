@@ -9,7 +9,10 @@ const useResumeStore = create((set, get) => ({
       const currentResume = get().resume;
       if(JSON.stringify(currentResume) !== JSON.stringify(cv)) {
         set({ resume: cv });
+      } else {
+        set({ resume: currentResume });
       }
+      console.log('cv', cv, currentResume)
     } catch (error) {
       console.error('Failed to initialize resume from localStorage:', error);
     }
