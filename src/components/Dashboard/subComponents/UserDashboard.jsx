@@ -14,6 +14,7 @@ const UserDashboard = () => {
   const location = useLocation();
   const resume = useResumeStore((state) => state.resume);
   const jobs = useJobsStore((state) => state.jobs);
+  const setSelectedJob = useJobsStore((state) => state.setSelectedJob);
   const hasFetchedJobs = useRef(false);
 
   const [countries, setCountries] = useState([]);
@@ -107,9 +108,9 @@ const UserDashboard = () => {
     }
   };
 
-  const handleCustomCVClick = description => {
-    console.log('description', description)
-    navigate("/custom-cv", { state: { tailorResumeOnload:' description' } });
+  const handleCustomCVClick = job => {
+    setSelectedJob(job);
+    navigate("/custom-cv");
   };
 
   const messages = [
@@ -342,7 +343,7 @@ const UserDashboard = () => {
                                 Apply
                               </a>
                               {job.description && (
-                                <button className="border-[1px] border-purple text-purple text-xs font-medium py-2 w-full flex text-nowrap px-3 justify-center rounded" onClick={() => handleCustomCVClick(job.jobDescription)}>
+                                <button className="border-[1px] border-purple text-purple text-xs font-medium py-2 w-full flex text-nowrap px-3 justify-center rounded" onClick={() => handleCustomCVClick(job)}>
                                   Increase compatibility
                                 </button>
                               )}
