@@ -11,28 +11,38 @@ const useResumeStore = create((set, get) => ({
   initializeResume: async (userId) => {
     try {
       get().setLoading(true);
-      
-      
       let cv = {};
       userId = userId || JSON.parse(localStorage.getItem('user'))?.uid;
-      if (checkUserExists(userId)) {
+  
+      if(await checkUserExists(userId)) {
         const fetchedCV = await getUserCVData(userId);
         cv = fetchedCV || {};
       } else {
-        //should be redirected to the resume builder
+        // should be redirected to the resume builder
         return null;
       }
-      console.log(cv);
+  
       const currentResume = get().resume;
-      if (JSON.stringify(currentResume) !== JSON.stringify(cv)) {
+  
+      if(JSON.stringify(currentResume) !== JSON.stringify(cv)) {
         set({ resume: cv });
+        // Save to localStorage
+        const storedUser = localStorage.getItem('user');
+        if(storedUser) {
+          const user = JSON.parse(storedUser);
+          user.cv = cv;
+          localStorage.setItem('user', JSON.stringify(user));
+        } else {
+          const newUser = { cv };
+          localStorage.setItem('user', JSON.stringify(newUser));
+        }
       }
     } catch (error) {
       console.error('Failed to initialize resume:', error);
     } finally {
       get().setLoading(false);
     }
-  },
+  },  
 
   updateResume: async (updatedCV) => {
     const userId = JSON.parse(localStorage.getItem('user'))?.uid || null;
@@ -44,7 +54,7 @@ const useResumeStore = create((set, get) => ({
           await updateUserData(userId, { cv: updatedCV });
         }
         const storedUser = localStorage.getItem('user');
-        if (storedUser) {
+        if(storedUser) {
           const user = JSON.parse(storedUser);
           user.cv = updatedCV;
           localStorage.setItem('user', JSON.stringify(user));

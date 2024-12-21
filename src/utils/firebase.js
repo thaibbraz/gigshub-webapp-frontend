@@ -38,7 +38,6 @@ async function checkUserExists(userId) {
     const snapshot = await get(child(dbRef, `users/${userId}`));
 
     if (snapshot.exists()) {
-      console.log("User exists:", snapshot.val());
       return true;
     } else {
       console.log("User does not exist or no users node in the database.");
@@ -105,7 +104,6 @@ const getUserCVData = async (userId) => {
     // Fetch the CV data
     const snapshot = await get(cvRef);
     if (snapshot.exists()) {
-      console.log("CV data fetched:", snapshot.val());
       return snapshot.val();
     } else {
       console.log("No CV data found for this user.");

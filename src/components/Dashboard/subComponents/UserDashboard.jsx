@@ -66,13 +66,11 @@ const UserDashboard = () => {
             body: JSON.stringify({
               search_term: searchTerm,
               location,
-              resume_data: resumeData,
+              resume_data: resumeData = { ...resumeData, skills: resumeData.skills || [{ list: [] }]},
               site_name: site,
             }),
           });
-
-          if (!response.ok) throw new Error(`Failed to fetch jobs from ${site}`);
-
+          if(!response.ok) throw new Error(`Failed to fetch jobs from ${site}`);
           const { jobs } = await response.json();
           jobLists.push({ site, list: jobs });
         } catch (error) {
@@ -111,6 +109,7 @@ const UserDashboard = () => {
 
   const handleCustomCVClick = job => {
     setSelectedJob(job);
+    localStorage.setItem('selectedJob', JSON.stringify(job));
     navigate("/custom-cv");
   };
 

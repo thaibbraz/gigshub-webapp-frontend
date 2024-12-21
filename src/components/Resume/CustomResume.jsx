@@ -8,6 +8,7 @@ import { ResumePreview } from "./ResumePreview.jsx";
 import useResumeStore from "../../stores/resume/resumeStore.js";
 import cloneDeep from "lodash/cloneDeep";
 import useJobsStore from "../../stores/resume/jobsStore.js";
+import { useNavigate } from "react-router-dom";
 
 const CustomResume = () => {
   const location = useLocation();
@@ -16,6 +17,7 @@ const CustomResume = () => {
   const initializeResume = useResumeStore((state) => state.initializeResume);
   const selectedJob = useJobsStore((state) => state.selectedJob);
   const setSelectedJob = useJobsStore((state) => state.setSelectedJob);
+  const navigate = useNavigate();
 
   const [resume, setResume] = useState(cloneDeep(originalResume));
 
@@ -66,19 +68,6 @@ const CustomResume = () => {
       handleJobAnalyse(selectedJob?.description);
     }
   }, [location.state, setSelectedJob]);
-
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      console.log('Window is unloading');
-    };
-  
-    window.addEventListener('beforeunload', handleBeforeUnload);
-  
-    return () => {
-      setSelectedJob(null);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, []);
   
   const calculateMatchingScore = () => {
     if(!analysisData || !analysisData.summary_of_issues) return 0;
@@ -326,6 +315,7 @@ const CustomResume = () => {
       // Create a temporary URL for the Blob
       const url = URL.createObjectURL(blob);
 
+      navigate("/dashboard");
       // Create a download link
       const link = document.createElement("a");
       link.href = url;
