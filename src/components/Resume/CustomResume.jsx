@@ -314,8 +314,6 @@ const CustomResume = () => {
 
       // Create a temporary URL for the Blob
       const url = URL.createObjectURL(blob);
-
-      navigate("/dashboard");
       // Create a download link
       const link = document.createElement("a");
       link.href = url;
@@ -325,6 +323,7 @@ const CustomResume = () => {
       // Revoke the URL to release memory
       URL.revokeObjectURL(url);
 
+      navigate("/dashboard");
       window.open(selectedJob.job_url, "_blank");
 
       setDownLoading(false);
