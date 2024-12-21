@@ -29,7 +29,7 @@ const ResumeCreator = () => {
 
   return (
     <div className="h-full p-6">
-      <h1 className="text-2xl font-semibold mb-4">Resume 1</h1>
+      <h1 className="text-2xl font-semibold mb-4">Resume Builder</h1>
       {/* Tabs */}
       <div className="flex flex-wrap gap-2 mb-6">
         {tabs.map((tab) => (

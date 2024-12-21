@@ -3,6 +3,7 @@ import useResumeStore from "../../stores/resume/resumeStore.js";
 import { useEffect, useState } from "react";
 import { addUserData } from "../../utils/firebase.js";
 import { useNavigate, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export const ResumePreview = ({ readOnly = false, customResume }) => {
   const { resume, loadingResume } = useResumeStore();
@@ -40,6 +41,7 @@ export const ResumePreview = ({ readOnly = false, customResume }) => {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
 
     if (!resume.title || !resume.country) {
+      toast.warning("Please fill job tittle and country");
       const searchParams = new URLSearchParams(location.search);
       searchParams.set("tab", "contact");
       navigate(`${location.pathname}?${searchParams.toString()}`, { replace: true });

@@ -60,15 +60,38 @@ const addUserData = async (userId, data) => {
     const userRef = ref(database, `users/${userId}`);
 
     // Thiago, I commented this out to be able to update the data
-    /***
+   
     const snapshot = await get(userRef);
     if(snapshot.exists()) {
       return;
     }
-    ***/
+    
     return await set(userRef, sanitizedData);
   } catch (error) {
     console.error("Error adding or updating user data:", error);
+  }
+};
+const updateUserData = async (userId, data) => {
+  console.log('updateUserData', userId, data);
+  try {
+    if (!userId) throw new Error("User ID is undefined");
+    if (!data || typeof data !== "object") throw new Error("Invalid data");
+
+    const sanitizedData = JSON.parse(JSON.stringify(data));
+    const userRef = ref(database, `users/${userId}`);
+
+    const snapshot = await get(userRef);
+
+    if (snapshot.exists()) {
+      const existingData = snapshot.val();
+      const updatedData = { ...existingData, ...sanitizedData };
+      await set(userRef, updatedData);
+    } else {
+      await set(userRef, sanitizedData);
+    }
+    console.log("User data added or updated successfully.");
+  } catch (error) {
+    console.error("Error updating user data:", error);
   }
 };
 
@@ -105,4 +128,5 @@ export {
   checkUserExists,
   signInWithPopup,
   getUserCVData,
+  updateUserData
 };

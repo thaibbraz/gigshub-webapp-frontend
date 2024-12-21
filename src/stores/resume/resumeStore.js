@@ -1,7 +1,9 @@
 import { create } from 'zustand';
-import { getUserCVData, addUserData } from '../../utils/firebase';
+import { checkUserExists, getUserCVData, updateUserData } from '../../utils/firebase';
+
 
 const useResumeStore = create((set, get) => ({
+  
   resume: {},
   loadingResume: false,
   setLoading: (loading) => set({ loadingResume: loading }),
@@ -9,16 +11,17 @@ const useResumeStore = create((set, get) => ({
   initializeResume: async (userId) => {
     try {
       get().setLoading(true);
-      const storedUser = localStorage.getItem('user');
+      
+      
       let cv = {};
       userId = userId || JSON.parse(localStorage.getItem('user'))?.uid;
-      if (userId) {
+      if (checkUserExists(userId)) {
         const fetchedCV = await getUserCVData(userId);
         cv = fetchedCV || {};
-      } else if (storedUser) {
-        cv = JSON.parse(storedUser).cv || {};
+      } else {
+        //should be redirected to the resume builder
+        return null;
       }
-
       console.log(cv);
       const currentResume = get().resume;
       if (JSON.stringify(currentResume) !== JSON.stringify(cv)) {
@@ -38,7 +41,7 @@ const useResumeStore = create((set, get) => ({
       const currentResume = get().resume;
       if(JSON.stringify(currentResume) !== JSON.stringify(updatedCV)) {
         if(userId) {
-          await addUserData(userId, { cv: updatedCV });
+          await updateUserData(userId, { cv: updatedCV });
         }
         const storedUser = localStorage.getItem('user');
         if (storedUser) {

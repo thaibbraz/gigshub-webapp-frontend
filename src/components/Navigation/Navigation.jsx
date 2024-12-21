@@ -64,6 +64,7 @@ const Navigation = ({ className }) => {
             <div className="flex justify-center items-center space-x-4 mb-4">
               <img src={logoDarkPurple} alt="Logo" className="h-10 w-10" />
             </div>
+            { Object.entries(resume).length > 0 && (
             <div className="cursor-pointer relative w-8 h-8">
               <div onClick={() => handleClick("dashboard")} className="absolute left-0 flex items-center justify-start px-2 py-1 -mx-2 -my-1 w-auto max-w-10 overflow-hidden transition-all duration-300 hover:max-w-[300px] hover:shadow-md hover:rounded-full hover:pe-4 hover:bg-white">
                 <div className="min-w-9 w-9 h-8 flex items-center justify-center">
@@ -74,6 +75,7 @@ const Navigation = ({ className }) => {
                 </span>
               </div>
             </div>
+            )}
             <div className="cursor-pointer relative w-8 h-8">
               <div onClick={() => handleClick("resume")} className="absolute left-0 flex items-center justify-start px-2 py-1 -mx-2 -my-1 w-auto max-w-10 overflow-hidden transition-all duration-300 hover:max-w-[300px] hover:shadow-md hover:rounded-full hover:pe-4 hover:bg-white">
                 <div className="min-w-9 w-9 h-8 flex items-center justify-center">
