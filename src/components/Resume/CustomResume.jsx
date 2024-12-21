@@ -6,7 +6,6 @@ import Select from "react-select";
 import { useLocation } from "react-router-dom";
 import { ResumePreview } from "./ResumePreview.jsx";
 import useResumeStore from "../../stores/resume/resumeStore.js";
-import { useNavigate } from "react-router-dom";
 import cloneDeep from "lodash/cloneDeep";
 import useJobsStore from "../../stores/resume/jobsStore.js";
 
@@ -76,7 +75,7 @@ const CustomResume = () => {
     window.addEventListener('beforeunload', handleBeforeUnload);
   
     return () => {
-      console.log('Removing beforeunload listener');
+      setSelectedJob(null);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
@@ -586,7 +585,7 @@ const CustomResume = () => {
         </div>
         <div className={`transition-all duration-500 ease-in-out flex flex-col p-5 items-center ${ showAnalysisPanel ? "w-[60%]" : "w-[100%]" } bg-gray-50`}>
           <div className="max-w-4xl">
-            <ResumePreview readOnly={true} resume={resume} />
+            <ResumePreview readOnly={true} customResume={resume} />
           </div>
 
           {selectedJob && !analysing && (

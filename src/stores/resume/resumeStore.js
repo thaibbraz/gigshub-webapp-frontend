@@ -1,28 +1,47 @@
 import { create } from 'zustand';
+import { getUserCVData, addUserData } from '../../utils/firebase';
 
 const useResumeStore = create((set, get) => ({
   resume: {},
-  initializeResume: () => {
+  loadingResume: false,
+  setLoading: (loading) => set({ loadingResume: loading }),
+
+  initializeResume: async (userId) => {
     try {
+      get().setLoading(true);
       const storedUser = localStorage.getItem('user');
-      const cv = storedUser ? JSON.parse(storedUser).cv || {} : {};
-      const currentResume = get().resume;
-      if(JSON.stringify(currentResume) !== JSON.stringify(cv)) {
-        set({ resume: cv });
-      } else {
-        set({ resume: currentResume });
+      let cv = {};
+      userId = userId || JSON.parse(localStorage.getItem('user'))?.uid;
+      if (userId) {
+        const fetchedCV = await getUserCVData(userId);
+        cv = fetchedCV || {};
+      } else if (storedUser) {
+        cv = JSON.parse(storedUser).cv || {};
       }
-      console.log('cv', cv, currentResume)
+
+      console.log(cv);
+      const currentResume = get().resume;
+      if (JSON.stringify(currentResume) !== JSON.stringify(cv)) {
+        set({ resume: cv });
+      }
     } catch (error) {
-      console.error('Failed to initialize resume from localStorage:', error);
+      console.error('Failed to initialize resume:', error);
+    } finally {
+      get().setLoading(false);
     }
   },
-  updateResume: (updatedCV) => {
+
+  updateResume: async (updatedCV) => {
+    const userId = JSON.parse(localStorage.getItem('user'))?.uid || null;
     try {
+      get().setLoading(true);
       const currentResume = get().resume;
       if(JSON.stringify(currentResume) !== JSON.stringify(updatedCV)) {
+        if(userId) {
+          await addUserData(userId, { cv: updatedCV });
+        }
         const storedUser = localStorage.getItem('user');
-        if(storedUser) {
+        if (storedUser) {
           const user = JSON.parse(storedUser);
           user.cv = updatedCV;
           localStorage.setItem('user', JSON.stringify(user));
@@ -33,7 +52,9 @@ const useResumeStore = create((set, get) => ({
         set({ resume: updatedCV });
       }
     } catch (error) {
-      console.error('Failed to update resume in localStorage:', error);
+      console.error('Failed to update resume:', error);
+    } finally {
+      get().setLoading(false);
     }
   },
 }));
