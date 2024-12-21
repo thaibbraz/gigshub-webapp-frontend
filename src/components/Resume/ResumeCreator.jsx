@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import ResumeCreatorContact from "./ResumeCreator/ResumeCreatorContact";
 import ResumeCreatorExperience from "./ResumeCreator/ResumeCreatorExperience";
@@ -8,7 +8,7 @@ import ResumeCreatorSkills from "./ResumeCreator/ResumeCreatorSkills.jsx";
 
 const ResumeCreator = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "contact");
+  const activeTab = searchParams.get("tab") || "contact";
 
   const tabs = [
     { id: "contact", label: "CONTACT" },
@@ -20,22 +20,16 @@ const ResumeCreator = () => {
 
   const handleTabClick = (tabId) => {
     const params = new URLSearchParams(searchParams);
-    if(tabId !== "experience") params.delete("exp");
-    if(tabId !== "projects") params.delete("project");
-    if(tabId !== "education") params.delete("edu");
+    if (tabId !== "experience") params.delete("exp");
+    if (tabId !== "projects") params.delete("project");
+    if (tabId !== "education") params.delete("edu");
+    params.set("tab", tabId);
     setSearchParams(params);
-    setActiveTab(tabId);
   };
-
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams);
-    params.set("tab", activeTab);
-    setSearchParams(params);
-  }, [activeTab, setSearchParams, searchParams]);
 
   return (
     <div className="h-full p-6">
-      <h1 className="text-2xl font-semibold mb-4">Resume 1</h1>
+      <h1 className="text-2xl font-semibold mb-4">Resume Builder</h1>
       {/* Tabs */}
       <div className="flex flex-wrap gap-2 mb-6">
         {tabs.map((tab) => (
@@ -58,7 +52,6 @@ const ResumeCreator = () => {
       {activeTab === "projects" && <ResumeCreatorProjects />}
       {activeTab === "education" && <ResumeCreatorEducation />}
       {activeTab === "skills" && <ResumeCreatorSkills />}
-
     </div>
   );
 };

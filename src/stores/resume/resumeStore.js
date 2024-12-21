@@ -1,25 +1,50 @@
 import { create } from 'zustand';
+import { checkUserExists, getUserCVData, updateUserData } from '../../utils/firebase';
+
 
 const useResumeStore = create((set, get) => ({
+  
   resume: {},
-  initializeResume: () => {
+  loadingResume: false,
+  setLoading: (loading) => set({ loadingResume: loading }),
+
+  initializeResume: async (userId) => {
     try {
-      const storedUser = localStorage.getItem('user');
-      const cv = storedUser ? JSON.parse(storedUser).cv || {} : {};
+      get().setLoading(true);
+      
+      
+      let cv = {};
+      userId = userId || JSON.parse(localStorage.getItem('user'))?.uid;
+      if (checkUserExists(userId)) {
+        const fetchedCV = await getUserCVData(userId);
+        cv = fetchedCV || {};
+      } else {
+        //should be redirected to the resume builder
+        return null;
+      }
+      console.log(cv);
       const currentResume = get().resume;
-      if(JSON.stringify(currentResume) !== JSON.stringify(cv)) {
+      if (JSON.stringify(currentResume) !== JSON.stringify(cv)) {
         set({ resume: cv });
       }
     } catch (error) {
-      console.error('Failed to initialize resume from localStorage:', error);
+      console.error('Failed to initialize resume:', error);
+    } finally {
+      get().setLoading(false);
     }
   },
-  updateResume: (updatedCV) => {
+
+  updateResume: async (updatedCV) => {
+    const userId = JSON.parse(localStorage.getItem('user'))?.uid || null;
     try {
+      get().setLoading(true);
       const currentResume = get().resume;
       if(JSON.stringify(currentResume) !== JSON.stringify(updatedCV)) {
+        if(userId) {
+          await updateUserData(userId, { cv: updatedCV });
+        }
         const storedUser = localStorage.getItem('user');
-        if(storedUser) {
+        if (storedUser) {
           const user = JSON.parse(storedUser);
           user.cv = updatedCV;
           localStorage.setItem('user', JSON.stringify(user));
@@ -30,7 +55,9 @@ const useResumeStore = create((set, get) => ({
         set({ resume: updatedCV });
       }
     } catch (error) {
-      console.error('Failed to update resume in localStorage:', error);
+      console.error('Failed to update resume:', error);
+    } finally {
+      get().setLoading(false);
     }
   },
 }));

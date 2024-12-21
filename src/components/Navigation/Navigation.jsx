@@ -14,6 +14,7 @@ import settingsIconDark from "../../assets/settingsIconDark.svg";
 import logoutIcon from "../../assets/logoutIcon.svg";
 import logoutIconDark from "../../assets/logoutIconDark.svg";
 import { useAuth } from "../../context/AuthContext";
+import useResumeStore from "../../stores/resume/resumeStore";
 
 const Navigation = ({ className }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -22,6 +23,8 @@ const Navigation = ({ className }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();
+
+  const resume = useResumeStore((state) => state.resume);
 
   const navClass = `relative flex flex-col h-full transition-all items-center bg-off-white z-20 ${location.pathname === "/dashboard" ? "h-6/6" : "h-auto"} w-24 transition-all duration-300`
 
@@ -45,9 +48,8 @@ const Navigation = ({ className }) => {
     try {
       const extensionId = process.env.REACT_APP_EXTENSION_ID;
       // Send both ID token and refresh token to the Chrome extension
-      await window.chrome.runtime.sendMessage(extensionId, {
-        action: "logout",
-      });
+      if(window.chrome?.runtime?.sendMessage)
+        await window.chrome.runtime.sendMessage(extensionId, { action: "logout" });
     } catch (error) {
       console.error("Error sending message to extension:", error);
     }
@@ -62,6 +64,7 @@ const Navigation = ({ className }) => {
             <div className="flex justify-center items-center space-x-4 mb-4">
               <img src={logoDarkPurple} alt="Logo" className="h-10 w-10" />
             </div>
+            { Object.entries(resume).length > 0 && (
             <div className="cursor-pointer relative w-8 h-8">
               <div onClick={() => handleClick("dashboard")} className="absolute left-0 flex items-center justify-start px-2 py-1 -mx-2 -my-1 w-auto max-w-10 overflow-hidden transition-all duration-300 hover:max-w-[300px] hover:shadow-md hover:rounded-full hover:pe-4 hover:bg-white">
                 <div className="min-w-9 w-9 h-8 flex items-center justify-center">
@@ -72,6 +75,7 @@ const Navigation = ({ className }) => {
                 </span>
               </div>
             </div>
+            )}
             <div className="cursor-pointer relative w-8 h-8">
               <div onClick={() => handleClick("resume")} className="absolute left-0 flex items-center justify-start px-2 py-1 -mx-2 -my-1 w-auto max-w-10 overflow-hidden transition-all duration-300 hover:max-w-[300px] hover:shadow-md hover:rounded-full hover:pe-4 hover:bg-white">
                 <div className="min-w-9 w-9 h-8 flex items-center justify-center">
@@ -82,16 +86,18 @@ const Navigation = ({ className }) => {
                 </span>
               </div>
             </div>
-            <div className="cursor-pointer relative w-8 h-8">
-              <div onClick={() => handleClick("custom-cv")} className="absolute left-0 flex items-center justify-start px-2 py-1 -mx-2 -my-1 w-auto max-w-10 overflow-hidden transition-all duration-300 hover:max-w-[300px] hover:shadow-md hover:rounded-full hover:pe-4 hover:bg-white">
-                <div className="min-w-9 w-9 h-8 flex items-center justify-center">
-                  <img src={activePage === "custom-cv" ? sparklesIconDark : sparklesIcon} alt="sparkles" className="h-5 w-5" />
+            { Object.entries(resume).length > 0 && (
+              <div className="cursor-pointer relative w-8 h-8">
+                <div onClick={() => handleClick("custom-cv")} className="absolute left-0 flex items-center justify-start px-2 py-1 -mx-2 -my-1 w-auto max-w-10 overflow-hidden transition-all duration-300 hover:max-w-[300px] hover:shadow-md hover:rounded-full hover:pe-4 hover:bg-white">
+                  <div className="min-w-9 w-9 h-8 flex items-center justify-center">
+                    <img src={activePage === "custom-cv" ? sparklesIconDark : sparklesIcon} alt="sparkles" className="h-5 w-5" />
+                  </div>
+                  <span className={`font-small uppercase m-0 font-bold overflow-hidden text-nowrap transition-all} ${ activePage === "custom-cv" ? "text-dark-blue" : "text-light-liliac"}`}>
+                  Tailor CV
+                  </span>
                 </div>
-                <span className={`font-small uppercase m-0 font-bold overflow-hidden text-nowrap transition-all} ${ activePage === "custom-cv" ? "text-dark-blue" : "text-light-liliac"}`}>
-                Tailor CV
-                </span>
               </div>
-            </div>
+            )}
           </div>
           <div className="w-10/12 border-t border-light-liliac opacity-30 mx-auto"></div>
           

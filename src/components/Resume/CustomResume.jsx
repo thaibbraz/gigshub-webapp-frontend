@@ -6,20 +6,20 @@ import Select from "react-select";
 import { useLocation } from "react-router-dom";
 import { ResumePreview } from "./ResumePreview.jsx";
 import useResumeStore from "../../stores/resume/resumeStore.js";
-import { useNavigate } from "react-router-dom";
 import cloneDeep from "lodash/cloneDeep";
+import useJobsStore from "../../stores/resume/jobsStore.js";
 
 const CustomResume = () => {
-  const navigate = useNavigate();
   const location = useLocation();
-  const hasTailoredResume = useRef(false);
   const originalResume = useResumeStore((state) => state.resume);
   const updateResume = useResumeStore((state) => state.updateResume);
   const initializeResume = useResumeStore((state) => state.initializeResume);
+  const selectedJob = useJobsStore((state) => state.selectedJob);
+  const setSelectedJob = useJobsStore((state) => state.setSelectedJob);
 
   const [resume, setResume] = useState(cloneDeep(originalResume));
 
-  const [loading, setLoading] = useState(false);
+  const [downloading, setDownLoading] = useState(false);
   const [analysing, setAnalysing] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [jobDescription, setJobDescription] = useState("");
@@ -37,11 +37,6 @@ const CustomResume = () => {
     grammar_issues: 1,
   };
 
-  
-  useEffect(() => {
-    initializeResume();
-  }, [initializeResume]);
-
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const description = queryParams.get("description");
@@ -49,7 +44,7 @@ const CustomResume = () => {
       setJobDescription(description);
       console.log("Description from extension:", description);
     } else {
-      console.log("No description found in URL.");
+      //console.log("No description found in URL.");
     }
   }, [location.search]);
 
@@ -57,17 +52,33 @@ const CustomResume = () => {
     if(localStorage.getItem("boardJobDescription")) {
       setJobDescription(localStorage.getItem("boardJobDescription"));
     } else {
-      console.log("No description found in localStorage.");
+      //console.log("No description found in localStorage.");
     }
   }, []);
 
   useEffect(() => {
-    if(location.state?.tailorResumeOnload && !hasTailoredResume.current) {
+    initializeResume();
+  }, [initializeResume]);
+
+  useEffect(() => {
+    if(selectedJob) {
       window.scrollTo({ top: 0 });
-      hasTailoredResume.current = true;
-      handleJobAnalyse(location.state.tailorResumeOnload);
+      handleJobAnalyse(selectedJob?.description);
     }
-  }, [location.state]);
+  }, [location.state, setSelectedJob]);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      console.log('Window is unloading');
+    };
+  
+    window.addEventListener('beforeunload', handleBeforeUnload);
+  
+    return () => {
+      setSelectedJob(null);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
   
   const calculateMatchingScore = () => {
     if(!analysisData || !analysisData.summary_of_issues) return 0;
@@ -282,32 +293,30 @@ const CustomResume = () => {
       : "#F2994A";
 
   const handleDownloadPDF = async () => {
-    console.log("Downloading PDF...");
-
+    setDownLoading(true);
     try {
-      const response = await fetch("http://localhost:8000/generate_resume", {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/generate_resume`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ resume_data: resume }),
       });
 
       if(!response.ok) {
+        setDownLoading(false);
         throw new Error("Network response was not ok");
       }
 
       const data = await response.json();
       console.log("PDF generation response:", data);
 
-      const base64Data = data.pdf_base64; // Assuming the base64 data is in the 'pdf_base64' property
+      const base64Data = data.pdf_base64;
 
       // Decode the base64 string
       const binaryData = atob(base64Data);
 
       // Convert binary string to ArrayBuffer
       const byteNumbers = new Uint8Array(binaryData.length);
-      for (let i = 0; i < binaryData.length; i++) {
+      for(let i = 0; i < binaryData.length; i++) {
         byteNumbers[i] = binaryData.charCodeAt(i);
       }
 
@@ -325,8 +334,13 @@ const CustomResume = () => {
 
       // Revoke the URL to release memory
       URL.revokeObjectURL(url);
+
+      window.open(selectedJob.job_url, "_blank");
+
+      setDownLoading(false);
     } catch (error) {
       console.error("Error:", error);
+      setDownLoading(false);
     }
   };
 
@@ -569,10 +583,18 @@ const CustomResume = () => {
             </div>
           }
         </div>
-        <div className={`transition-all duration-500 ease-in-out flex justify-center ${ showAnalysisPanel ? "w-[60%]" : "w-[100%]" } p-5 bg-gray-50`}>
-          <div className="max-w-3xl">
-            <ResumePreview readOnly={true} resume={resume} />
+        <div className={`transition-all duration-500 ease-in-out flex flex-col p-5 items-center ${ showAnalysisPanel ? "w-[60%]" : "w-[100%]" } bg-gray-50`}>
+          <div className="max-w-4xl">
+            <ResumePreview readOnly={true} customResume={resume} />
           </div>
+
+          {selectedJob && !analysing && (
+            <div className="flex justify-end w-full py-4">
+              <button onClick={() => handleDownloadPDF()} className="relative flex items-center font-normal bg-purple px-4 py-2 text-sm text-white rounded-full">
+                Download and Apply
+              </button>
+            </div>
+          )}
         </div>
       </div>
       {showPopup && (

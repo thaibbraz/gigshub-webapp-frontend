@@ -744,7 +744,7 @@ const Analytics = () => {
             <span>Download CV</span>
           </button>
         </div>
-        <div className="w-full max-h-[1200px] overflow-y-auto bg-white border-2 border-dashed border-gray-300 rounded-lg">
+        <div className="w-full min-h-full overflow-y-auto bg-white border-2 border-dashed border-gray-300 rounded-lg">
           <div className="flex justify-end p-4">
             <img
               src={editIcon}

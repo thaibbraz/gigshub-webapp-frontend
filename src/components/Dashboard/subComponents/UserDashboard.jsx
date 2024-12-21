@@ -14,6 +14,7 @@ const UserDashboard = () => {
   const location = useLocation();
   const resume = useResumeStore((state) => state.resume);
   const jobs = useJobsStore((state) => state.jobs);
+  const setSelectedJob = useJobsStore((state) => state.setSelectedJob);
   const hasFetchedJobs = useRef(false);
 
   const [countries, setCountries] = useState([]);
@@ -48,7 +49,7 @@ const UserDashboard = () => {
   }, []);
 
   useEffect(() => {
-    if (location.state?.fetchJobsOnLoad && !hasFetchedJobs.current) {
+    if(location.state?.fetchJobsOnLoad && !hasFetchedJobs.current) {
       fetchJobs();
       hasFetchedJobs.current = true;
     }
@@ -90,7 +91,8 @@ const UserDashboard = () => {
   const fetchJobs = async () => {
     const { setJobs } = useJobsStore.getState();
     try {
-      if (!jobTitle || !locationState) {
+      console.log(jobTitle, locationState);
+      if(!jobTitle || !locationState) {
         return console.warn("You need to fill in your job title and location.");
       }
       const jobSources = ["indeed", "linkedin", "zip_recruiter", "glassdoor", "google"];
@@ -107,9 +109,9 @@ const UserDashboard = () => {
     }
   };
 
-  const handleCustomCVClick = description => {
-    console.log('description', description)
-    navigate("/custom-cv", { state: { tailorResumeOnload:' description' } });
+  const handleCustomCVClick = job => {
+    setSelectedJob(job);
+    navigate("/custom-cv");
   };
 
   const messages = [
@@ -190,7 +192,7 @@ const UserDashboard = () => {
         </div>
         {/* Job List Section */}
         {error && <p className="text-center text-red-500">{error}</p>}
-        {loadingJobs.length > 0 && (
+        {loadingJobs?.length > 0 && (
           <div className="flex flex-col items-center bg-white w-full">
             <div className="flex flex-col items-center justify-center space-y-6 mt-10">
               {/* Dynamic Message */}
@@ -243,7 +245,7 @@ const UserDashboard = () => {
           </div>
         )}
         {/* Job List */}
-        {!loadingJobs.length && jobs && (
+        {!loadingJobs?.length && jobs && (
           <div className="flex flex-col items-center bg-white rounded-xl w-full overflow-y-auto">
             <div className="overflow-x-auto">
               <table className="min-w-full bg-white rounded-lg">
@@ -268,7 +270,7 @@ const UserDashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {jobs?.jobLists.map((group, index) => {
+                  {jobs?.jobLists?.map((group, index) => {
                     let logo;
                     if(group.site === "indeed") {
                       logo =
@@ -342,7 +344,7 @@ const UserDashboard = () => {
                                 Apply
                               </a>
                               {job.description && (
-                                <button className="border-[1px] border-purple text-purple text-xs font-medium py-2 w-full flex text-nowrap px-3 justify-center rounded" onClick={() => handleCustomCVClick(job.jobDescription)}>
+                                <button className="border-[1px] border-purple text-purple text-xs font-medium py-2 w-full flex text-nowrap px-3 justify-center rounded" onClick={() => handleCustomCVClick(job)}>
                                   Increase compatibility
                                 </button>
                               )}

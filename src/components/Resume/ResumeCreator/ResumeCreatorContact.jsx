@@ -16,7 +16,7 @@ const ResumeCreatorContact = () => {
     phone: "",
     email: "",
     linkedin: "",
-    country: null,
+    country: "",
   });
 
   const [countries, setCountries] = useState([]);
@@ -30,12 +30,7 @@ const ResumeCreatorContact = () => {
     setFormData((prev) => ({ ...prev, ...resume }));
   }, [resume]);
 
-  const mockCountries = [
-    { value: "US", label: "United States" },
-    { value: "CA", label: "Canada" },
-    { value: "UK", label: "United Kingdom" },
-    { value: "IN", label: "India" },
-  ];
+
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -48,7 +43,6 @@ const ResumeCreatorContact = () => {
         setCountries(countryOptions);
       } catch (error) {
         console.error("Error fetching countries:", error);
-        setCountries(mockCountries);
       }
     };
 
@@ -111,7 +105,7 @@ const ResumeCreatorContact = () => {
         </div>
         <div>
           <label htmlFor="title" className="text-sm font-bold text-gray-700">
-            TITLE
+            JOB TITLE
           </label>
           <input
             required
@@ -120,7 +114,7 @@ const ResumeCreatorContact = () => {
             name="title"
             value={formData.title || ''}
             onChange={handleInputChange}
-            placeholder="First Name"
+            placeholder="Job Title"
             className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
           />
         </div>
