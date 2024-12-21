@@ -192,7 +192,7 @@ const UserDashboard = () => {
         </div>
         {/* Job List Section */}
         {error && <p className="text-center text-red-500">{error}</p>}
-        {loadingJobs.length > 0 && (
+        {loadingJobs?.length > 0 && (
           <div className="flex flex-col items-center bg-white w-full">
             <div className="flex flex-col items-center justify-center space-y-6 mt-10">
               {/* Dynamic Message */}
@@ -245,7 +245,7 @@ const UserDashboard = () => {
           </div>
         )}
         {/* Job List */}
-        {!loadingJobs.length && jobs && (
+        {!loadingJobs?.length && jobs && (
           <div className="flex flex-col items-center bg-white rounded-xl w-full overflow-y-auto">
             <div className="overflow-x-auto">
               <table className="min-w-full bg-white rounded-lg">
@@ -270,7 +270,7 @@ const UserDashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {jobs?.jobLists.map((group, index) => {
+                  {jobs?.jobLists?.map((group, index) => {
                     let logo;
                     if(group.site === "indeed") {
                       logo =

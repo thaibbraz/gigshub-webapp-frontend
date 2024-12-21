@@ -16,7 +16,7 @@ const ResumeCreatorContact = () => {
     phone: "",
     email: "",
     linkedin: "",
-    country: null,
+    country: "",
   });
 
   const [countries, setCountries] = useState([]);
@@ -30,12 +30,7 @@ const ResumeCreatorContact = () => {
     setFormData((prev) => ({ ...prev, ...resume }));
   }, [resume]);
 
-  const mockCountries = [
-    { value: "US", label: "United States" },
-    { value: "CA", label: "Canada" },
-    { value: "UK", label: "United Kingdom" },
-    { value: "IN", label: "India" },
-  ];
+
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -48,7 +43,6 @@ const ResumeCreatorContact = () => {
         setCountries(countryOptions);
       } catch (error) {
         console.error("Error fetching countries:", error);
-        setCountries(mockCountries);
       }
     };
 
