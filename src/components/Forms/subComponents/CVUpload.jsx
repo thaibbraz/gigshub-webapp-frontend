@@ -19,13 +19,32 @@ const CVUpload = ({ onNext }) => {
     formData.append("pdfFile", file);
     formData.append("fileName", file.name);
     try {
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/upload_resume`, {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/upload_resume`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (response.ok) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
         const data = await response.json();
+        reader.onload = () => {
+          const base64Data = reader.result;
+
+          const extensionId = process.env.REACT_APP_EXTENSION_ID;
+          console.log("extensionId", extensionId);
+          window.chrome.runtime.sendMessage(extensionId, {
+            action: "resume_upload",
+            data: {
+              resume_data: data.resume_data,
+              pdfFile: base64Data,
+              fileName: file.name,
+            },
+          });
+        };
 
         // Update form fields with returned data from the backend
         setFormData({
