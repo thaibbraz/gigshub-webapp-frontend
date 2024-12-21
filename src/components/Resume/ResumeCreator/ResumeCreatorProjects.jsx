@@ -30,7 +30,7 @@ const ResumeCreatorProjects = () => {
   useEffect(() => {
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev);
-      newParams.set("tab", "project");
+      newParams.set("tab", "projects");
       newParams.set("project", activeTab);
       return newParams;
     });

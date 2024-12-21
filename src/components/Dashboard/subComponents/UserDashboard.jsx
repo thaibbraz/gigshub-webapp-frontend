@@ -49,7 +49,7 @@ const UserDashboard = () => {
   }, []);
 
   useEffect(() => {
-    if (location.state?.fetchJobsOnLoad && !hasFetchedJobs.current) {
+    if(location.state?.fetchJobsOnLoad && !hasFetchedJobs.current) {
       fetchJobs();
       hasFetchedJobs.current = true;
     }
@@ -91,7 +91,8 @@ const UserDashboard = () => {
   const fetchJobs = async () => {
     const { setJobs } = useJobsStore.getState();
     try {
-      if (!jobTitle || !locationState) {
+      console.log(jobTitle, locationState);
+      if(!jobTitle || !locationState) {
         return console.warn("You need to fill in your job title and location.");
       }
       const jobSources = ["indeed", "linkedin", "zip_recruiter", "glassdoor", "google"];

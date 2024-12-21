@@ -22,14 +22,16 @@ export const uploadResume = async file => {
           const base64Data = reader.result; 
 
           const extensionId = process.env.REACT_APP_EXTENSION_ID;
-          window.chrome.runtime.sendMessage(extensionId, {
-            action: "resume_upload",
-            data: {
-              resume_data: data.resume_data,
-              pdfFile: base64Data,
-              fileName: file.name,
-            },
-          });
+          
+          if(window.chrome?.runtime?.sendMessage)
+            window.chrome.runtime.sendMessage(extensionId, {
+              action: "resume_upload",
+              data: {
+                resume_data: data.resume_data,
+                pdfFile: base64Data,
+                fileName: file.name,
+              },
+            });
         };
         
         const user = JSON.parse(localStorage.getItem("user"));

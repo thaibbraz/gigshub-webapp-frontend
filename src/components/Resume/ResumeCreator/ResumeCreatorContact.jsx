@@ -111,7 +111,7 @@ const ResumeCreatorContact = () => {
         </div>
         <div>
           <label htmlFor="title" className="text-sm font-bold text-gray-700">
-            TITLE
+            JOB TITLE
           </label>
           <input
             required
@@ -120,7 +120,7 @@ const ResumeCreatorContact = () => {
             name="title"
             value={formData.title || ''}
             onChange={handleInputChange}
-            placeholder="First Name"
+            placeholder="Job Title"
             className="mt-1 w-full p-2 border rounded-md text focus:ring-purple focus:border-purple"
           />
         </div>
